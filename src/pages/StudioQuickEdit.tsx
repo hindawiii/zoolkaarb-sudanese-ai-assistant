@@ -774,11 +774,14 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Compact bottom inline icon bar */}
+      {/* Premium horizontally-scrolling tool bar (original Zool Karb style) */}
       {currentImage && (
         <div className="fixed bottom-0 inset-x-0 z-40 bg-card/85 backdrop-blur-2xl border-t border-gold/30">
-          <div className="max-w-md mx-auto px-2 py-2">
-            <div className="grid grid-cols-5 gap-1">
+          <div className="max-w-md mx-auto px-3 py-3">
+            <div
+              className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory"
+              style={{ scrollbarWidth: "none" }}
+            >
               {TOOLS.map((t) => {
                 const active = activeTool === t.id;
                 return (
@@ -786,14 +789,16 @@ const ZoolProToolsHub = () => {
                     key={t.id}
                     onClick={() => setActiveTool((prev) => (prev === t.id ? null : t.id))}
                     disabled={loading}
-                    className={`flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all active:scale-95 disabled:opacity-50 ${
+                    className={`shrink-0 snap-start flex flex-col items-center justify-center gap-1.5 w-[78px] h-[78px] rounded-2xl border transition-all active:scale-95 disabled:opacity-50 ${
                       active
-                        ? "gradient-gold text-primary-foreground shadow-lg shadow-gold/30"
-                        : "bg-transparent text-foreground hover:bg-muted/40"
+                        ? "gradient-gold text-primary-foreground shadow-lg shadow-gold/40 border-gold"
+                        : "bg-background/60 text-foreground border-gold/20 hover:border-gold/50"
                     }`}
                   >
-                    <t.icon className="w-4 h-4" />
-                    <span className="text-[9px] font-cairo leading-tight">{isRtl ? t.ar : t.en}</span>
+                    <t.icon className="w-6 h-6" />
+                    <span className="text-[11px] font-cairo font-semibold leading-tight">
+                      {isRtl ? t.ar : t.en}
+                    </span>
                   </button>
                 );
               })}
