@@ -479,31 +479,31 @@ const ZoolProToolsHub = () => {
   /* ============================================================ */
   return (
     <div
-      className="min-h-screen bg-background max-w-md mx-auto relative pb-44"
+      className="min-h-screen bg-background max-w-md mx-auto relative pb-56"
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundImage:
           "radial-gradient(ellipse at top, hsl(var(--gold) / 0.08), transparent 60%)",
       }}
     >
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-gold/20 bg-card/60 backdrop-blur-2xl sticky top-0 z-30">
+      <header className="flex items-center gap-3 px-4 py-4 border-b border-gold/20 bg-card/60 backdrop-blur-2xl sticky top-0 z-30">
         <button
           onClick={() => navigate("/studio")}
-          className="p-1.5 rounded-xl hover:bg-muted"
+          className="p-2 rounded-xl hover:bg-muted"
           aria-label="Back"
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
         <div className="flex-1">
-          <h1 className="text-base font-bold font-cairo bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">
+          <h1 className="text-lg font-bold font-cairo bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">
             {isRtl ? "أدوات الفزعة" : "Zool Pro Tools"}
           </h1>
-          <p className="text-[10px] text-muted-foreground font-cairo">
+          <p className="text-xs text-muted-foreground font-cairo">
             {isRtl ? "محرر احترافي بالكامل في المتصفح" : "Pro client-side editor"}
           </p>
         </div>
         {currentImage && (
-          <button onClick={reset} className="p-1.5 rounded-xl hover:bg-muted text-muted-foreground" aria-label="New">
+          <button onClick={reset} className="p-2 rounded-xl hover:bg-muted text-muted-foreground" aria-label="New">
             <ImageIcon className="w-5 h-5" />
           </button>
         )}
