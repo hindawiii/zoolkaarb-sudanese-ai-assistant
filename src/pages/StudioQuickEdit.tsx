@@ -121,10 +121,9 @@ const segmentPerson = async (img: HTMLImageElement): Promise<ImageData> => {
   const ctx = c.getContext("2d")!;
 
   try {
-    // @ts-ignore – dynamic import from CDN
-    const mod: any = await import(
-      /* @vite-ignore */ "https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"
-    ).catch(() => null);
+    const cdnUrl = "https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js";
+    // @ts-ignore – dynamic import from CDN at runtime
+    const mod: any = await import(/* @vite-ignore */ cdnUrl).catch(() => null);
     const SelfieCtor =
       mod?.SelfieSegmentation ||
       // @ts-ignore
