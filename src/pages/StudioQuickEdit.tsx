@@ -479,31 +479,31 @@ const ZoolProToolsHub = () => {
   /* ============================================================ */
   return (
     <div
-      className="min-h-screen bg-background max-w-md mx-auto relative pb-44"
+      className="min-h-screen bg-background max-w-md mx-auto relative pb-56"
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundImage:
           "radial-gradient(ellipse at top, hsl(var(--gold) / 0.08), transparent 60%)",
       }}
     >
-      <header className="flex items-center gap-3 px-4 py-3 border-b border-gold/20 bg-card/60 backdrop-blur-2xl sticky top-0 z-30">
+      <header className="flex items-center gap-3 px-4 py-4 border-b border-gold/20 bg-card/60 backdrop-blur-2xl sticky top-0 z-30">
         <button
           onClick={() => navigate("/studio")}
-          className="p-1.5 rounded-xl hover:bg-muted"
+          className="p-2 rounded-xl hover:bg-muted"
           aria-label="Back"
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
         <div className="flex-1">
-          <h1 className="text-base font-bold font-cairo bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">
+          <h1 className="text-lg font-bold font-cairo bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">
             {isRtl ? "أدوات الفزعة" : "Zool Pro Tools"}
           </h1>
-          <p className="text-[10px] text-muted-foreground font-cairo">
+          <p className="text-xs text-muted-foreground font-cairo">
             {isRtl ? "محرر احترافي بالكامل في المتصفح" : "Pro client-side editor"}
           </p>
         </div>
         {currentImage && (
-          <button onClick={reset} className="p-1.5 rounded-xl hover:bg-muted text-muted-foreground" aria-label="New">
+          <button onClick={reset} className="p-2 rounded-xl hover:bg-muted text-muted-foreground" aria-label="New">
             <ImageIcon className="w-5 h-5" />
           </button>
         )}
@@ -774,11 +774,14 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Compact bottom inline icon bar */}
+      {/* Premium horizontally-scrolling tool bar (original Zool Karb style) */}
       {currentImage && (
         <div className="fixed bottom-0 inset-x-0 z-40 bg-card/85 backdrop-blur-2xl border-t border-gold/30">
-          <div className="max-w-md mx-auto px-2 py-2">
-            <div className="grid grid-cols-5 gap-1">
+          <div className="max-w-md mx-auto px-3 py-3">
+            <div
+              className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory"
+              style={{ scrollbarWidth: "none" }}
+            >
               {TOOLS.map((t) => {
                 const active = activeTool === t.id;
                 return (
@@ -786,14 +789,16 @@ const ZoolProToolsHub = () => {
                     key={t.id}
                     onClick={() => setActiveTool((prev) => (prev === t.id ? null : t.id))}
                     disabled={loading}
-                    className={`flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all active:scale-95 disabled:opacity-50 ${
+                    className={`shrink-0 snap-start flex flex-col items-center justify-center gap-1.5 w-[78px] h-[78px] rounded-2xl border transition-all active:scale-95 disabled:opacity-50 ${
                       active
-                        ? "gradient-gold text-primary-foreground shadow-lg shadow-gold/30"
-                        : "bg-transparent text-foreground hover:bg-muted/40"
+                        ? "gradient-gold text-primary-foreground shadow-lg shadow-gold/40 border-gold"
+                        : "bg-background/60 text-foreground border-gold/20 hover:border-gold/50"
                     }`}
                   >
-                    <t.icon className="w-4 h-4" />
-                    <span className="text-[9px] font-cairo leading-tight">{isRtl ? t.ar : t.en}</span>
+                    <t.icon className="w-6 h-6" />
+                    <span className="text-[11px] font-cairo font-semibold leading-tight">
+                      {isRtl ? t.ar : t.en}
+                    </span>
                   </button>
                 );
               })}
