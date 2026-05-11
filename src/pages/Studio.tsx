@@ -35,7 +35,7 @@ const Studio = () => {
         </button>
         <div className="flex-1">
           <h1 className="text-base font-bold font-cairo text-foreground">استوديو الذكاء الاصطناعي</h1>
-          <p className="text-[10px] text-muted-foreground">Zool AI Studio — Production Suite</p>
+          <p className="text-[10px] text-muted-foreground">Madar AI Studio — Production Suite</p>
         </div>
       </header>
 

@@ -204,7 +204,7 @@ const ZoolShare = () => {
           <ArrowLeft className="w-5 h-5 text-[#D4AF37]" />
         </button>
         <div className="flex-1">
-          <h1 className="text-base font-bold text-white">زول شير</h1>
+          <h1 className="text-base font-bold text-white">مدار شير</h1>
           <p className="text-[10px] text-[#D4AF37]/70">Local P2P · بدون رصيد</p>
         </div>
         <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30">

@@ -41,7 +41,7 @@ const Settings = () => {
         setNotifications(true);
         toast.success(t("toast.notifEnabled", language), { duration: 4000 });
         try {
-          new Notification("ZoolKaarb", {
+          new Notification("Madar", {
             body: language === "ar" ? "أبشر، التنبيهات الكاربة حتصلك أول بأول 🇸🇩" : "Notifications enabled!",
           });
         } catch { /* notification may fail silently on some browsers */ }
@@ -149,7 +149,7 @@ const Settings = () => {
         <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
           {[
             { label: t("settings.privacy", language), labelAr: "سياسة الخصوصية", icon: Shield },
-            { label: t("settings.about", language), labelAr: "عن زول كارب", icon: Info },
+            { label: t("settings.about", language), labelAr: "عن مدار", icon: Info },
           ].map((item) => (
             <button
               key={item.labelAr}
@@ -167,7 +167,7 @@ const Settings = () => {
         </div>
       </div>
 
-      <p className="text-center text-[10px] text-muted-foreground mt-8">ZoolKaarb v1.0.0 — Made with ❤️ in Sudan</p>
+      <p className="text-center text-[10px] text-muted-foreground mt-8">Madar v1.0.0 — Made with ❤️ in Sudan</p>
 
       {showOverlay && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center" onClick={() => setShowOverlay(false)}>

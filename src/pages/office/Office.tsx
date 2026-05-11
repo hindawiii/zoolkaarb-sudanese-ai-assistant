@@ -50,7 +50,7 @@ const Office = () => {
             <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">
               المكتب الرقمي
             </h1>
-            <p className="text-[10px] text-muted-foreground">Zool Digital Office</p>
+            <p className="text-[10px] text-muted-foreground">Madar Digital Office</p>
           </div>
         </div>
         <div

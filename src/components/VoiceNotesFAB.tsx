@@ -220,7 +220,7 @@ const VoiceNotesFAB = () => {
   };
 
   const shareText = async (text: string) => {
-    const data = { text, title: "ZoolKaarb" };
+    const data = { text, title: "Madar" };
     if (navigator.share) {
       try {
         await navigator.share(data);

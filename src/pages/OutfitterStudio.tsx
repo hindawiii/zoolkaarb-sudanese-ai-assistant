@@ -195,7 +195,7 @@ const OutfitterStudio = () => {
       const file = new File([blob], "zool-outfitter.png", { type: "image/png" });
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare && nav.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: "Zool Outfitter" });
+        await navigator.share({ files: [file], title: "Madar Outfitter" });
       } else {
         const a = document.createElement("a");
         a.href = output; a.download = "zool-outfitter.png"; a.click();

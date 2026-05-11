@@ -2,7 +2,7 @@ import { AppLanguage } from "@/store/userStore";
 
 type Dict = Record<string, { ar: string; en: string }>;
 
-// NOTE: Brand category titles (e.g., ستوديو زول، الواجب، الخال) stay Arabic always.
+// NOTE: Brand category titles (e.g., ستوديو مدار، الواجب، الخال) stay Arabic always.
 export const dict: Dict = {
   // Headers / greetings
   "greeting.morning": { ar: "صباح الخير", en: "Good morning" },
@@ -23,7 +23,7 @@ export const dict: Dict = {
   "svc.wajib.desc": { ar: "قوالب وتهاني واتس وفيس", en: "WhatsApp & Facebook templates" },
   "svc.recorder.title": { ar: "المسجل الذكي", en: "Smart Recorder" },
   "svc.recorder.desc": { ar: "تسجيل وتغيير الصوت", en: "Record & Voice Changer" },
-  "svc.share.title": { ar: "زول شير", en: "Zool Share" },
+  "svc.share.title": { ar: "مدار شير", en: "Madar Share" },
   "svc.share.desc": { ar: "مشاركة الملفات و PDF", en: "File Sharing & PDF Scan" },
 
   // Utilities
@@ -33,7 +33,7 @@ export const dict: Dict = {
   "util.scanner.desc": { ar: "مسح المستندات إلى PDF", en: "Scan to PDF" },
   "util.yafatish.title": { ar: "الزول يفتش", en: "Al-Zool Yafatish" },
   "util.yafatish.desc": { ar: "أقرب الأماكن إليك", en: "Find places near you" },
-  "util.share.title": { ar: "زول شير", en: "Zool Share" },
+  "util.share.title": { ar: "مدار شير", en: "Madar Share" },
   "util.share.desc": { ar: "شارك عبر واتساب", en: "Share via WhatsApp" },
   "util.rewards.title": { ar: "إعلانات مكافأة", en: "Rewarded Ads" },
   "util.rewards.desc": { ar: "افتح المميزات", en: "Unlock premium" },
@@ -53,7 +53,7 @@ export const dict: Dict = {
   "settings.notifications": { ar: "الإشعارات", en: "Notifications" },
   "settings.editName": { ar: "اضغط لتعديل اسمك", en: "Tap to edit your name" },
   "settings.privacy": { ar: "سياسة الخصوصية", en: "Privacy Policy" },
-  "settings.about": { ar: "عن زول كارب", en: "About ZoolKaarb" },
+  "settings.about": { ar: "عن مدار", en: "About Madar" },
 
   // Chat
   "chat.online": { ar: "متصل", en: "Online" },

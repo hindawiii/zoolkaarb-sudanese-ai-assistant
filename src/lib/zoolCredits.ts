@@ -1,4 +1,4 @@
-// Unified "Zool Credits" ledger — one global system inherited by every tool
+// Unified "Madar Credits" ledger — one global system inherited by every tool
 // (current + future). Persists in localStorage. Auto-initializes any tool the
 // first time it's queried with FREE_TRIAL credits. Reward-per-ad varies by tool.
 

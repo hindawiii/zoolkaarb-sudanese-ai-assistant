@@ -211,11 +211,11 @@ const VoiceChanger = () => {
   const shareToWhatsApp = async () => {
     if (!previewBlob) return;
     const file = new File([previewBlob], `zoolkaarb-${selected}.wav`, { type: "audio/wav" });
-    const text = "صوت احترافي من زول كـــــارب 🎤";
+    const text = "صوت احترافي من مدار 🎤";
     try {
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare && nav.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], text, title: "ZoolKaarb" });
+        await navigator.share({ files: [file], text, title: "Madar" });
         return;
       }
     } catch (e) { console.warn(e); }

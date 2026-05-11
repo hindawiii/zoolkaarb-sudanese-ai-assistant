@@ -20,7 +20,7 @@ import { toast } from "@/hooks/use-toast";
 import { useUser } from "@/store/userStore";
 
 /* ============================================================
-   Zool Pro Tools Hub – fully client-side image processing
+   Madar Tools Hub – fully client-side image processing
    ============================================================ */
 
 type ToolId = "recolor" | "background" | "eraser" | "textify" | "crop";
@@ -496,7 +496,7 @@ const ZoolProToolsHub = () => {
         </button>
         <div className="flex-1">
           <h1 className="text-lg font-bold font-cairo bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">
-            {isRtl ? "أدوات الفزعة" : "Zool Pro Tools"}
+            {isRtl ? "أدوات مدار" : "Madar Tools"}
           </h1>
           <p className="text-xs text-muted-foreground font-cairo">
             {isRtl ? "محرر احترافي بالكامل في المتصفح" : "Pro client-side editor"}
@@ -565,7 +565,7 @@ const ZoolProToolsHub = () => {
                   <Sparkles className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <p className="text-xs text-foreground font-cairo">
-                  {isRtl ? "الخال شغال.. بجهز في أدوات الفزعة" : "Working..."}
+                  {isRtl ? "الخال شغال.. بجهز في أدوات مدار" : "Working..."}
                 </p>
               </div>
             )}
@@ -774,7 +774,7 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Premium horizontally-scrolling tool bar (original Zool Karb style) */}
+      {/* Premium horizontally-scrolling tool bar (original Madar style) */}
       {currentImage && (
         <div className="fixed bottom-0 inset-x-0 z-40 bg-card/85 backdrop-blur-2xl border-t border-gold/30">
           <div className="max-w-md mx-auto px-3 py-3">

@@ -26,7 +26,7 @@ const SudaneseHeader = () => {
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 text-start">
           <h1 className="text-2xl font-bold text-foreground tracking-tight font-cairo truncate">
-            {isRtl ? "زول كـــــارب" : "ZoolKaarb"}
+            {isRtl ? "مدار" : "Madar"}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5 font-cairo truncate">
             {greeting}

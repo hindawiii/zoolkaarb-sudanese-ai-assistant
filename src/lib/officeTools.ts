@@ -11,7 +11,7 @@ import {
 import { saveAs } from "file-saver";
 import { supabase } from "@/integrations/supabase/client";
 
-const WATERMARK_TEXT = "Zool Karb";
+const WATERMARK_TEXT = "Madar";
 
 const fileToDataUrl = (f: File): Promise<string> =>
   new Promise((res, rej) => {

@@ -1,4 +1,4 @@
-// Apply a subtle "Zool Karb" watermark to a base64/dataURL image.
+// Apply a subtle "Madar" watermark to a base64/dataURL image.
 // Returns a new PNG dataURL. Falls back to original on failure.
 
 export const addZoolWatermark = async (imageDataUrl: string): Promise<string> => {
@@ -13,7 +13,7 @@ export const addZoolWatermark = async (imageDataUrl: string): Promise<string> =>
 
     const fontSize = Math.max(14, Math.round(canvas.width * 0.025));
     const padding = Math.round(fontSize * 0.8);
-    const text = "✦ Zool Karb";
+    const text = "✦ Madar";
     ctx.font = `700 ${fontSize}px Tajawal, Inter, sans-serif`;
     ctx.textBaseline = "bottom";
     ctx.textAlign = "right";

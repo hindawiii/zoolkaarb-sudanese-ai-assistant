@@ -174,12 +174,12 @@ const DataSaver = () => {
     if (!compressed) return;
     const text =
       network === "whatsapp"
-        ? "📲 مضغوطة بـ ZoolKaarb — توفير في الباقة!"
-        : "🌍 ملف مضغوط من ZoolKaarb";
+        ? "📲 مضغوطة بـ Madar — توفير في الباقة!"
+        : "🌍 ملف مضغوط من Madar";
     try {
       const navAny = navigator as Navigator & { canShare?: (data: ShareData) => boolean };
       if (navAny.canShare && navAny.canShare({ files: [compressed] })) {
-        await navigator.share({ files: [compressed], text, title: "ZoolKaarb" });
+        await navigator.share({ files: [compressed], text, title: "Madar" });
         return;
       }
     } catch {

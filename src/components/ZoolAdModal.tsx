@@ -58,7 +58,7 @@ const ZoolAdModal = ({ open, isRtl = true, toolId, onClose, onRewarded }: Props)
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <p className="text-xs font-semibold text-muted-foreground font-cairo flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-gold" />
-            {isRtl ? "نظام رصيد زول" : "Zool Credits"}
+            {isRtl ? "نظام رصيد مدار" : "Madar Credits"}
           </p>
           {!watching && (
             <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted" aria-label="Close">

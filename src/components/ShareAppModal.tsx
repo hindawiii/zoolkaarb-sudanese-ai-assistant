@@ -7,8 +7,8 @@ interface Props {
 }
 
 const APP_URL = typeof window !== "undefined" ? window.location.origin : "https://zoolkaarb.app";
-const SHARE_TEXT_AR = "جرّب ZoolKaarb — تطبيق سوداني ذكي فيه كل حاجة تحتاجها 🇸🇩";
-const SHARE_TEXT_EN = "Check out ZoolKaarb — the all-in-one Sudanese AI utility app 🇸🇩";
+const SHARE_TEXT_AR = "جرّب Madar — تطبيق سوداني ذكي فيه كل حاجة تحتاجها 🇸🇩";
+const SHARE_TEXT_EN = "Check out Madar — the all-in-one Sudanese AI utility app 🇸🇩";
 
 const ShareAppModal = ({ open, onClose }: Props) => {
   const { language } = useUser();
@@ -72,7 +72,7 @@ const ShareAppModal = ({ open, onClose }: Props) => {
           {language === "ar" ? "انشر التطبيق" : "Share the App"}
         </h3>
         <p className="text-sm text-muted-foreground text-center mt-1">
-          {language === "ar" ? "شارك ZoolKaarb مع أصحابك" : "Spread the word about ZoolKaarb"}
+          {language === "ar" ? "شارك Madar مع أصحابك" : "Spread the word about Madar"}
         </p>
 
         <div className="flex items-center justify-center gap-5 mt-6">

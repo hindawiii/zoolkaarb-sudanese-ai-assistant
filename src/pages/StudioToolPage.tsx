@@ -196,7 +196,7 @@ const StudioToolPage = () => {
       const file = new File([blob], "zool-studio.png", { type: "image/png" });
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare && nav.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: "Zool Karb Studio" });
+        await navigator.share({ files: [file], title: "Madar Studio" });
       } else {
         const a = document.createElement("a");
         a.href = output;
