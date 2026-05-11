@@ -53,6 +53,9 @@ const fileToBase64 = (file: File): Promise<string> =>
     r.readAsDataURL(file);
   });
 
+const isAiCreditsExhausted = (data: unknown) =>
+  typeof data === "object" && data !== null && "code" in data && data.code === "AI_CREDITS_EXHAUSTED";
+
 // Lightweight client-side preprocessing simulator (PoseNet/face-api stand-in)
 // Uses native FaceDetector when available; otherwise returns a sane default.
 const preprocess = async (dataUrl: string): Promise<{ face: boolean; pose: string }> => {
@@ -128,6 +131,16 @@ const AnimeStudio = () => {
         },
       });
       if (error) throw error;
+      if (isAiCreditsExhausted(data)) {
+        toast({
+          title: isRtl ? "رصيد الذكاء الاصطناعي خلص" : "AI balance exhausted",
+          description: isRtl
+            ? "الصفحة شغالة، لكن تحويل الصور يحتاج شحن رصيد Cloud & AI من إعدادات مساحة العمل."
+            : "The page is still working, but image generation needs more Cloud & AI balance in workspace settings.",
+          variant: "destructive",
+        });
+        return;
+      }
       if (data?.error) throw new Error(data.error);
       if (!data?.imageUrl) throw new Error("No image returned");
       const watermarked = await addZoolWatermark(data.imageUrl);
