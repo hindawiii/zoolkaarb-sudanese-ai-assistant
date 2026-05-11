@@ -9,6 +9,7 @@ import Studio from "./pages/Studio.tsx";
 import StudioToolPage from "./pages/StudioToolPage.tsx";
 import StudioQuickEdit from "./pages/StudioQuickEdit.tsx";
 import AnimeStudio from "./pages/AnimeStudio.tsx";
+import OutfitterStudio from "./pages/OutfitterStudio.tsx";
 import Settings from "./pages/Settings.tsx";
 import AlWajib from "./pages/AlWajib.tsx";
 import TemplateEditor from "./pages/TemplateEditor.tsx";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/studio" element={<Studio />} />
           <Route path="/studio/quick" element={<StudioQuickEdit />} />
           <Route path="/studio/anime-hero" element={<AnimeStudio />} />
+          <Route path="/studio/clothes-changer" element={<OutfitterStudio />} />
           <Route path="/studio/:slug" element={<StudioToolPage />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/al-wajib" element={<AlWajib />} />
