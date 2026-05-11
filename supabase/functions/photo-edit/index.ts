@@ -205,8 +205,12 @@ Deno.serve(async (req) => {
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add credits in Lovable workspace settings." }), {
-          status: 402,
+        return new Response(JSON.stringify({
+          error: "AI credits exhausted. Please add credits in Lovable workspace settings.",
+          code: "AI_CREDITS_EXHAUSTED",
+          recoverable: true,
+        }), {
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
