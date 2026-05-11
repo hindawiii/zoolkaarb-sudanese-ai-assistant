@@ -66,6 +66,65 @@ const PROP_PROMPTS: Record<string, string> = {
   staff: "Place a mystical shonen battle staff in the subject's hand, with subtle glowing runes.",
 };
 
+// ===== Outfitter Studio (ControlNet-style pose-locked outfit composer) =====
+const OUTFIT_VARIANTS: Record<string, string> = {
+  // Heritage (Sudanese)
+  "galabiya": "Replace clothing with a clean traditional Sudanese white jalabiya (galabiya) only — no headwear, no accessories.",
+  "galabiya-imma": "Replace clothing with a traditional Sudanese white jalabiya AND a properly wrapped white Imma turban on the head.",
+  "galabiya-imma-shawl-cane": "Replace clothing with a Sudanese white jalabiya, a wrapped white Imma turban, an elegant shawl draped over the shoulder, and a wooden Sudanese cane (3aja3) held in hand.",
+  "galabiya-imma-shawl-cane-markoub": "Replace clothing with a Sudanese white jalabiya, wrapped white Imma turban, shoulder shawl, wooden Sudanese cane in hand, AND traditional Sudanese Markoub leather shoes on the feet.",
+  "ansar": "Replace clothing with an Ansar-style Sudanese jalabiya (patched colorful cloth pattern characteristic of Ansar/Mahdi tradition).",
+  // Formal
+  "classic": "Replace clothing with an elegant classic black/charcoal two-piece formal suit with crisp white shirt and tie.",
+  "blazer": "Replace clothing with a tailored modern blazer over a dress shirt with smart chinos.",
+  "wedding": "Replace clothing with a luxurious wedding suit (ivory or navy tuxedo with bow tie and pocket square).",
+  // Casual
+  "tshirt-jeans": "Replace clothing with a stylish fitted t-shirt and modern blue jeans.",
+  "hoodie": "Replace clothing with a premium streetwear hoodie and joggers.",
+  "polo": "Replace clothing with a clean polo shirt and casual shorts.",
+  "denim-jacket": "Replace clothing with a denim jacket over a plain t-shirt with dark jeans.",
+};
+const EYEWEAR_PROMPTS: Record<string, string> = {
+  "none": "Do not add any eyewear; if the subject already wears glasses keep them unchanged.",
+  "sunglasses-aviator": "Add classic aviator sunglasses on the face, properly aligned to the eyes, with realistic reflections and matching shadow on the cheekbones.",
+  "sunglasses-wayfarer": "Add modern wayfarer sunglasses on the face, properly aligned to the eyes, realistic reflections.",
+  "glasses-clear": "Add stylish clear prescription glasses on the face, properly aligned to the eyes, subtle lens reflections.",
+};
+const HEADWEAR_PROMPTS: Record<string, string> = {
+  "none": "Do not add any headwear; keep the original hair visible exactly as is.",
+  "cap": "Add a casual modern baseball cap on the head, fitted to the head shape with realistic shadow on the forehead.",
+  "taqiya": "Add a traditional white Sudanese Taqiya (skull cap) on the head, fitted naturally.",
+  "tarboush": "Add a classic red Tarboush (fez) on the head, fitted naturally with subtle shadow.",
+};
+
+const buildOutfitterPrompt = (p: {
+  category?: string; variant?: string; eyewear?: string; headwear?: string;
+  mixMatch?: boolean; mixTarget?: string; pose?: string;
+}) => {
+  const variantPrompt = OUTFIT_VARIANTS[p.variant ?? ""] ?? OUTFIT_VARIANTS["galabiya-imma"];
+  const eyewearPrompt = EYEWEAR_PROMPTS[p.eyewear ?? "none"];
+  const headwearPrompt = HEADWEAR_PROMPTS[p.headwear ?? "none"];
+
+  const mixMatchPrompt = p.mixMatch
+    ? `IMPORTANT: This is a Mix & Match inpainting operation. Modify ONLY the ${p.mixTarget ?? "top"} clothing region. Keep ALL other clothing pieces, accessories, headwear, and eyewear that the subject is currently wearing 100% untouched and pixel-identical.`
+    : "";
+
+  const poseHint = p.pose && p.pose !== "natural"
+    ? `Detected pose: ${p.pose}. Preserve this exact body posture without altering limb positions.`
+    : "Preserve the subject's exact original body posture without altering limb positions.";
+
+  return [
+    "Photorealistic outfit replacement with strict pose preservation (ControlNet-style hard constraint).",
+    "MANDATORY: Preserve the subject's facial identity, skin tone, hair (unless headwear is added), exact body pose, head tilt, hand positions, and background 100%.",
+    poseHint,
+    variantPrompt,
+    eyewearPrompt,
+    headwearPrompt,
+    mixMatchPrompt,
+    "Match lighting direction, shadows, color temperature, and grain of the original photo perfectly so the new clothing looks naturally photographed on the subject. No deformation of body proportions. No extra limbs. No identity drift.",
+  ].filter(Boolean).join(" ");
+};
+
 const buildAnimePrompt = (p: {
   style?: string; hero?: string; aura?: string; hair?: string; prop?: string;
 }) => {
@@ -87,7 +146,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { imageBase64, images, action, anime } = await req.json();
+    const { imageBase64, images, action, anime, outfitter } = await req.json();
     const imageList: string[] = Array.isArray(images) && images.length > 0
       ? images
       : imageBase64
@@ -102,6 +161,9 @@ Deno.serve(async (req) => {
     let prompt: string | undefined = PROMPTS[action];
     if (action === "anime-studio") {
       prompt = buildAnimePrompt(anime ?? {});
+    }
+    if (action === "outfitter-studio") {
+      prompt = buildOutfitterPrompt(outfitter ?? {});
     }
     if (!prompt) {
       return new Response(JSON.stringify({ error: `Unknown action: ${action}` }), {
