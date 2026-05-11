@@ -94,6 +94,7 @@ const OutfitterStudio = () => {
   const [adOpen, setAdOpen] = useState(false);
   const [remaining, setRemaining] = useState(getRemaining(TOOL_ID));
   const [pose, setPose] = useState<string>("natural");
+  const [aiCreditsExhausted, setAiCreditsExhausted] = useState(false);
 
   const [category, setCategory] = useState<CategoryId>("heritage");
   const [variant, setVariant] = useState<string>("galabiya-imma");
@@ -149,8 +150,20 @@ const OutfitterStudio = () => {
         },
       });
       if (error) throw error;
+      if (data?.code === "AI_CREDITS_EXHAUSTED") {
+        setAiCreditsExhausted(true);
+        toast({
+          title: isRtl ? "رصيد الذكاء الاصطناعي خلص" : "AI balance exhausted",
+          description: isRtl
+            ? "زِد رصيد Lovable AI من إعدادات مساحة العمل عشان نكمل التعديل."
+            : "Add Lovable AI balance in workspace settings to keep editing.",
+          variant: "destructive",
+        });
+        return;
+      }
       if (data?.error) throw new Error(data.error);
       if (!data?.imageUrl) throw new Error("No image");
+      setAiCreditsExhausted(false);
       const watermarked = await addZoolWatermark(data.imageUrl);
       setOutput(watermarked);
       const next = consumeUse(TOOL_ID);
@@ -271,6 +284,19 @@ const OutfitterStudio = () => {
             <a href={output} download="zool-outfitter.png" className="flex-1 py-2.5 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-95">
               <Download className="w-3.5 h-3.5" />{isRtl ? "حفظ" : "Save"}
             </a>
+          </div>
+        )}
+
+        {aiCreditsExhausted && !loading && (
+          <div className="mt-3 rounded-2xl border border-destructive/40 bg-destructive/10 px-3 py-2.5">
+            <p className="text-[12px] font-bold font-cairo text-foreground">
+              {isRtl ? "رصيد Lovable AI خلص" : "Lovable AI balance is exhausted"}
+            </p>
+            <p className="text-[10.5px] text-muted-foreground font-cairo leading-relaxed mt-1">
+              {isRtl
+                ? "الصفحة شغالة، لكن تعديل الصور يحتاج شحن رصيد Cloud & AI من إعدادات مساحة العمل."
+                : "The page is still working, but image editing needs more Cloud & AI balance in workspace settings."}
+            </p>
           </div>
         )}
       </div>
