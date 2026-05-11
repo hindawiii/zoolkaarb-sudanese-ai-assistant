@@ -25,6 +25,9 @@ const VS_ICONS = [
   { id: "swords", labelAr: "سيوف", labelEn: "Swords", render: () => <Swords className="w-6 h-6 text-primary-foreground" /> },
 ] as const;
 
+const isAiCreditsExhausted = (data: unknown) =>
+  typeof data === "object" && data !== null && "code" in data && data.code === "AI_CREDITS_EXHAUSTED";
+
 const StudioToolPage = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -98,6 +101,16 @@ const StudioToolPage = () => {
 
       const { data, error } = await supabase.functions.invoke("photo-edit", { body });
       if (error) throw error;
+      if (isAiCreditsExhausted(data)) {
+        toast({
+          title: isRtl ? "رصيد الذكاء الاصطناعي خلص" : "AI balance exhausted",
+          description: isRtl
+            ? "الصفحة شغالة، لكن تعديل الصور يحتاج شحن رصيد Cloud & AI من إعدادات مساحة العمل."
+            : "The page is still working, but image editing needs more Cloud & AI balance in workspace settings.",
+          variant: "destructive",
+        });
+        return;
+      }
       if (data?.error) throw new Error(data.error);
       if (!data?.imageUrl) throw new Error("No image returned");
 
