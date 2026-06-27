@@ -774,12 +774,12 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Premium horizontally-scrolling tool bar (original Madar style) */}
+      {/* Premium horizontally-scrolling tool bar (restored original Madar style) */}
       {currentImage && (
-        <div className="fixed bottom-0 inset-x-0 z-40 bg-card/85 backdrop-blur-2xl border-t border-gold/30">
-          <div className="max-w-md mx-auto px-3 py-3">
+        <div className="fixed bottom-0 inset-x-0 z-40 bg-card/85 backdrop-blur-2xl border-t border-gold/30 shadow-[0_-8px_30px_rgba(212,175,55,0.15)]">
+          <div className="max-w-md mx-auto px-4 py-4">
             <div
-              className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory"
+              className="flex gap-4 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory"
               style={{ scrollbarWidth: "none" }}
             >
               {TOOLS.map((t) => {
@@ -789,14 +789,14 @@ const ZoolProToolsHub = () => {
                     key={t.id}
                     onClick={() => setActiveTool((prev) => (prev === t.id ? null : t.id))}
                     disabled={loading}
-                    className={`shrink-0 snap-start flex flex-col items-center justify-center gap-1.5 w-[78px] h-[78px] rounded-2xl border transition-all active:scale-95 disabled:opacity-50 ${
+                    className={`shrink-0 snap-start flex flex-col items-center justify-center gap-2 w-[96px] h-[96px] rounded-2xl border-2 transition-all active:scale-95 disabled:opacity-50 ${
                       active
                         ? "gradient-gold text-primary-foreground shadow-lg shadow-gold/40 border-gold"
-                        : "bg-background/60 text-foreground border-gold/20 hover:border-gold/50"
+                        : "bg-background/60 text-foreground border-gold/25 hover:border-gold/60"
                     }`}
                   >
-                    <t.icon className="w-6 h-6" />
-                    <span className="text-[11px] font-cairo font-semibold leading-tight">
+                    <t.icon className="w-8 h-8" />
+                    <span className="text-[13px] font-cairo font-bold leading-tight">
                       {isRtl ? t.ar : t.en}
                     </span>
                   </button>
