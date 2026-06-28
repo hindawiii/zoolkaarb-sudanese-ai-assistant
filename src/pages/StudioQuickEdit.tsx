@@ -1196,11 +1196,20 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Premium horizontally-scrolling tool bar */}
+      {/* Premium Madar tools panel — 4-column grid like reference */}
       {currentImage && (
-        <div className="fixed bottom-0 inset-x-0 z-40 bg-card/85 backdrop-blur-2xl border-t border-gold/30 shadow-[0_-8px_30px_rgba(212,175,55,0.15)]">
-          <div className="max-w-md mx-auto px-4 py-4">
-            <div className="flex gap-4 overflow-x-auto pb-1 -mx-1 px-1 snap-x" style={{ scrollbarWidth: "none" }}>
+        <div className="fixed bottom-0 inset-x-0 z-40 bg-card/90 backdrop-blur-2xl border-t border-gold/30 shadow-[0_-8px_30px_rgba(212,175,55,0.15)]">
+          <div className="max-w-md mx-auto px-4 pt-3 pb-4">
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[11px] font-cairo text-gold/80 font-bold tracking-wide">
+                {isRtl ? `${TOOLS.length} أداة مدار` : `${TOOLS.length} Madar Tools`}
+              </span>
+              <span className="h-1 w-10 rounded-full bg-gold/40" />
+            </div>
+            <div
+              className="grid grid-cols-4 gap-3 max-h-[42vh] overflow-y-auto pb-1"
+              style={{ scrollbarWidth: "none" }}
+            >
               {TOOLS.map((t) => {
                 const active = activeTool === t.id;
                 return (
@@ -1208,14 +1217,14 @@ const ZoolProToolsHub = () => {
                     key={t.id}
                     onClick={() => setActiveTool((prev) => (prev === t.id ? null : t.id))}
                     disabled={loading}
-                    className={`shrink-0 snap-start flex flex-col items-center justify-center gap-2 w-[96px] h-[96px] rounded-2xl border-2 transition-all active:scale-95 disabled:opacity-50 ${
+                    className={`flex flex-col items-center justify-center gap-1.5 h-[88px] rounded-2xl border-2 transition-all active:scale-95 disabled:opacity-50 ${
                       active
                         ? "gradient-gold text-primary-foreground shadow-lg shadow-gold/40 border-gold"
                         : "bg-background/60 text-foreground border-gold/25 hover:border-gold/60"
                     }`}
                   >
-                    <t.icon className="w-8 h-8" />
-                    <span className="text-[13px] font-cairo font-bold leading-tight text-center px-1">
+                    <t.icon className="w-7 h-7" />
+                    <span className="text-[12px] font-cairo font-bold leading-tight text-center px-1">
                       {isRtl ? t.ar : t.en}
                     </span>
                   </button>
@@ -1225,6 +1234,7 @@ const ZoolProToolsHub = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };
