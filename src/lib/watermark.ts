@@ -1,9 +1,18 @@
-// Apply a subtle "Madar" watermark to a base64/dataURL image.
+// Apply the official Madar logo watermark to a base64/dataURL image.
 // Returns a new PNG dataURL. Falls back to original on failure.
+import madarLogo from "@/assets/madar-logo.png.asset.json";
+
+let cachedLogo: HTMLImageElement | null = null;
+
+const getLogo = async (): Promise<HTMLImageElement> => {
+  if (cachedLogo) return cachedLogo;
+  cachedLogo = await loadImage(madarLogo.url);
+  return cachedLogo;
+};
 
 export const addZoolWatermark = async (imageDataUrl: string): Promise<string> => {
   try {
-    const img = await loadImage(imageDataUrl);
+    const [img, logo] = await Promise.all([loadImage(imageDataUrl), getLogo()]);
     const canvas = document.createElement("canvas");
     canvas.width = img.naturalWidth || img.width;
     canvas.height = img.naturalHeight || img.height;
@@ -11,29 +20,58 @@ export const addZoolWatermark = async (imageDataUrl: string): Promise<string> =>
     if (!ctx) return imageDataUrl;
     ctx.drawImage(img, 0, 0);
 
-    const fontSize = Math.max(14, Math.round(canvas.width * 0.025));
-    const padding = Math.round(fontSize * 0.8);
-    const text = "✦ Madar";
-    ctx.font = `700 ${fontSize}px Tajawal, Inter, sans-serif`;
-    ctx.textBaseline = "bottom";
-    ctx.textAlign = "right";
+    // Logo sized to ~14% of width, anchored bottom-right with padding.
+    const targetW = Math.max(72, Math.round(canvas.width * 0.14));
+    const ratio = (logo.naturalHeight || logo.height) / (logo.naturalWidth || logo.width || 1);
+    const targetH = Math.round(targetW * ratio);
+    const padding = Math.round(Math.min(canvas.width, canvas.height) * 0.025);
 
-    // soft dark backdrop pill
-    const metrics = ctx.measureText(text);
-    const tw = metrics.width;
-    const th = fontSize * 1.25;
-    const x = canvas.width - padding;
-    const y = canvas.height - padding;
-    ctx.fillStyle = "rgba(0,0,0,0.35)";
-    roundRect(ctx, x - tw - padding * 0.6, y - th - padding * 0.15, tw + padding * 1.2, th + padding * 0.3, th * 0.4);
+    const x = canvas.width - targetW - padding;
+    const y = canvas.height - targetH - padding;
+
+    // Soft dark glass pill behind the logo
+    const pillPad = Math.round(targetH * 0.25);
+    ctx.fillStyle = "rgba(0,0,0,0.42)";
+    roundRect(
+      ctx,
+      x - pillPad,
+      y - pillPad,
+      targetW + pillPad * 2,
+      targetH + pillPad * 2,
+      (targetH + pillPad * 2) * 0.28,
+    );
     ctx.fill();
 
-    // gold gradient text
-    const grad = ctx.createLinearGradient(x - tw, 0, x, 0);
-    grad.addColorStop(0, "#F5D27A");
-    grad.addColorStop(1, "#E8B547");
-    ctx.fillStyle = grad;
-    ctx.fillText(text, x, y - padding * 0.1);
+    // Thin gold border
+    ctx.strokeStyle = "rgba(212,175,55,0.75)";
+    ctx.lineWidth = Math.max(1, Math.round(targetW * 0.012));
+    roundRect(
+      ctx,
+      x - pillPad,
+      y - pillPad,
+      targetW + pillPad * 2,
+      targetH + pillPad * 2,
+      (targetH + pillPad * 2) * 0.28,
+    );
+    ctx.stroke();
+
+    // Render logo inverted to white for visibility on dark glass
+    const off = document.createElement("canvas");
+    off.width = targetW;
+    off.height = targetH;
+    const octx = off.getContext("2d");
+    if (octx) {
+      octx.drawImage(logo, 0, 0, targetW, targetH);
+      octx.globalCompositeOperation = "source-in";
+      const grad = octx.createLinearGradient(0, 0, targetW, 0);
+      grad.addColorStop(0, "#F5D27A");
+      grad.addColorStop(1, "#E8B547");
+      octx.fillStyle = grad;
+      octx.fillRect(0, 0, targetW, targetH);
+      ctx.drawImage(off, x, y);
+    } else {
+      ctx.drawImage(logo, x, y, targetW, targetH);
+    }
 
     return canvas.toDataURL("image/png");
   } catch (e) {
