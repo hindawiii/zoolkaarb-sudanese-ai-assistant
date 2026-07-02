@@ -27,7 +27,14 @@ import {
   Scan,
   Stars,
   Scissors,
+  LayoutGrid,
+  Focus,
+  Droplet,
+  Thermometer,
+  CircleDot,
+  Zap,
 } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -59,31 +66,54 @@ type ToolId =
   | "stretch"
   | "motion"
   | "tilt-shift"
-  | "remove-bg";
+  | "remove-bg"
+  | "sharpen"
+  | "vignette"
+  | "grain"
+  | "warmth";
 
-const TOOLS: { id: ToolId; ar: string; en: string; icon: typeof Palette }[] = [
-  { id: "remove-bg", ar: "إزالة الخلفية", en: "Remove BG", icon: Scissors },
-  { id: "crop", ar: "قص", en: "Crop", icon: Crop },
-  { id: "free-crop", ar: "قص حر", en: "Free Crop", icon: Scan },
-  { id: "shape-crop", ar: "قص الأشكال", en: "Shape Crop", icon: Triangle },
-  { id: "dispersion", ar: "تشتيت", en: "Dispersion", icon: Stars },
-  { id: "clone", ar: "استنساخ", en: "Clone", icon: Copy },
-  { id: "ai-replace", ar: "تبديل ذكي", en: "AI Replace", icon: Wand2 },
-  { id: "stretch", ar: "تمطيط", en: "Stretch", icon: Maximize2 },
-  { id: "motion", ar: "حركة", en: "Motion", icon: Activity },
-  { id: "eraser", ar: "ممحاة", en: "Eraser", icon: Eraser },
-  { id: "curves", ar: "منحنيات", en: "Curves", icon: Sliders },
-  { id: "adjust", ar: "ضبط", en: "Adjust", icon: Sun },
-  { id: "enhance", ar: "تحسين", en: "Enhance", icon: Sparkles },
-  { id: "tilt-shift", ar: "عزل العدسة", en: "Tilt Shift", icon: Aperture },
-  { id: "perspective", ar: "منظور", en: "Perspective", icon: Move },
-  { id: "resize", ar: "تعديل الحجم", en: "Resize", icon: Square },
-  { id: "flip-rotate", ar: "تدوير/عكس", en: "Flip/Rotate", icon: FlipHorizontal },
-  { id: "ai-enhance", ar: "تحسين ذكي", en: "AI Enhance", icon: Sparkles },
-  { id: "ai-expand", ar: "توسيع ذكي", en: "AI Expand", icon: Maximize2 },
-  { id: "recolor", ar: "تلوين", en: "Recolor", icon: Palette },
-  { id: "background", ar: "خلفية", en: "Background", icon: Mountain },
-  { id: "textify", ar: "نص ASCII", en: "Textify", icon: Type },
+type ToolCat = "bg" | "cut" | "ai" | "color" | "geo" | "fx";
+
+const TOOLS: { id: ToolId; ar: string; en: string; icon: typeof Palette; cat: ToolCat }[] = [
+  // Background & Cutting
+  { id: "remove-bg", ar: "إزالة الخلفية", en: "Remove BG", icon: Scissors, cat: "bg" },
+  { id: "background", ar: "خلفية جديدة", en: "Background", icon: Mountain, cat: "bg" },
+  { id: "eraser", ar: "إزالة عنصر", en: "Object Erase", icon: Eraser, cat: "bg" },
+  { id: "ai-replace", ar: "تبديل ذكي", en: "AI Replace", icon: Wand2, cat: "bg" },
+  { id: "clone", ar: "استنساخ", en: "Clone", icon: Copy, cat: "bg" },
+  // Crop & Geometry
+  { id: "crop", ar: "قص", en: "Crop", icon: Crop, cat: "geo" },
+  { id: "free-crop", ar: "قص حر", en: "Free Crop", icon: Scan, cat: "geo" },
+  { id: "shape-crop", ar: "قص الأشكال", en: "Shape Crop", icon: Triangle, cat: "geo" },
+  { id: "perspective", ar: "منظور", en: "Perspective", icon: Move, cat: "geo" },
+  { id: "resize", ar: "تعديل الحجم", en: "Resize", icon: Square, cat: "geo" },
+  { id: "flip-rotate", ar: "تدوير/عكس", en: "Flip/Rotate", icon: FlipHorizontal, cat: "geo" },
+  { id: "stretch", ar: "تمطيط", en: "Stretch", icon: Maximize2, cat: "geo" },
+  // AI & Enhance
+  { id: "ai-enhance", ar: "تحسين ذكي", en: "AI Enhance", icon: Sparkles, cat: "ai" },
+  { id: "ai-expand", ar: "توسيع ذكي", en: "AI Expand", icon: Maximize2, cat: "ai" },
+  { id: "enhance", ar: "تلوين ذكي", en: "Enhance", icon: Zap, cat: "ai" },
+  { id: "sharpen", ar: "شحذ", en: "Sharpen", icon: Focus, cat: "ai" },
+  // Color
+  { id: "recolor", ar: "تلوين", en: "Recolor", icon: Palette, cat: "color" },
+  { id: "warmth", ar: "حرارة اللون", en: "Warmth", icon: Thermometer, cat: "color" },
+  { id: "curves", ar: "منحنيات", en: "Curves", icon: Sliders, cat: "color" },
+  { id: "adjust", ar: "ضبط", en: "Adjust", icon: Sun, cat: "color" },
+  // FX
+  { id: "vignette", ar: "فينييت", en: "Vignette", icon: CircleDot, cat: "fx" },
+  { id: "grain", ar: "حبيبات", en: "Grain", icon: Droplet, cat: "fx" },
+  { id: "tilt-shift", ar: "عزل العدسة", en: "Tilt Shift", icon: Aperture, cat: "fx" },
+  { id: "motion", ar: "حركة", en: "Motion", icon: Activity, cat: "fx" },
+  { id: "dispersion", ar: "تشتيت", en: "Dispersion", icon: Stars, cat: "fx" },
+  { id: "textify", ar: "نص ASCII", en: "Textify", icon: Type, cat: "fx" },
+];
+
+const CATEGORIES: { id: ToolCat; ar: string; en: string }[] = [
+  { id: "bg", ar: "الخلفية والقص", en: "Background & Cut" },
+  { id: "geo", ar: "الأبعاد والقص", en: "Crop & Geometry" },
+  { id: "ai", ar: "الذكاء الاصطناعي", en: "AI & Enhance" },
+  { id: "color", ar: "الألوان", en: "Color" },
+  { id: "fx", ar: "المؤثرات", en: "Effects" },
 ];
 
 const COLOR_PRESETS = [
@@ -238,20 +268,145 @@ const swapBackground = async (
   return out.toDataURL("image/png");
 };
 
-const removeBackground = async (src: string): Promise<string> => {
+const removeBackground = async (src: string, feather = 2, edgeThreshold = 128): Promise<string> => {
   const img = await loadImage(src);
   const w = img.naturalWidth;
   const h = img.naturalHeight;
   const mask = await segmentPerson(img);
   const out = makeCanvas(w, h);
   const ctx = out.getContext("2d")!;
+
+  // Feather the mask into its own canvas for a clean edge
+  const maskC = makeCanvas(w, h);
+  const mctx = maskC.getContext("2d")!;
+  const maskImg = mctx.createImageData(w, h);
+  for (let i = 0; i < maskImg.data.length; i += 4) {
+    const a = mask.data[i] >= edgeThreshold ? 255 : 0;
+    maskImg.data[i] = maskImg.data[i + 1] = maskImg.data[i + 2] = 255;
+    maskImg.data[i + 3] = a;
+  }
+  mctx.putImageData(maskImg, 0, 0);
+  if (feather > 0) {
+    const soft = makeCanvas(w, h);
+    const sctx = soft.getContext("2d")!;
+    (sctx as any).filter = `blur(${feather}px)`;
+    sctx.drawImage(maskC, 0, 0);
+    (sctx as any).filter = "none";
+    mctx.clearRect(0, 0, w, h);
+    mctx.drawImage(soft, 0, 0);
+  }
+  const softMask = mctx.getImageData(0, 0, w, h);
+
   ctx.drawImage(img, 0, 0);
   const data = ctx.getImageData(0, 0, w, h);
   for (let i = 0; i < data.data.length; i += 4) {
-    data.data[i + 3] = mask.data[i];
+    data.data[i + 3] = softMask.data[i + 3];
   }
   ctx.putImageData(data, 0, 0);
   return out.toDataURL("image/png");
+};
+
+/** Cut out (make transparent) the region painted on the mask. */
+const cutPaintedArea = async (src: string, brushMask: HTMLCanvasElement): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const maskFull = makeCanvas(w, h);
+  maskFull.getContext("2d")!.drawImage(brushMask, 0, 0, w, h);
+  const md = maskFull.getContext("2d")!.getImageData(0, 0, w, h).data;
+
+  const out = makeCanvas(w, h);
+  const ctx = out.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const d = ctx.getImageData(0, 0, w, h);
+  for (let i = 0; i < d.data.length; i += 4) {
+    if (md[i + 3] > 20) d.data[i + 3] = 0;
+  }
+  ctx.putImageData(d, 0, 0);
+  return out.toDataURL("image/png");
+};
+
+/* ---------- New pro tools ---------- */
+
+const sharpenImage = async (src: string, amount: number): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const c = makeCanvas(w, h);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const s = ctx.getImageData(0, 0, w, h);
+  const o = ctx.createImageData(w, h);
+  const k = amount / 100; // 0..1.5
+  const center = 1 + 4 * k;
+  const side = -k;
+  const idx = (x: number, y: number) => (y * w + x) * 4;
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      for (let ch = 0; ch < 3; ch++) {
+        const v =
+          s.data[idx(x, y) + ch] * center +
+          s.data[idx(x - 1, y) + ch] * side +
+          s.data[idx(x + 1, y) + ch] * side +
+          s.data[idx(x, y - 1) + ch] * side +
+          s.data[idx(x, y + 1) + ch] * side;
+        o.data[idx(x, y) + ch] = Math.min(255, Math.max(0, v));
+      }
+      o.data[idx(x, y) + 3] = s.data[idx(x, y) + 3];
+    }
+  }
+  ctx.putImageData(o, 0, 0);
+  return c.toDataURL("image/png");
+};
+
+const vignetteImage = async (src: string, amount: number): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const c = makeCanvas(w, h);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
+  g.addColorStop(0, "rgba(0,0,0,0)");
+  g.addColorStop(1, `rgba(0,0,0,${Math.min(0.95, amount / 100)})`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+  return c.toDataURL("image/png");
+};
+
+const grainImage = async (src: string, amount: number): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const c = makeCanvas(w, h);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const d = ctx.getImageData(0, 0, w, h);
+  const a = amount / 100;
+  for (let i = 0; i < d.data.length; i += 4) {
+    const n = (Math.random() - 0.5) * 80 * a;
+    d.data[i] = Math.min(255, Math.max(0, d.data[i] + n));
+    d.data[i + 1] = Math.min(255, Math.max(0, d.data[i + 1] + n));
+    d.data[i + 2] = Math.min(255, Math.max(0, d.data[i + 2] + n));
+  }
+  ctx.putImageData(d, 0, 0);
+  return c.toDataURL("image/png");
+};
+
+const warmthImage = async (src: string, temp: number): Promise<string> => {
+  // temp: -100 (cool) .. 100 (warm)
+  const img = await loadImage(src);
+  const c = makeCanvas(img.naturalWidth, img.naturalHeight);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const d = ctx.getImageData(0, 0, c.width, c.height);
+  const shift = temp * 0.5;
+  for (let i = 0; i < d.data.length; i += 4) {
+    d.data[i] = Math.min(255, Math.max(0, d.data[i] + shift));
+    d.data[i + 2] = Math.min(255, Math.max(0, d.data[i + 2] - shift));
+  }
+  ctx.putImageData(d, 0, 0);
+  return c.toDataURL("image/png");
 };
 
 const textifyImage = async (src: string, color: string): Promise<string> => {
@@ -615,6 +770,13 @@ const ZoolProToolsHub = () => {
   const [expandPct, setExpandPct] = useState(20);
   const [dispDir, setDispDir] = useState<"right" | "left" | "up" | "down">("right");
   const [dispAmt, setDispAmt] = useState(40);
+  const [sharpenAmt, setSharpenAmt] = useState(60);
+  const [vignetteAmt, setVignetteAmt] = useState(60);
+  const [grainAmt, setGrainAmt] = useState(40);
+  const [warmthAmt, setWarmthAmt] = useState(0);
+  const [featherAmt, setFeatherAmt] = useState(2);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [rbgMode, setRbgMode] = useState<"auto" | "brush">("auto");
 
   // Eraser / Replace / Clone shared state
   const paintCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -666,10 +828,11 @@ const ZoolProToolsHub = () => {
     }
   };
 
-  /* ---------- Paint canvas setup (eraser / ai-replace / clone) ---------- */
+  /* ---------- Paint canvas setup (eraser / ai-replace / clone / remove-bg brush) ---------- */
+  const isPaintToolFor = (t: ToolId | null) =>
+    t === "eraser" || t === "ai-replace" || t === "clone" || (t === "remove-bg" && rbgMode === "brush");
   useEffect(() => {
-    const isPaintTool = activeTool === "eraser" || activeTool === "ai-replace" || activeTool === "clone";
-    if (!isPaintTool || !currentImage) return;
+    if (!isPaintToolFor(activeTool) || !currentImage) return;
     const canvas = paintCanvasRef.current;
     if (!canvas) return;
     loadImage(currentImage).then((img) => {
@@ -682,7 +845,7 @@ const ZoolProToolsHub = () => {
       const mask = makeCanvas(canvas.width, canvas.height);
       paintState.current.mask = mask;
     });
-  }, [activeTool, currentImage]);
+  }, [activeTool, currentImage, rbgMode]);
 
   const paintPos = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const c = paintCanvasRef.current!;
@@ -796,13 +959,13 @@ const ZoolProToolsHub = () => {
   };
 
   const activeMeta = TOOLS.find((t) => t.id === activeTool);
-  const isPaintTool = activeTool === "eraser" || activeTool === "ai-replace" || activeTool === "clone";
+  const isPaintTool = isPaintToolFor(activeTool);
   const isCropTool = activeTool === "crop" || activeTool === "free-crop";
 
   /* ============================================================ */
   return (
     <div
-      className="min-h-screen bg-background max-w-md mx-auto relative pb-56"
+      className="min-h-screen bg-background max-w-md mx-auto relative pb-24"
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundImage: "radial-gradient(ellipse at top, hsl(var(--gold) / 0.08), transparent 60%)",
@@ -964,7 +1127,58 @@ const ZoolProToolsHub = () => {
                 </div>
               )}
 
-              {isPaintTool && (
+              {activeTool === "remove-bg" && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => setRbgMode("auto")} className={`py-2 rounded-xl text-[11px] font-cairo border ${rbgMode === "auto" ? "border-gold bg-gold/15 text-gold" : "border-border bg-background/50 text-foreground"}`}>
+                      {isRtl ? "قص تلقائي ذكي" : "Smart Auto"}
+                    </button>
+                    <button onClick={() => setRbgMode("brush")} className={`py-2 rounded-xl text-[11px] font-cairo border ${rbgMode === "brush" ? "border-gold bg-gold/15 text-gold" : "border-border bg-background/50 text-foreground"}`}>
+                      {isRtl ? "فرشاة يدوية" : "Manual Brush"}
+                    </button>
+                  </div>
+                  {rbgMode === "auto" ? (
+                    <>
+                      <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                        <span className="w-16">{isRtl ? "نعومة الحواف" : "Feather"}</span>
+                        <input type="range" min={0} max={12} value={featherAmt} onChange={(e) => setFeatherAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                        <span className="w-6 text-end text-foreground">{featherAmt}</span>
+                      </label>
+                      <button onClick={() => withProgress(() => removeBackground(currentImage, featherAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                        {isRtl ? "اقص الخلفية الآن" : "Cut background"}
+                      </button>
+                      <p className="text-[10px] text-muted-foreground font-cairo text-center">
+                        {isRtl ? "قص أوتوماتيكي دقيق حول الشخص" : "Precise auto cut around subject"}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-cairo text-muted-foreground">{isRtl ? "الفرشاة" : "Brush"}</span>
+                        <input type="range" min={10} max={120} value={brushSize} onChange={(e) => setBrushSize(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                        <span className="text-[10px] font-cairo text-foreground w-6 text-end">{brushSize}</span>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          if (!paintState.current.mask) return;
+                          setLoading(true);
+                          try { apply(await cutPaintedArea(currentImage, paintState.current.mask)); toast({ title: isRtl ? "تم القص" : "Cut!" }); }
+                          catch { toast({ title: isRtl ? "ما زبط" : "Failed", variant: "destructive" }); }
+                          finally { setLoading(false); }
+                        }}
+                        className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95"
+                      >
+                        {isRtl ? "اقص المنطقة المحددة" : "Cut painted area"}
+                      </button>
+                      <p className="text-[10px] text-muted-foreground font-cairo text-center">
+                        {isRtl ? "ارسم على العنصر لتحويله شفاف" : "Paint the object to make it transparent"}
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {(activeTool === "eraser" || activeTool === "ai-replace" || activeTool === "clone") && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] font-cairo text-muted-foreground">{isRtl ? "حجم الفرشاة" : "Brush"}</span>
@@ -975,7 +1189,7 @@ const ZoolProToolsHub = () => {
                     onClick={() => applyMaskedFill(activeTool === "clone" ? "clone" : "blur")}
                     className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95"
                   >
-                    {activeTool === "eraser" && (isRtl ? "محو ذكي" : "Smart erase")}
+                    {activeTool === "eraser" && (isRtl ? "إزالة العنصر" : "Remove object")}
                     {activeTool === "ai-replace" && (isRtl ? "تبديل ذكي" : "AI replace")}
                     {activeTool === "clone" && (isRtl ? "استنساخ المنطقة" : "Clone area")}
                   </button>
@@ -984,6 +1198,59 @@ const ZoolProToolsHub = () => {
                   </p>
                 </div>
               )}
+
+              {activeTool === "sharpen" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "شدة" : "Amount"}</span>
+                    <input type="range" min={10} max={150} value={sharpenAmt} onChange={(e) => setSharpenAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{sharpenAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => sharpenImage(currentImage, sharpenAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "شحذ التفاصيل" : "Sharpen"}
+                  </button>
+                </div>
+              )}
+
+              {activeTool === "vignette" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "شدة" : "Amount"}</span>
+                    <input type="range" min={10} max={100} value={vignetteAmt} onChange={(e) => setVignetteAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{vignetteAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => vignetteImage(currentImage, vignetteAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "طبّق التظليل" : "Apply vignette"}
+                  </button>
+                </div>
+              )}
+
+              {activeTool === "grain" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "شدة" : "Amount"}</span>
+                    <input type="range" min={5} max={100} value={grainAmt} onChange={(e) => setGrainAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{grainAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => grainImage(currentImage, grainAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "أضف حبيبات" : "Add grain"}
+                  </button>
+                </div>
+              )}
+
+              {activeTool === "warmth" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "بارد ↔ دافئ" : "Cool ↔ Warm"}</span>
+                    <input type="range" min={-100} max={100} value={warmthAmt} onChange={(e) => setWarmthAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{warmthAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => warmthImage(currentImage, warmthAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "طبّق حرارة اللون" : "Apply warmth"}
+                  </button>
+                </div>
+              )}
+
 
               {activeTool === "textify" && (
                 <div className="space-y-3">
@@ -1215,51 +1482,80 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Compact Madar tools panel — 5-col grid, smaller tiles so preview stays visible */}
+      {/* Floating side-drawer trigger — image stays fully visible */}
       {currentImage && (
-        <div className="fixed bottom-0 inset-x-0 z-40 bg-card/92 backdrop-blur-2xl border-t border-gold/30 shadow-[0_-8px_30px_rgba(212,175,55,0.15)]">
-          <div className="max-w-md mx-auto px-3 pt-2 pb-3">
-            <div className="flex items-center justify-between mb-1.5 px-1">
-              <span className="text-[10px] font-cairo text-gold/80 font-bold tracking-wide">
-                {isRtl ? `${TOOLS.length} أداة مدار` : `${TOOLS.length} Madar Tools`}
-              </span>
-              <span className="h-1 w-8 rounded-full bg-gold/40" />
-            </div>
-            <div
-              className="grid grid-cols-8 gap-1 max-h-[26vh] overflow-y-auto pb-1"
-              style={{ scrollbarWidth: "none" }}
+        <Sheet>
+          <SheetTrigger asChild>
+            <button
+              className="fixed bottom-5 z-40 flex items-center gap-2 px-4 py-3 rounded-full gradient-gold text-primary-foreground shadow-xl shadow-gold/30 active:scale-95 font-cairo font-bold text-xs"
+              style={isRtl ? { left: "1rem" } : { right: "1rem" }}
+              aria-label={isRtl ? "الأدوات" : "Tools"}
             >
-              {TOOLS.map((t) => {
-                const active = activeTool === t.id;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => {
-                      if (t.id === "remove-bg") {
-                        withProgress(() => removeBackground(currentImage));
-                        setActiveTool(null);
-                        return;
-                      }
-                      setActiveTool((prev) => (prev === t.id ? null : t.id));
-                    }}
-                    disabled={loading}
-                    className={`flex flex-col items-center justify-center gap-0.5 h-[48px] rounded-lg border transition-all active:scale-95 disabled:opacity-50 ${
-                      active
-                        ? "gradient-gold text-primary-foreground shadow shadow-gold/40 border-gold"
-                        : "bg-background/60 text-foreground border-gold/25 hover:border-gold/60"
-                    }`}
-                  >
-                    <t.icon className="w-3 h-3" />
-                    <span className="text-[7px] font-cairo font-bold leading-none text-center px-0.5 line-clamp-1">
-                      {isRtl ? t.ar : t.en}
-                    </span>
-                  </button>
-                );
-              })}
+              <LayoutGrid className="w-4 h-4" />
+              <span>{isRtl ? `أدوات (${TOOLS.length})` : `Tools (${TOOLS.length})`}</span>
+            </button>
+          </SheetTrigger>
+          <SheetContent
+            side={isRtl ? "right" : "left"}
+            className="w-[82vw] sm:w-[340px] p-0 bg-card/95 backdrop-blur-2xl border-gold/30"
+          >
+            <div className="h-full flex flex-col">
+              <div className="px-4 py-3 border-b border-gold/20 flex items-center justify-between">
+                <span className="text-sm font-cairo font-bold text-gold">
+                  {isRtl ? "أدوات مدار الاحترافية" : "Madar Pro Tools"}
+                </span>
+                <span className="text-[10px] font-cairo text-muted-foreground">{TOOLS.length}</span>
+              </div>
+              <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4" style={{ scrollbarWidth: "none" }}>
+                {CATEGORIES.map((cat) => {
+                  const tools = TOOLS.filter((t) => t.cat === cat.id);
+                  if (!tools.length) return null;
+                  return (
+                    <div key={cat.id}>
+                      <p className="text-[10px] font-cairo font-bold text-gold/80 mb-2 px-1 tracking-wide">
+                        {isRtl ? cat.ar : cat.en}
+                      </p>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {tools.map((t) => {
+                          const active = activeTool === t.id;
+                          return (
+                            <button
+                              key={t.id}
+                              onClick={() => {
+                                setActiveTool((prev) => (prev === t.id ? null : t.id));
+                              }}
+                              disabled={loading}
+                              className={`flex flex-col items-center justify-center gap-1 h-[60px] rounded-xl border transition-all active:scale-95 disabled:opacity-50 ${
+                                active
+                                  ? "gradient-gold text-primary-foreground shadow shadow-gold/40 border-gold"
+                                  : "bg-background/60 text-foreground border-gold/20 hover:border-gold/50"
+                              }`}
+                            >
+                              <t.icon className="w-4 h-4" />
+                              <span className="text-[8px] font-cairo font-bold leading-none text-center px-0.5 line-clamp-1">
+                                {isRtl ? t.ar : t.en}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-2 border-t border-gold/20">
+                <p className="text-[9px] font-cairo text-muted-foreground text-center leading-relaxed">
+                  {isRtl
+                    ? "اختر أداة ثم أغلق القائمة لضبطها فوق الصورة"
+                    : "Pick a tool, then close to adjust over the image"}
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
+          </SheetContent>
+        </Sheet>
       )}
+
+
 
 
     </div>
