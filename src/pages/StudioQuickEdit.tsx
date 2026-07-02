@@ -776,6 +776,7 @@ const ZoolProToolsHub = () => {
   const [warmthAmt, setWarmthAmt] = useState(0);
   const [featherAmt, setFeatherAmt] = useState(2);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [rbgMode, setRbgMode] = useState<"auto" | "brush">("auto");
 
   // Eraser / Replace / Clone shared state
   const paintCanvasRef = useRef<HTMLCanvasElement>(null);
