@@ -828,10 +828,11 @@ const ZoolProToolsHub = () => {
     }
   };
 
-  /* ---------- Paint canvas setup (eraser / ai-replace / clone) ---------- */
+  /* ---------- Paint canvas setup (eraser / ai-replace / clone / remove-bg brush) ---------- */
+  const isPaintToolFor = (t: ToolId | null) =>
+    t === "eraser" || t === "ai-replace" || t === "clone" || (t === "remove-bg" && rbgMode === "brush");
   useEffect(() => {
-    const isPaintTool = activeTool === "eraser" || activeTool === "ai-replace" || activeTool === "clone";
-    if (!isPaintTool || !currentImage) return;
+    if (!isPaintToolFor(activeTool) || !currentImage) return;
     const canvas = paintCanvasRef.current;
     if (!canvas) return;
     loadImage(currentImage).then((img) => {
@@ -844,7 +845,7 @@ const ZoolProToolsHub = () => {
       const mask = makeCanvas(canvas.width, canvas.height);
       paintState.current.mask = mask;
     });
-  }, [activeTool, currentImage]);
+  }, [activeTool, currentImage, rbgMode]);
 
   const paintPos = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const c = paintCanvasRef.current!;
