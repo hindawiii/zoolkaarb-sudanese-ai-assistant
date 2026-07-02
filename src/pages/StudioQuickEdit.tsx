@@ -770,6 +770,12 @@ const ZoolProToolsHub = () => {
   const [expandPct, setExpandPct] = useState(20);
   const [dispDir, setDispDir] = useState<"right" | "left" | "up" | "down">("right");
   const [dispAmt, setDispAmt] = useState(40);
+  const [sharpenAmt, setSharpenAmt] = useState(60);
+  const [vignetteAmt, setVignetteAmt] = useState(60);
+  const [grainAmt, setGrainAmt] = useState(40);
+  const [warmthAmt, setWarmthAmt] = useState(0);
+  const [featherAmt, setFeatherAmt] = useState(2);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Eraser / Replace / Clone shared state
   const paintCanvasRef = useRef<HTMLCanvasElement>(null);
