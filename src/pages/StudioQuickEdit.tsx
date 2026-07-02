@@ -268,20 +268,145 @@ const swapBackground = async (
   return out.toDataURL("image/png");
 };
 
-const removeBackground = async (src: string): Promise<string> => {
+const removeBackground = async (src: string, feather = 2, edgeThreshold = 128): Promise<string> => {
   const img = await loadImage(src);
   const w = img.naturalWidth;
   const h = img.naturalHeight;
   const mask = await segmentPerson(img);
   const out = makeCanvas(w, h);
   const ctx = out.getContext("2d")!;
+
+  // Feather the mask into its own canvas for a clean edge
+  const maskC = makeCanvas(w, h);
+  const mctx = maskC.getContext("2d")!;
+  const maskImg = mctx.createImageData(w, h);
+  for (let i = 0; i < maskImg.data.length; i += 4) {
+    const a = mask.data[i] >= edgeThreshold ? 255 : 0;
+    maskImg.data[i] = maskImg.data[i + 1] = maskImg.data[i + 2] = 255;
+    maskImg.data[i + 3] = a;
+  }
+  mctx.putImageData(maskImg, 0, 0);
+  if (feather > 0) {
+    const soft = makeCanvas(w, h);
+    const sctx = soft.getContext("2d")!;
+    (sctx as any).filter = `blur(${feather}px)`;
+    sctx.drawImage(maskC, 0, 0);
+    (sctx as any).filter = "none";
+    mctx.clearRect(0, 0, w, h);
+    mctx.drawImage(soft, 0, 0);
+  }
+  const softMask = mctx.getImageData(0, 0, w, h);
+
   ctx.drawImage(img, 0, 0);
   const data = ctx.getImageData(0, 0, w, h);
   for (let i = 0; i < data.data.length; i += 4) {
-    data.data[i + 3] = mask.data[i];
+    data.data[i + 3] = softMask.data[i + 3];
   }
   ctx.putImageData(data, 0, 0);
   return out.toDataURL("image/png");
+};
+
+/** Cut out (make transparent) the region painted on the mask. */
+const cutPaintedArea = async (src: string, brushMask: HTMLCanvasElement): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const maskFull = makeCanvas(w, h);
+  maskFull.getContext("2d")!.drawImage(brushMask, 0, 0, w, h);
+  const md = maskFull.getContext("2d")!.getImageData(0, 0, w, h).data;
+
+  const out = makeCanvas(w, h);
+  const ctx = out.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const d = ctx.getImageData(0, 0, w, h);
+  for (let i = 0; i < d.data.length; i += 4) {
+    if (md[i + 3] > 20) d.data[i + 3] = 0;
+  }
+  ctx.putImageData(d, 0, 0);
+  return out.toDataURL("image/png");
+};
+
+/* ---------- New pro tools ---------- */
+
+const sharpenImage = async (src: string, amount: number): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const c = makeCanvas(w, h);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const s = ctx.getImageData(0, 0, w, h);
+  const o = ctx.createImageData(w, h);
+  const k = amount / 100; // 0..1.5
+  const center = 1 + 4 * k;
+  const side = -k;
+  const idx = (x: number, y: number) => (y * w + x) * 4;
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      for (let ch = 0; ch < 3; ch++) {
+        const v =
+          s.data[idx(x, y) + ch] * center +
+          s.data[idx(x - 1, y) + ch] * side +
+          s.data[idx(x + 1, y) + ch] * side +
+          s.data[idx(x, y - 1) + ch] * side +
+          s.data[idx(x, y + 1) + ch] * side;
+        o.data[idx(x, y) + ch] = Math.min(255, Math.max(0, v));
+      }
+      o.data[idx(x, y) + 3] = s.data[idx(x, y) + 3];
+    }
+  }
+  ctx.putImageData(o, 0, 0);
+  return c.toDataURL("image/png");
+};
+
+const vignetteImage = async (src: string, amount: number): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const c = makeCanvas(w, h);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
+  g.addColorStop(0, "rgba(0,0,0,0)");
+  g.addColorStop(1, `rgba(0,0,0,${Math.min(0.95, amount / 100)})`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+  return c.toDataURL("image/png");
+};
+
+const grainImage = async (src: string, amount: number): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const c = makeCanvas(w, h);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const d = ctx.getImageData(0, 0, w, h);
+  const a = amount / 100;
+  for (let i = 0; i < d.data.length; i += 4) {
+    const n = (Math.random() - 0.5) * 80 * a;
+    d.data[i] = Math.min(255, Math.max(0, d.data[i] + n));
+    d.data[i + 1] = Math.min(255, Math.max(0, d.data[i + 1] + n));
+    d.data[i + 2] = Math.min(255, Math.max(0, d.data[i + 2] + n));
+  }
+  ctx.putImageData(d, 0, 0);
+  return c.toDataURL("image/png");
+};
+
+const warmthImage = async (src: string, temp: number): Promise<string> => {
+  // temp: -100 (cool) .. 100 (warm)
+  const img = await loadImage(src);
+  const c = makeCanvas(img.naturalWidth, img.naturalHeight);
+  const ctx = c.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const d = ctx.getImageData(0, 0, c.width, c.height);
+  const shift = temp * 0.5;
+  for (let i = 0; i < d.data.length; i += 4) {
+    d.data[i] = Math.min(255, Math.max(0, d.data[i] + shift));
+    d.data[i + 2] = Math.min(255, Math.max(0, d.data[i + 2] - shift));
+  }
+  ctx.putImageData(d, 0, 0);
+  return c.toDataURL("image/png");
 };
 
 const textifyImage = async (src: string, color: string): Promise<string> => {
