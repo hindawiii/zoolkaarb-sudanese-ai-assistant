@@ -959,7 +959,7 @@ const ZoolProToolsHub = () => {
   };
 
   const activeMeta = TOOLS.find((t) => t.id === activeTool);
-  const isPaintTool = activeTool === "eraser" || activeTool === "ai-replace" || activeTool === "clone";
+  const isPaintTool = isPaintToolFor(activeTool);
   const isCropTool = activeTool === "crop" || activeTool === "free-crop";
 
   /* ============================================================ */
