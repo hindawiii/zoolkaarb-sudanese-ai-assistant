@@ -66,31 +66,54 @@ type ToolId =
   | "stretch"
   | "motion"
   | "tilt-shift"
-  | "remove-bg";
+  | "remove-bg"
+  | "sharpen"
+  | "vignette"
+  | "grain"
+  | "warmth";
 
-const TOOLS: { id: ToolId; ar: string; en: string; icon: typeof Palette }[] = [
-  { id: "remove-bg", ar: "إزالة الخلفية", en: "Remove BG", icon: Scissors },
-  { id: "crop", ar: "قص", en: "Crop", icon: Crop },
-  { id: "free-crop", ar: "قص حر", en: "Free Crop", icon: Scan },
-  { id: "shape-crop", ar: "قص الأشكال", en: "Shape Crop", icon: Triangle },
-  { id: "dispersion", ar: "تشتيت", en: "Dispersion", icon: Stars },
-  { id: "clone", ar: "استنساخ", en: "Clone", icon: Copy },
-  { id: "ai-replace", ar: "تبديل ذكي", en: "AI Replace", icon: Wand2 },
-  { id: "stretch", ar: "تمطيط", en: "Stretch", icon: Maximize2 },
-  { id: "motion", ar: "حركة", en: "Motion", icon: Activity },
-  { id: "eraser", ar: "ممحاة", en: "Eraser", icon: Eraser },
-  { id: "curves", ar: "منحنيات", en: "Curves", icon: Sliders },
-  { id: "adjust", ar: "ضبط", en: "Adjust", icon: Sun },
-  { id: "enhance", ar: "تحسين", en: "Enhance", icon: Sparkles },
-  { id: "tilt-shift", ar: "عزل العدسة", en: "Tilt Shift", icon: Aperture },
-  { id: "perspective", ar: "منظور", en: "Perspective", icon: Move },
-  { id: "resize", ar: "تعديل الحجم", en: "Resize", icon: Square },
-  { id: "flip-rotate", ar: "تدوير/عكس", en: "Flip/Rotate", icon: FlipHorizontal },
-  { id: "ai-enhance", ar: "تحسين ذكي", en: "AI Enhance", icon: Sparkles },
-  { id: "ai-expand", ar: "توسيع ذكي", en: "AI Expand", icon: Maximize2 },
-  { id: "recolor", ar: "تلوين", en: "Recolor", icon: Palette },
-  { id: "background", ar: "خلفية", en: "Background", icon: Mountain },
-  { id: "textify", ar: "نص ASCII", en: "Textify", icon: Type },
+type ToolCat = "bg" | "cut" | "ai" | "color" | "geo" | "fx";
+
+const TOOLS: { id: ToolId; ar: string; en: string; icon: typeof Palette; cat: ToolCat }[] = [
+  // Background & Cutting
+  { id: "remove-bg", ar: "إزالة الخلفية", en: "Remove BG", icon: Scissors, cat: "bg" },
+  { id: "background", ar: "خلفية جديدة", en: "Background", icon: Mountain, cat: "bg" },
+  { id: "eraser", ar: "إزالة عنصر", en: "Object Erase", icon: Eraser, cat: "bg" },
+  { id: "ai-replace", ar: "تبديل ذكي", en: "AI Replace", icon: Wand2, cat: "bg" },
+  { id: "clone", ar: "استنساخ", en: "Clone", icon: Copy, cat: "bg" },
+  // Crop & Geometry
+  { id: "crop", ar: "قص", en: "Crop", icon: Crop, cat: "geo" },
+  { id: "free-crop", ar: "قص حر", en: "Free Crop", icon: Scan, cat: "geo" },
+  { id: "shape-crop", ar: "قص الأشكال", en: "Shape Crop", icon: Triangle, cat: "geo" },
+  { id: "perspective", ar: "منظور", en: "Perspective", icon: Move, cat: "geo" },
+  { id: "resize", ar: "تعديل الحجم", en: "Resize", icon: Square, cat: "geo" },
+  { id: "flip-rotate", ar: "تدوير/عكس", en: "Flip/Rotate", icon: FlipHorizontal, cat: "geo" },
+  { id: "stretch", ar: "تمطيط", en: "Stretch", icon: Maximize2, cat: "geo" },
+  // AI & Enhance
+  { id: "ai-enhance", ar: "تحسين ذكي", en: "AI Enhance", icon: Sparkles, cat: "ai" },
+  { id: "ai-expand", ar: "توسيع ذكي", en: "AI Expand", icon: Maximize2, cat: "ai" },
+  { id: "enhance", ar: "تلوين ذكي", en: "Enhance", icon: Zap, cat: "ai" },
+  { id: "sharpen", ar: "شحذ", en: "Sharpen", icon: Focus, cat: "ai" },
+  // Color
+  { id: "recolor", ar: "تلوين", en: "Recolor", icon: Palette, cat: "color" },
+  { id: "warmth", ar: "حرارة اللون", en: "Warmth", icon: Thermometer, cat: "color" },
+  { id: "curves", ar: "منحنيات", en: "Curves", icon: Sliders, cat: "color" },
+  { id: "adjust", ar: "ضبط", en: "Adjust", icon: Sun, cat: "color" },
+  // FX
+  { id: "vignette", ar: "فينييت", en: "Vignette", icon: CircleDot, cat: "fx" },
+  { id: "grain", ar: "حبيبات", en: "Grain", icon: Droplet, cat: "fx" },
+  { id: "tilt-shift", ar: "عزل العدسة", en: "Tilt Shift", icon: Aperture, cat: "fx" },
+  { id: "motion", ar: "حركة", en: "Motion", icon: Activity, cat: "fx" },
+  { id: "dispersion", ar: "تشتيت", en: "Dispersion", icon: Stars, cat: "fx" },
+  { id: "textify", ar: "نص ASCII", en: "Textify", icon: Type, cat: "fx" },
+];
+
+const CATEGORIES: { id: ToolCat; ar: string; en: string }[] = [
+  { id: "bg", ar: "الخلفية والقص", en: "Background & Cut" },
+  { id: "geo", ar: "الأبعاد والقص", en: "Crop & Geometry" },
+  { id: "ai", ar: "الذكاء الاصطناعي", en: "AI & Enhance" },
+  { id: "color", ar: "الألوان", en: "Color" },
+  { id: "fx", ar: "المؤثرات", en: "Effects" },
 ];
 
 const COLOR_PRESETS = [
