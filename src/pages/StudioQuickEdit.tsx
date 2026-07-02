@@ -26,6 +26,7 @@ import {
   FlipHorizontal,
   Scan,
   Stars,
+  Scissors,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
@@ -57,9 +58,11 @@ type ToolId =
   | "enhance"
   | "stretch"
   | "motion"
-  | "tilt-shift";
+  | "tilt-shift"
+  | "remove-bg";
 
 const TOOLS: { id: ToolId; ar: string; en: string; icon: typeof Palette }[] = [
+  { id: "remove-bg", ar: "إزالة الخلفية", en: "Remove BG", icon: Scissors },
   { id: "crop", ar: "قص", en: "Crop", icon: Crop },
   { id: "free-crop", ar: "قص حر", en: "Free Crop", icon: Scan },
   { id: "shape-crop", ar: "قص الأشكال", en: "Shape Crop", icon: Triangle },
@@ -232,6 +235,22 @@ const swapBackground = async (
   }
   sctx.putImageData(srcData, 0, 0);
   octx.drawImage(src2, 0, 0);
+  return out.toDataURL("image/png");
+};
+
+const removeBackground = async (src: string): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const mask = await segmentPerson(img);
+  const out = makeCanvas(w, h);
+  const ctx = out.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  const data = ctx.getImageData(0, 0, w, h);
+  for (let i = 0; i < data.data.length; i += 4) {
+    data.data[i + 3] = mask.data[i];
+  }
+  ctx.putImageData(data, 0, 0);
   return out.toDataURL("image/png");
 };
 
@@ -1207,7 +1226,7 @@ const ZoolProToolsHub = () => {
               <span className="h-1 w-8 rounded-full bg-gold/40" />
             </div>
             <div
-              className="grid grid-cols-5 gap-2 max-h-[28vh] overflow-y-auto pb-1"
+              className="grid grid-cols-8 gap-1 max-h-[26vh] overflow-y-auto pb-1"
               style={{ scrollbarWidth: "none" }}
             >
               {TOOLS.map((t) => {
@@ -1215,16 +1234,23 @@ const ZoolProToolsHub = () => {
                 return (
                   <button
                     key={t.id}
-                    onClick={() => setActiveTool((prev) => (prev === t.id ? null : t.id))}
+                    onClick={() => {
+                      if (t.id === "remove-bg") {
+                        withProgress(() => removeBackground(currentImage));
+                        setActiveTool(null);
+                        return;
+                      }
+                      setActiveTool((prev) => (prev === t.id ? null : t.id));
+                    }}
                     disabled={loading}
-                    className={`flex flex-col items-center justify-center gap-1 h-[62px] rounded-xl border transition-all active:scale-95 disabled:opacity-50 ${
+                    className={`flex flex-col items-center justify-center gap-0.5 h-[48px] rounded-lg border transition-all active:scale-95 disabled:opacity-50 ${
                       active
-                        ? "gradient-gold text-primary-foreground shadow-md shadow-gold/40 border-gold"
+                        ? "gradient-gold text-primary-foreground shadow shadow-gold/40 border-gold"
                         : "bg-background/60 text-foreground border-gold/25 hover:border-gold/60"
                     }`}
                   >
-                    <t.icon className="w-4 h-4" />
-                    <span className="text-[10px] font-cairo font-bold leading-tight text-center px-0.5 line-clamp-1">
+                    <t.icon className="w-3 h-3" />
+                    <span className="text-[7px] font-cairo font-bold leading-none text-center px-0.5 line-clamp-1">
                       {isRtl ? t.ar : t.en}
                     </span>
                   </button>
