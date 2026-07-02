@@ -1482,51 +1482,80 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Compact Madar tools panel — 5-col grid, smaller tiles so preview stays visible */}
+      {/* Floating side-drawer trigger — image stays fully visible */}
       {currentImage && (
-        <div className="fixed bottom-0 inset-x-0 z-40 bg-card/92 backdrop-blur-2xl border-t border-gold/30 shadow-[0_-8px_30px_rgba(212,175,55,0.15)]">
-          <div className="max-w-md mx-auto px-3 pt-2 pb-3">
-            <div className="flex items-center justify-between mb-1.5 px-1">
-              <span className="text-[10px] font-cairo text-gold/80 font-bold tracking-wide">
-                {isRtl ? `${TOOLS.length} أداة مدار` : `${TOOLS.length} Madar Tools`}
-              </span>
-              <span className="h-1 w-8 rounded-full bg-gold/40" />
-            </div>
-            <div
-              className="grid grid-cols-8 gap-1 max-h-[26vh] overflow-y-auto pb-1"
-              style={{ scrollbarWidth: "none" }}
+        <Sheet>
+          <SheetTrigger asChild>
+            <button
+              className="fixed bottom-5 z-40 flex items-center gap-2 px-4 py-3 rounded-full gradient-gold text-primary-foreground shadow-xl shadow-gold/30 active:scale-95 font-cairo font-bold text-xs"
+              style={isRtl ? { left: "1rem" } : { right: "1rem" }}
+              aria-label={isRtl ? "الأدوات" : "Tools"}
             >
-              {TOOLS.map((t) => {
-                const active = activeTool === t.id;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => {
-                      if (t.id === "remove-bg") {
-                        withProgress(() => removeBackground(currentImage));
-                        setActiveTool(null);
-                        return;
-                      }
-                      setActiveTool((prev) => (prev === t.id ? null : t.id));
-                    }}
-                    disabled={loading}
-                    className={`flex flex-col items-center justify-center gap-0.5 h-[48px] rounded-lg border transition-all active:scale-95 disabled:opacity-50 ${
-                      active
-                        ? "gradient-gold text-primary-foreground shadow shadow-gold/40 border-gold"
-                        : "bg-background/60 text-foreground border-gold/25 hover:border-gold/60"
-                    }`}
-                  >
-                    <t.icon className="w-3 h-3" />
-                    <span className="text-[7px] font-cairo font-bold leading-none text-center px-0.5 line-clamp-1">
-                      {isRtl ? t.ar : t.en}
-                    </span>
-                  </button>
-                );
-              })}
+              <LayoutGrid className="w-4 h-4" />
+              <span>{isRtl ? `أدوات (${TOOLS.length})` : `Tools (${TOOLS.length})`}</span>
+            </button>
+          </SheetTrigger>
+          <SheetContent
+            side={isRtl ? "right" : "left"}
+            className="w-[82vw] sm:w-[340px] p-0 bg-card/95 backdrop-blur-2xl border-gold/30"
+          >
+            <div className="h-full flex flex-col">
+              <div className="px-4 py-3 border-b border-gold/20 flex items-center justify-between">
+                <span className="text-sm font-cairo font-bold text-gold">
+                  {isRtl ? "أدوات مدار الاحترافية" : "Madar Pro Tools"}
+                </span>
+                <span className="text-[10px] font-cairo text-muted-foreground">{TOOLS.length}</span>
+              </div>
+              <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4" style={{ scrollbarWidth: "none" }}>
+                {CATEGORIES.map((cat) => {
+                  const tools = TOOLS.filter((t) => t.cat === cat.id);
+                  if (!tools.length) return null;
+                  return (
+                    <div key={cat.id}>
+                      <p className="text-[10px] font-cairo font-bold text-gold/80 mb-2 px-1 tracking-wide">
+                        {isRtl ? cat.ar : cat.en}
+                      </p>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {tools.map((t) => {
+                          const active = activeTool === t.id;
+                          return (
+                            <button
+                              key={t.id}
+                              onClick={() => {
+                                setActiveTool((prev) => (prev === t.id ? null : t.id));
+                              }}
+                              disabled={loading}
+                              className={`flex flex-col items-center justify-center gap-1 h-[60px] rounded-xl border transition-all active:scale-95 disabled:opacity-50 ${
+                                active
+                                  ? "gradient-gold text-primary-foreground shadow shadow-gold/40 border-gold"
+                                  : "bg-background/60 text-foreground border-gold/20 hover:border-gold/50"
+                              }`}
+                            >
+                              <t.icon className="w-4 h-4" />
+                              <span className="text-[8px] font-cairo font-bold leading-none text-center px-0.5 line-clamp-1">
+                                {isRtl ? t.ar : t.en}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="px-4 py-2 border-t border-gold/20">
+                <p className="text-[9px] font-cairo text-muted-foreground text-center leading-relaxed">
+                  {isRtl
+                    ? "اختر أداة ثم أغلق القائمة لضبطها فوق الصورة"
+                    : "Pick a tool, then close to adjust over the image"}
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
+          </SheetContent>
+        </Sheet>
       )}
+
+
 
 
     </div>
