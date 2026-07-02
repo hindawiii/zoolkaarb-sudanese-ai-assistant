@@ -27,7 +27,14 @@ import {
   Scan,
   Stars,
   Scissors,
+  LayoutGrid,
+  Focus,
+  Droplet,
+  Thermometer,
+  CircleDot,
+  Zap,
 } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@/hooks/use-toast";
