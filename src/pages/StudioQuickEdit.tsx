@@ -965,7 +965,7 @@ const ZoolProToolsHub = () => {
   /* ============================================================ */
   return (
     <div
-      className="min-h-screen bg-background max-w-md mx-auto relative pb-56"
+      className="min-h-screen bg-background max-w-md mx-auto relative pb-24"
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundImage: "radial-gradient(ellipse at top, hsl(var(--gold) / 0.08), transparent 60%)",
