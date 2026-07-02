@@ -1127,7 +1127,58 @@ const ZoolProToolsHub = () => {
                 </div>
               )}
 
-              {isPaintTool && (
+              {activeTool === "remove-bg" && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => setRbgMode("auto")} className={`py-2 rounded-xl text-[11px] font-cairo border ${rbgMode === "auto" ? "border-gold bg-gold/15 text-gold" : "border-border bg-background/50 text-foreground"}`}>
+                      {isRtl ? "قص تلقائي ذكي" : "Smart Auto"}
+                    </button>
+                    <button onClick={() => setRbgMode("brush")} className={`py-2 rounded-xl text-[11px] font-cairo border ${rbgMode === "brush" ? "border-gold bg-gold/15 text-gold" : "border-border bg-background/50 text-foreground"}`}>
+                      {isRtl ? "فرشاة يدوية" : "Manual Brush"}
+                    </button>
+                  </div>
+                  {rbgMode === "auto" ? (
+                    <>
+                      <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                        <span className="w-16">{isRtl ? "نعومة الحواف" : "Feather"}</span>
+                        <input type="range" min={0} max={12} value={featherAmt} onChange={(e) => setFeatherAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                        <span className="w-6 text-end text-foreground">{featherAmt}</span>
+                      </label>
+                      <button onClick={() => withProgress(() => removeBackground(currentImage, featherAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                        {isRtl ? "اقص الخلفية الآن" : "Cut background"}
+                      </button>
+                      <p className="text-[10px] text-muted-foreground font-cairo text-center">
+                        {isRtl ? "قص أوتوماتيكي دقيق حول الشخص" : "Precise auto cut around subject"}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-cairo text-muted-foreground">{isRtl ? "الفرشاة" : "Brush"}</span>
+                        <input type="range" min={10} max={120} value={brushSize} onChange={(e) => setBrushSize(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                        <span className="text-[10px] font-cairo text-foreground w-6 text-end">{brushSize}</span>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          if (!paintState.current.mask) return;
+                          setLoading(true);
+                          try { apply(await cutPaintedArea(currentImage, paintState.current.mask)); toast({ title: isRtl ? "تم القص" : "Cut!" }); }
+                          catch { toast({ title: isRtl ? "ما زبط" : "Failed", variant: "destructive" }); }
+                          finally { setLoading(false); }
+                        }}
+                        className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95"
+                      >
+                        {isRtl ? "اقص المنطقة المحددة" : "Cut painted area"}
+                      </button>
+                      <p className="text-[10px] text-muted-foreground font-cairo text-center">
+                        {isRtl ? "ارسم على العنصر لتحويله شفاف" : "Paint the object to make it transparent"}
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {(activeTool === "eraser" || activeTool === "ai-replace" || activeTool === "clone") && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] font-cairo text-muted-foreground">{isRtl ? "حجم الفرشاة" : "Brush"}</span>
@@ -1138,7 +1189,7 @@ const ZoolProToolsHub = () => {
                     onClick={() => applyMaskedFill(activeTool === "clone" ? "clone" : "blur")}
                     className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95"
                   >
-                    {activeTool === "eraser" && (isRtl ? "محو ذكي" : "Smart erase")}
+                    {activeTool === "eraser" && (isRtl ? "إزالة العنصر" : "Remove object")}
                     {activeTool === "ai-replace" && (isRtl ? "تبديل ذكي" : "AI replace")}
                     {activeTool === "clone" && (isRtl ? "استنساخ المنطقة" : "Clone area")}
                   </button>
@@ -1147,6 +1198,59 @@ const ZoolProToolsHub = () => {
                   </p>
                 </div>
               )}
+
+              {activeTool === "sharpen" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "شدة" : "Amount"}</span>
+                    <input type="range" min={10} max={150} value={sharpenAmt} onChange={(e) => setSharpenAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{sharpenAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => sharpenImage(currentImage, sharpenAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "شحذ التفاصيل" : "Sharpen"}
+                  </button>
+                </div>
+              )}
+
+              {activeTool === "vignette" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "شدة" : "Amount"}</span>
+                    <input type="range" min={10} max={100} value={vignetteAmt} onChange={(e) => setVignetteAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{vignetteAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => vignetteImage(currentImage, vignetteAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "طبّق التظليل" : "Apply vignette"}
+                  </button>
+                </div>
+              )}
+
+              {activeTool === "grain" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "شدة" : "Amount"}</span>
+                    <input type="range" min={5} max={100} value={grainAmt} onChange={(e) => setGrainAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{grainAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => grainImage(currentImage, grainAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "أضف حبيبات" : "Add grain"}
+                  </button>
+                </div>
+              )}
+
+              {activeTool === "warmth" && (
+                <div className="space-y-3">
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-12">{isRtl ? "بارد ↔ دافئ" : "Cool ↔ Warm"}</span>
+                    <input type="range" min={-100} max={100} value={warmthAmt} onChange={(e) => setWarmthAmt(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-8 text-end text-foreground">{warmthAmt}</span>
+                  </label>
+                  <button onClick={() => withProgress(() => warmthImage(currentImage, warmthAmt))} className="w-full py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                    {isRtl ? "طبّق حرارة اللون" : "Apply warmth"}
+                  </button>
+                </div>
+              )}
+
 
               {activeTool === "textify" && (
                 <div className="space-y-3">
