@@ -1,7 +1,7 @@
-import { Eraser, Wand2, Sparkles, Palette, Crop, Film, Users, Shirt, Drama, Layers, Swords, type LucideIcon } from "lucide-react";
+import { Eraser, Wand2, Sparkles, Palette, Crop, Users, Shirt, Drama, Layers, type LucideIcon } from "lucide-react";
 import type { StudioToolId } from "@/lib/studioQuota";
 
-export type ToolMode = "single-edit" | "dual-edit" | "multi-edit" | "living-image" | "vs-arena";
+export type ToolMode = "single-edit" | "dual-edit" | "multi-edit";
 
 export interface StudioTool {
   id: StudioToolId | "quick-edit";
@@ -23,20 +23,6 @@ export interface StudioTool {
 }
 
 export const STUDIO_TOOLS: StudioTool[] = [
-  {
-    id: "living-image",
-    slug: "living-image",
-    icon: Film,
-    labelAr: "صورة حية",
-    labelEn: "Living Image",
-    taglineAr: "خلي صورتك ترقص وتتكلم",
-    taglineEn: "Make your photo move",
-    workingMessageAr: "الخال بيدي صورتك فيتامينات.. ثواني وبتبدأ الرقص!",
-    workingMessageEn: "Al-Khal is energizing your photo... it'll start dancing in seconds!",
-    mode: "living-image",
-    accent: "gold",
-    metered: true,
-  },
   {
     id: "face-swap",
     slug: "face-swap",
@@ -101,21 +87,7 @@ export const STUDIO_TOOLS: StudioTool[] = [
     accent: "nile",
     metered: true,
   },
-  {
-    id: "challenge-arena",
-    slug: "challenge-arena",
-    icon: Swords,
-    labelAr: "ساحة التحدي",
-    labelEn: "Challenge Arena",
-    taglineAr: "خلي الناس تحكم بينكم",
-    taglineEn: "Side-by-side battles",
-    workingMessageAr: "الخال بجهز في ساحة المعركة.. ثواني وتشوف الفائز!",
-    workingMessageEn: "Preparing the arena...",
-    mode: "vs-arena",
-    action: "challenge-arena",
-    accent: "earth",
-    metered: true,
-  },
+
 ];
 
 // Legacy quick-edit tools (the old Studio actions)

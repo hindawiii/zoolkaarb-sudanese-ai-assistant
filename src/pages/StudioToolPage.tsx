@@ -62,13 +62,11 @@ const StudioToolPage = () => {
     );
   }
 
-  const requiredCount = tool.mode === "single-edit" || tool.mode === "living-image" ? 1 : tool.mode === "multi-edit" ? 2 : 2;
-  const maxImages = tool.mode === "multi-edit" ? 4 : tool.mode === "single-edit" || tool.mode === "living-image" ? 1 : 2;
+  const requiredCount = tool.mode === "single-edit" ? 1 : tool.mode === "multi-edit" ? 2 : 2;
+  const maxImages = tool.mode === "multi-edit" ? 4 : tool.mode === "single-edit" ? 1 : 2;
   const slotLabels = tool.mode === "dual-edit"
     ? isRtl ? ["1. صورة الجسم/الخلفية", "2. صورة الوجه"] : ["1. Body / scene", "2. Face source"]
-    : tool.mode === "vs-arena"
-      ? isRtl ? ["المتنافس 1", "المتنافس 2"] : ["Fighter 1", "Fighter 2"]
-      : [];
+    : [];
 
   const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -151,38 +149,11 @@ const StudioToolPage = () => {
     await reallyRun(action);
   };
 
-  // Living image: client-only Ken Burns "fake animation" preview (Phase 1).
-  const triggerLivingImage = async () => {
-    if (loading) return;
-    if (images.length < 1) {
-      toast({ title: isRtl ? "ناقصة صورة" : "Need an image", description: isRtl ? "حمّل صورة أولاً" : "Upload an image first", variant: "destructive" });
-      return;
-    }
-    if (tool.metered && remaining <= 0) {
-      setPendingRun("__living__");
-      setAdOpen(true);
-      return;
-    }
-    setLoading(true);
-    // simulate processing
-    await new Promise((r) => setTimeout(r, 1400));
-    const watermarked = await addZoolWatermark(images[0]);
-    setOutput(watermarked);
-    setLivingPlaying(true);
-    const next = consumeUse(tool.id as StudioToolId);
-    setRemaining(next);
-    setLoading(false);
-    toast({ title: isRtl ? "بدأ الرقص!" : "Dancing!", description: isRtl ? "صورتك حية الحين" : "Your photo is alive" });
-  };
-
   const onAdRewarded = () => {
     if (!tool) return;
     const r = grantAdReward(tool.id as StudioToolId);
     setRemaining(r);
-    if (pendingRun === "__living__") {
-      setPendingRun(null);
-      setTimeout(() => triggerLivingImage(), 100);
-    } else if (pendingRun) {
+    if (pendingRun) {
       const action = pendingRun;
       setPendingRun(null);
       setTimeout(() => reallyRun(action), 100);
@@ -215,8 +186,8 @@ const StudioToolPage = () => {
   };
 
   const Icon = tool.icon;
-  const showVsBadge = tool.mode === "vs-arena" && !!output;
-  const currentVs = VS_ICONS.find((v) => v.id === vsIcon)!;
+  const showVsBadge = false;
+  const currentVs = VS_ICONS[0];
 
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-28" dir={isRtl ? "rtl" : "ltr"}>
@@ -377,15 +348,6 @@ const StudioToolPage = () => {
                 </button>
               ))}
             </div>
-          ) : tool.mode === "living-image" ? (
-            <button
-              onClick={triggerLivingImage}
-              disabled={loading || images.length < 1}
-              className="w-full py-3.5 rounded-xl gradient-gold text-primary-foreground font-bold font-cairo disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              {isRtl ? "خلي الصورة ترقص" : "Bring it to life"}
-            </button>
           ) : (
             <button
               onClick={() => triggerRun(tool.action || "")}

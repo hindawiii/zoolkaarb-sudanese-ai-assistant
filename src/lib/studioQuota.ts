@@ -14,12 +14,10 @@ export const FREE_LIMIT = FREE_TRIAL;
 export const AD_REWARD = DEFAULT_REWARD;
 
 export type StudioToolId =
-  | "living-image"
   | "face-swap"
   | "clothes-changer"
   | "anime-hero"
-  | "smart-blender"
-  | "challenge-arena";
+  | "smart-blender";
 
 export const getRemaining = (tool: StudioToolId): number => getCredits(tool);
 export const consumeUse = (tool: StudioToolId): number => consumeCredit(tool);
