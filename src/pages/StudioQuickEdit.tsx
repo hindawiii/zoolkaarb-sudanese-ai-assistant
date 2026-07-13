@@ -55,6 +55,7 @@ type ToolId =
   | "perspective"
   | "resize"
   | "flip-rotate"
+  | "straighten"
   | "ai-enhance"
   | "ai-expand"
   | "ai-replace"
@@ -88,6 +89,7 @@ const TOOLS: { id: ToolId; ar: string; en: string; icon: typeof Palette; cat: To
   { id: "perspective", ar: "منظور", en: "Perspective", icon: Move, cat: "geo" },
   { id: "resize", ar: "تعديل الحجم", en: "Resize", icon: Square, cat: "geo" },
   { id: "flip-rotate", ar: "تدوير/عكس", en: "Flip/Rotate", icon: FlipHorizontal, cat: "geo" },
+  { id: "straighten", ar: "تسوية الميلان", en: "Straighten", icon: RotateCcw, cat: "geo" },
   { id: "stretch", ar: "تمطيط", en: "Stretch", icon: Maximize2, cat: "geo" },
   // AI & Enhance
   { id: "ai-enhance", ar: "تحسين ذكي", en: "AI Enhance", icon: Sparkles, cat: "ai" },
@@ -564,6 +566,50 @@ const flipRotate = async (src: string, op: "flip-h" | "flip-v" | "rotate-90" | "
   return c.toDataURL("image/png");
 };
 
+// Rotate by an arbitrary angle (degrees) and auto-crop to the largest inscribed
+// axis-aligned rectangle so no transparent/black corners remain.
+const straightenImage = async (src: string, angleDeg: number): Promise<string> => {
+  const img = await loadImage(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  const angle = (angleDeg * Math.PI) / 180;
+  if (Math.abs(angleDeg) < 0.01) return src;
+
+  // Bounding box of rotated image
+  const sinA = Math.abs(Math.sin(angle));
+  const cosA = Math.abs(Math.cos(angle));
+  const bbW = w * cosA + h * sinA;
+  const bbH = w * sinA + h * cosA;
+
+  // Largest inscribed axis-aligned rectangle
+  const alpha = Math.abs(angle) % (Math.PI / 2);
+  const longer = Math.max(w, h);
+  const shorter = Math.min(w, h);
+  const gamma = w < h ? Math.atan2(bbW, bbH) : Math.atan2(bbH, bbW);
+  const delta = Math.PI - alpha - gamma;
+  const d = longer * Math.cos(alpha);
+  const a = (d * Math.sin(alpha)) / Math.sin(delta);
+  const y = a * Math.cos(gamma);
+  const x = y * Math.tan(gamma);
+  const cropW = Math.max(16, Math.floor(bbW - 2 * x));
+  const cropH = Math.max(16, Math.floor(bbH - 2 * y));
+
+  // Draw rotated onto a bb-sized canvas, then crop centre
+  const rot = makeCanvas(Math.ceil(bbW), Math.ceil(bbH));
+  const rctx = rot.getContext("2d")!;
+  rctx.imageSmoothingQuality = "high";
+  rctx.translate(rot.width / 2, rot.height / 2);
+  rctx.rotate(angle);
+  rctx.drawImage(img, -w / 2, -h / 2);
+
+  const out = makeCanvas(cropW, cropH);
+  const octx = out.getContext("2d")!;
+  const sx = Math.floor((rot.width - cropW) / 2);
+  const sy = Math.floor((rot.height - cropH) / 2);
+  octx.drawImage(rot, sx, sy, cropW, cropH, 0, 0, cropW, cropH);
+  return out.toDataURL("image/png");
+};
+
 const resizeImage = async (src: string, scalePct: number): Promise<string> => {
   const img = await loadImage(src);
   const w = Math.max(16, Math.round((img.naturalWidth * scalePct) / 100));
@@ -775,6 +821,7 @@ const ZoolProToolsHub = () => {
   const [grainAmt, setGrainAmt] = useState(40);
   const [warmthAmt, setWarmthAmt] = useState(0);
   const [featherAmt, setFeatherAmt] = useState(2);
+  const [straightenAngle, setStraightenAngle] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [rbgMode, setRbgMode] = useState<"auto" | "brush">("auto");
 
@@ -1344,6 +1391,28 @@ const ZoolProToolsHub = () => {
                       {label}
                     </button>
                   ))}
+                </div>
+              )}
+
+              {activeTool === "straighten" && (
+                <div className="space-y-3">
+                  <div
+                    className="relative w-full aspect-video rounded-xl overflow-hidden border border-gold/30 bg-background/40"
+                    style={{ backgroundImage: `url(${currentImage})`, backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center", transform: `rotate(${straightenAngle}deg)`, transition: "transform 120ms" }}
+                  />
+                  <label className="text-[10px] font-cairo text-muted-foreground flex items-center gap-2">
+                    <span className="w-14">{isRtl ? "الزاوية" : "Angle"}</span>
+                    <input type="range" min={-45} max={45} step={0.5} value={straightenAngle} onChange={(e) => setStraightenAngle(Number(e.target.value))} className="flex-1 accent-[hsl(var(--gold))]" />
+                    <span className="w-12 text-end text-foreground">{straightenAngle.toFixed(1)}°</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <button onClick={() => setStraightenAngle(0)} className="px-3 py-2 rounded-xl border border-gold/30 bg-background/60 text-[11px] font-cairo text-foreground active:scale-95">
+                      {isRtl ? "صفر" : "Reset"}
+                    </button>
+                    <button onClick={() => withProgress(() => straightenImage(currentImage, straightenAngle))} className="flex-1 py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold font-cairo active:scale-95">
+                      {isRtl ? "طبّق التسوية" : "Apply straighten"}
+                    </button>
+                  </div>
                 </div>
               )}
 
