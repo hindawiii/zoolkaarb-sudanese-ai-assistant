@@ -348,9 +348,6 @@ const StudioToolPage = () => {
                 </button>
               ))}
             </div>
-          ) : false ? (
-            <></>
-
           ) : (
             <button
               onClick={() => triggerRun(tool.action || "")}
