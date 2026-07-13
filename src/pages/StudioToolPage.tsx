@@ -348,15 +348,9 @@ const StudioToolPage = () => {
                 </button>
               ))}
             </div>
-          ) : tool.mode === "living-image" ? (
-            <button
-              onClick={triggerLivingImage}
-              disabled={loading || images.length < 1}
-              className="w-full py-3.5 rounded-xl gradient-gold text-primary-foreground font-bold font-cairo disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              {isRtl ? "خلي الصورة ترقص" : "Bring it to life"}
-            </button>
+          ) : false ? (
+            <></>
+
           ) : (
             <button
               onClick={() => triggerRun(tool.action || "")}
