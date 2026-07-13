@@ -31,8 +31,6 @@ const PROMPTS: Record<string, string> = {
     "Take the face from the SECOND image and seamlessly blend it onto the person in the FIRST image. Match skin tone, lighting direction, shadows, and color grading perfectly. Preserve the body, pose, and background of the first image. Photorealistic result.",
   "smart-blender":
     "Merge the provided images into a single cohesive composition. Apply AI color harmonization to unify lighting, shadows, and color grading across all elements so they look like one natural photo.",
-  "challenge-arena":
-    "Create a side-by-side VS battle composition from the two provided images. Place them on left and right halves with a dramatic golden divider. Match lighting and add a cinematic dark vignette. Leave clear empty space in the center for a VS badge overlay.",
 };
 
 // ===== Anime Transformation Studio (ControlNet/LoRA-style prompt composer) =====
