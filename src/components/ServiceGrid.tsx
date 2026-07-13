@@ -42,7 +42,7 @@ const ServiceGrid = () => {
         {
           titleAr: "ستوديو مدار",
           titleEn: "Madar Studio",
-          desc: isRtl ? "Face Swap · Anime · Living Image" : "Face Swap · Anime · Living",
+          desc: isRtl ? "Face Swap · Anime · Blender" : "Face Swap · Anime · Blender",
           icon: ImagePlus,
           iconBg: "bg-gold/20",
           route: "/studio",
