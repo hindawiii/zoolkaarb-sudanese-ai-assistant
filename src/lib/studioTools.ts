@@ -87,21 +87,7 @@ export const STUDIO_TOOLS: StudioTool[] = [
     accent: "nile",
     metered: true,
   },
-  {
-    id: "challenge-arena",
-    slug: "challenge-arena",
-    icon: Swords,
-    labelAr: "ساحة التحدي",
-    labelEn: "Challenge Arena",
-    taglineAr: "خلي الناس تحكم بينكم",
-    taglineEn: "Side-by-side battles",
-    workingMessageAr: "الخال بجهز في ساحة المعركة.. ثواني وتشوف الفائز!",
-    workingMessageEn: "Preparing the arena...",
-    mode: "vs-arena",
-    action: "challenge-arena",
-    accent: "earth",
-    metered: true,
-  },
+
 ];
 
 // Legacy quick-edit tools (the old Studio actions)
