@@ -340,14 +340,6 @@ const StudioToolPage = () => {
         onRewarded={onAdRewarded}
       />
 
-      <style>{`
-        @keyframes living-kenburns {
-          0% { transform: scale(1) translate(0,0); }
-          50% { transform: scale(1.06) translate(-1.5%, 1%); }
-          100% { transform: scale(1) translate(0,0); }
-        }
-        .animate-living { animation: living-kenburns 4s ease-in-out infinite; transform-origin: center; }
-      `}</style>
     </div>
   );
 };
