@@ -1,4 +1,4 @@
-import { ArrowLeft, Upload, Download, Loader2, RotateCcw, Plus, X, Share2, Swords, Flame, Zap } from "lucide-react";
+import { ArrowLeft, Download, Loader2, RotateCcw, Plus, X, Share2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,12 +18,6 @@ const fileToBase64 = (file: File): Promise<string> =>
     r.readAsDataURL(file);
   });
 
-const VS_ICONS = [
-  { id: "vs", labelAr: "VS", labelEn: "VS", render: () => <span className="font-extrabold text-primary-foreground text-xl tracking-tight">VS</span> },
-  { id: "bolt", labelAr: "صاعقة", labelEn: "Bolt", render: () => <Zap className="w-6 h-6 text-primary-foreground" /> },
-  { id: "fire", labelAr: "نار", labelEn: "Fire", render: () => <Flame className="w-6 h-6 text-primary-foreground" /> },
-  { id: "swords", labelAr: "سيوف", labelEn: "Swords", render: () => <Swords className="w-6 h-6 text-primary-foreground" /> },
-] as const;
 
 const isAiCreditsExhausted = (data: unknown) =>
   typeof data === "object" && data !== null && "code" in data && data.code === "AI_CREDITS_EXHAUSTED";
@@ -42,8 +36,6 @@ const StudioToolPage = () => {
   const [adOpen, setAdOpen] = useState(false);
   const [pendingRun, setPendingRun] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number>(tool ? getRemaining(tool.id as StudioToolId) : 0);
-  const [vsIcon, setVsIcon] = useState<(typeof VS_ICONS)[number]["id"]>("vs");
-  const [livingPlaying, setLivingPlaying] = useState(false);
 
   useEffect(() => {
     if (tool) setRemaining(getRemaining(tool.id as StudioToolId));
