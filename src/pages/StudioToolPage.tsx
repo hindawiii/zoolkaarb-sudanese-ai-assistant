@@ -1,4 +1,4 @@
-import { ArrowLeft, Upload, Download, Loader2, RotateCcw, Plus, X, Share2, Swords, Flame, Zap } from "lucide-react";
+import { ArrowLeft, Download, Loader2, RotateCcw, Plus, X, Share2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,12 +18,6 @@ const fileToBase64 = (file: File): Promise<string> =>
     r.readAsDataURL(file);
   });
 
-const VS_ICONS = [
-  { id: "vs", labelAr: "VS", labelEn: "VS", render: () => <span className="font-extrabold text-primary-foreground text-xl tracking-tight">VS</span> },
-  { id: "bolt", labelAr: "صاعقة", labelEn: "Bolt", render: () => <Zap className="w-6 h-6 text-primary-foreground" /> },
-  { id: "fire", labelAr: "نار", labelEn: "Fire", render: () => <Flame className="w-6 h-6 text-primary-foreground" /> },
-  { id: "swords", labelAr: "سيوف", labelEn: "Swords", render: () => <Swords className="w-6 h-6 text-primary-foreground" /> },
-] as const;
 
 const isAiCreditsExhausted = (data: unknown) =>
   typeof data === "object" && data !== null && "code" in data && data.code === "AI_CREDITS_EXHAUSTED";
@@ -42,8 +36,6 @@ const StudioToolPage = () => {
   const [adOpen, setAdOpen] = useState(false);
   const [pendingRun, setPendingRun] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number>(tool ? getRemaining(tool.id as StudioToolId) : 0);
-  const [vsIcon, setVsIcon] = useState<(typeof VS_ICONS)[number]["id"]>("vs");
-  const [livingPlaying, setLivingPlaying] = useState(false);
 
   useEffect(() => {
     if (tool) setRemaining(getRemaining(tool.id as StudioToolId));
@@ -182,12 +174,9 @@ const StudioToolPage = () => {
   const reset = () => {
     setImages([]);
     setOutput(null);
-    setLivingPlaying(false);
   };
 
   const Icon = tool.icon;
-  const showVsBadge = false;
-  const currentVs = VS_ICONS[0];
 
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-28" dir={isRtl ? "rtl" : "ltr"}>
@@ -252,21 +241,11 @@ const StudioToolPage = () => {
         <div className="px-4 mt-4">
           <div className="rounded-3xl border border-border bg-card overflow-hidden relative">
             {output ? (
-              <div className="relative">
-                <img
-                  src={output}
-                  alt="result"
-                  className={`w-full h-auto block ${livingPlaying ? "animate-living" : ""}`}
-                />
-                {showVsBadge && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-20 h-20 rounded-full gradient-gold flex items-center justify-center shadow-2xl border-4 border-card relative overflow-hidden">
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.6),transparent_60%)]" />
-                      <div className="relative">{currentVs.render()}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <img
+                src={output}
+                alt="result"
+                className="w-full h-auto block"
+              />
             ) : (
               <div className="aspect-square flex flex-col items-center justify-center gap-3 bg-muted/30">
                 <Loader2 className="w-8 h-8 text-gold animate-spin" />
@@ -277,25 +256,6 @@ const StudioToolPage = () => {
             )}
           </div>
 
-          {/* VS icon picker */}
-          {showVsBadge && (
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-              {VS_ICONS.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => setVsIcon(v.id)}
-                  className={`min-w-[68px] py-2 rounded-xl border text-[10.5px] font-cairo flex flex-col items-center gap-1 active:scale-95 ${
-                    vsIcon === v.id ? "gradient-gold border-transparent text-primary-foreground" : "bg-card border-border text-foreground"
-                  }`}
-                >
-                  <div className="w-6 h-6 flex items-center justify-center">
-                    {v.id === "vs" ? <span className="font-extrabold text-sm">VS</span> : v.render()}
-                  </div>
-                  <span>{isRtl ? v.labelAr : v.labelEn}</span>
-                </button>
-              ))}
-            </div>
-          )}
 
           {output && (
             <div className="flex gap-2 mt-3">
@@ -380,14 +340,6 @@ const StudioToolPage = () => {
         onRewarded={onAdRewarded}
       />
 
-      <style>{`
-        @keyframes living-kenburns {
-          0% { transform: scale(1) translate(0,0); }
-          50% { transform: scale(1.06) translate(-1.5%, 1%); }
-          100% { transform: scale(1) translate(0,0); }
-        }
-        .animate-living { animation: living-kenburns 4s ease-in-out infinite; transform-origin: center; }
-      `}</style>
     </div>
   );
 };
