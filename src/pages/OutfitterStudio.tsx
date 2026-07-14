@@ -20,11 +20,19 @@ const CATEGORIES: { id: CategoryId; labelAr: string; labelEn: string; emoji: str
 ];
 
 const HERITAGE_OPTIONS = [
-  { id: "galabiya", labelAr: "جلابية فقط", labelEn: "Galabiya only", emoji: "👘" },
+  { id: "galabiya", labelAr: "جلابية بيضاء بسيطة", labelEn: "Simple White Galabiya", emoji: "👘" },
   { id: "galabiya-imma", labelAr: "جلابية بعمة", labelEn: "Galabiya + Imma", emoji: "👳🏽" },
   { id: "galabiya-imma-shawl-cane", labelAr: "جلابية وعمة وشال وعجاز", labelEn: "Galabiya + Imma + Shawl + Cane", emoji: "🪄" },
   { id: "galabiya-imma-shawl-cane-markoub", labelAr: "+ مركوب", labelEn: "+ Markoub shoes", emoji: "👞" },
   { id: "ansar", labelAr: "جلابية أنصارية", labelEn: "Ansar-style Galabiya", emoji: "🏳️" },
+  // New premium heritage designs
+  { id: "arban-blue", labelAr: "جلابية أرباب زرقاء", labelEn: "Arban Blue Jalabiya", emoji: "🔵" },
+  { id: "emirati-white-cane", labelAr: "ثوب إماراتي بعصا", labelEn: "Emirati Thobe + Cane", emoji: "🪄" },
+  { id: "sheikh-gold-embroidered", labelAr: "جلابية شيخ مطرزة ذهبي", labelEn: "Sheikh Gold-Embroidered", emoji: "👑" },
+  { id: "sino-black-gold-shawl", labelAr: "جلابية بشال أسود وذهبي", labelEn: "Sino Black-Gold Shawl", emoji: "🖤" },
+  { id: "dark-embroidered-jalabiya", labelAr: "جلابية داكنة مطرزة", labelEn: "Dark Embroidered Jalabiya", emoji: "🟫" },
+  { id: "purple-thobe-turban", labelAr: "ثوب بنفسجي بعمامة", labelEn: "Purple Thobe + Turban", emoji: "🟣" },
+  { id: "black-thobe-white-turban", labelAr: "ثوب أسود بعمامة بيضاء", labelEn: "Black Thobe + White Turban", emoji: "⚫" },
 ] as const;
 
 const FORMAL_OPTIONS = [
