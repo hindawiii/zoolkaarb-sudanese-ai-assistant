@@ -116,8 +116,9 @@ const HEADWEAR_PROMPTS: Record<string, string> = {
 const buildOutfitterPrompt = (p: {
   category?: string; variant?: string; eyewear?: string; headwear?: string;
   mixMatch?: boolean; mixTarget?: string; pose?: string;
+  framing?: string; includeShoes?: boolean; includeCane?: boolean;
 }) => {
-  const variantPrompt = OUTFIT_VARIANTS[p.variant ?? ""] ?? OUTFIT_VARIANTS["galabiya-imma"];
+  let variantPrompt = OUTFIT_VARIANTS[p.variant ?? ""] ?? OUTFIT_VARIANTS["galabiya-imma"];
   const eyewearPrompt = EYEWEAR_PROMPTS[p.eyewear ?? "none"];
   const headwearPrompt = HEADWEAR_PROMPTS[p.headwear ?? "none"];
 
@@ -129,13 +130,39 @@ const buildOutfitterPrompt = (p: {
     ? `Detected pose: ${p.pose}. Preserve this exact body posture without altering limb positions.`
     : "Preserve the subject's exact original body posture without altering limb positions.";
 
+  // Framing / accessory guardrails: strip shoes & cane references when the photo isn't full-body,
+  // or when the user explicitly disabled them. Otherwise floating shoes/canes appear where the
+  // frame is cropped above the feet.
+  const isFullBody = p.framing === "full";
+  const shoesAllowed = p.includeShoes !== false && isFullBody;
+  const caneAllowed = p.includeCane !== false && isFullBody;
+
+  if (!shoesAllowed) {
+    variantPrompt = variantPrompt
+      .replace(/,?\s*(?:with\s+)?(?:brown|black|white|tan|leather|oxford|derby|loafer|dress|markoub|cognac|burgundy)?\s*shoes?[^.,]*/gi, "")
+      .replace(/,?\s*(?:with\s+)?sneakers?[^.,]*/gi, "");
+  }
+  if (!caneAllowed) {
+    variantPrompt = variantPrompt.replace(/,?\s*(?:holding|with|and)?\s*(?:a\s+)?(?:black|wooden|traditional)?\s*(?:cane|walking stick|staff|3aga|3agaz|agaz)[^.,]*/gi, "");
+  }
+
+  const framingRule = isFullBody
+    ? "Full-body composition: render the entire outfit including footwear naturally on the ground plane."
+    : "CRITICAL FRAMING RULE: The source photo is a half-body / portrait crop where the feet and lower legs are NOT visible. DO NOT add shoes, sandals, boots, markoub, or any footwear anywhere in the frame — they must not float or appear cropped at the bottom. DO NOT add a cane, walking stick, or staff. Keep the crop identical to the original photo (do not extend the canvas downward).";
+
+  const accessoryOverride = (!shoesAllowed || !caneAllowed)
+    ? `Explicitly OMIT the following from the output: ${[!shoesAllowed && "any footwear/shoes/markoub", !caneAllowed && "any cane/walking stick/staff"].filter(Boolean).join(", ")}. If the outfit description mentions them, ignore that part.`
+    : "";
+
   return [
     "Photorealistic outfit replacement with strict pose preservation (ControlNet-style hard constraint).",
     "MANDATORY: Preserve the subject's facial identity, skin tone, hair (unless headwear is added), exact body pose, head tilt, hand positions, and background 100%.",
     poseHint,
+    framingRule,
     variantPrompt,
     eyewearPrompt,
     headwearPrompt,
+    accessoryOverride,
     mixMatchPrompt,
     "Match lighting direction, shadows, color temperature, and grain of the original photo perfectly so the new clothing looks naturally photographed on the subject. No deformation of body proportions. No extra limbs. No identity drift.",
   ].filter(Boolean).join(" ");

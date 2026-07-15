@@ -120,6 +120,9 @@ const OutfitterStudio = () => {
   const [headwear, setHeadwear] = useState<string>("none");
   const [mixMatch, setMixMatch] = useState(false);
   const [mixTarget, setMixTarget] = useState<string>("top");
+  const [framing, setFraming] = useState<"full" | "half">("half");
+  const [includeShoes, setIncludeShoes] = useState(false);
+  const [includeCane, setIncludeCane] = useState(false);
 
   useEffect(() => { setRemaining(getRemaining(TOOL_ID)); }, []);
 
@@ -140,6 +143,15 @@ const OutfitterStudio = () => {
     setImage(b64);
     setOutput(null);
     setAnalyzing(true);
+    // Auto-detect framing from aspect ratio: portrait-ish → likely half-body / upper-body crop
+    const probe = new Image();
+    probe.src = b64;
+    await new Promise((res) => (probe.onload = res));
+    const aspect = probe.width / probe.height;
+    const autoFraming: "full" | "half" = aspect < 0.6 ? "full" : "half";
+    setFraming(autoFraming);
+    setIncludeShoes(autoFraming === "full");
+    setIncludeCane(false);
     const meta = await detectPose(b64);
     setPose(meta.pose);
     setAnalyzing(false);
@@ -164,6 +176,9 @@ const OutfitterStudio = () => {
             mixMatch,
             mixTarget: mixMatch ? mixTarget : undefined,
             pose,
+            framing,
+            includeShoes: framing === "full" && includeShoes,
+            includeCane: framing === "full" && includeCane,
           },
         },
       });
@@ -336,6 +351,72 @@ const OutfitterStudio = () => {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Framing & footwear guardrails */}
+      <div className="px-4 mt-5">
+        <p className="text-[11px] font-bold font-cairo text-gold mb-2">
+          {isRtl ? "نطاق الصورة" : "Photo Framing"}
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => { setFraming("half"); setIncludeShoes(false); setIncludeCane(false); }}
+            className={`p-3 rounded-2xl border text-start active:scale-95 ${
+              framing === "half" ? "border-gold bg-gold/10" : "border-border bg-card"
+            }`}
+          >
+            <div className="text-lg">🖼️</div>
+            <p className="text-[11px] font-bold font-cairo text-foreground mt-1">
+              {isRtl ? "نصفي / بورتريه" : "Half / Portrait"}
+            </p>
+            <p className="text-[9.5px] text-muted-foreground font-cairo leading-tight mt-0.5">
+              {isRtl ? "الأقدام ما ظاهرة — بدون جزمة أو عكاز" : "Feet not visible — no shoes / cane"}
+            </p>
+          </button>
+          <button
+            onClick={() => setFraming("full")}
+            className={`p-3 rounded-2xl border text-start active:scale-95 ${
+              framing === "full" ? "border-gold bg-gold/10" : "border-border bg-card"
+            }`}
+          >
+            <div className="text-lg">🧍</div>
+            <p className="text-[11px] font-bold font-cairo text-foreground mt-1">
+              {isRtl ? "كامل الجسم" : "Full body"}
+            </p>
+            <p className="text-[9.5px] text-muted-foreground font-cairo leading-tight mt-0.5">
+              {isRtl ? "الصورة كاملة والأقدام ظاهرة" : "Feet visible in the frame"}
+            </p>
+          </button>
+        </div>
+
+        {framing === "full" && (
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            <button
+              onClick={() => setIncludeShoes((v) => !v)}
+              className={`py-2.5 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 flex items-center justify-center gap-1.5 ${
+                includeShoes ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+              }`}
+            >
+              👞 {isRtl ? "إضافة جزمة" : "Add shoes"}
+            </button>
+            <button
+              onClick={() => setIncludeCane((v) => !v)}
+              className={`py-2.5 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 flex items-center justify-center gap-1.5 ${
+                includeCane ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+              }`}
+            >
+              🪄 {isRtl ? "إضافة عكاز" : "Add cane"}
+            </button>
+          </div>
+        )}
+
+        {framing === "half" && (
+          <p className="text-[10px] text-muted-foreground font-cairo mt-2 leading-relaxed">
+            {isRtl
+              ? "الخال ما بضيف الجزمة أو العكاز عشان الصورة نصفية — عشان ما يبانو طايرين."
+              : "Shoes & cane are auto-disabled for cropped/half-body shots to prevent floating artifacts."}
+          </p>
+        )}
       </div>
 
       {/* Variants */}
