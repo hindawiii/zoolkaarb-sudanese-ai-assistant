@@ -167,6 +167,9 @@ const OutfitterStudio = () => {
             mixMatch,
             mixTarget: mixMatch ? mixTarget : undefined,
             pose,
+            framing,
+            includeShoes: framing === "full" && includeShoes,
+            includeCane: framing === "full" && includeCane,
           },
         },
       });
