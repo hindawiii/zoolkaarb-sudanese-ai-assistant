@@ -143,6 +143,15 @@ const OutfitterStudio = () => {
     setImage(b64);
     setOutput(null);
     setAnalyzing(true);
+    // Auto-detect framing from aspect ratio: portrait-ish → likely half-body / upper-body crop
+    const probe = new Image();
+    probe.src = b64;
+    await new Promise((res) => (probe.onload = res));
+    const aspect = probe.width / probe.height;
+    const autoFraming: "full" | "half" = aspect < 0.6 ? "full" : "half";
+    setFraming(autoFraming);
+    setIncludeShoes(autoFraming === "full");
+    setIncludeCane(false);
     const meta = await detectPose(b64);
     setPose(meta.pose);
     setAnalyzing(false);
