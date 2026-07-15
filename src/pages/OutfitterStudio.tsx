@@ -39,6 +39,16 @@ const FORMAL_OPTIONS = [
   { id: "classic", labelAr: "بدلة كلاسيك", labelEn: "Classic suit", emoji: "🤵" },
   { id: "blazer", labelAr: "بليزر", labelEn: "Blazer + chinos", emoji: "🧥" },
   { id: "wedding", labelAr: "بدلة عرس", labelEn: "Wedding suit", emoji: "💍" },
+  { id: "navy-slim-suit", labelAr: "بدلة كحلي سليم", labelEn: "Navy slim suit", emoji: "🔷" },
+  { id: "charcoal-modern-suit", labelAr: "بدلة رمادي داكن", labelEn: "Charcoal modern", emoji: "⬛" },
+  { id: "olive-green-suit", labelAr: "بدلة زيتي أنيقة", labelEn: "Olive green suit", emoji: "🟢" },
+  { id: "ivory-summer-suit", labelAr: "بدلة صيفي أوف وايت", labelEn: "Ivory summer suit", emoji: "🤍" },
+  { id: "double-breasted-navy", labelAr: "دبل بريستد كحلي", labelEn: "Double-breasted navy", emoji: "🧭" },
+  { id: "double-breasted-black", labelAr: "دبل بريستد أسود", labelEn: "Double-breasted black", emoji: "🖤" },
+  { id: "cream-blazer-turtleneck", labelAr: "بليزر كريمي وتيرتل", labelEn: "Cream blazer + turtleneck", emoji: "🧶" },
+  { id: "overcoat-suit", labelAr: "بالطو فوق البدلة", labelEn: "Overcoat over suit", emoji: "🧥" },
+  { id: "grey-suit-turtleneck", labelAr: "بدلة رمادي بتيرتل", labelEn: "Grey suit + turtleneck", emoji: "🩶" },
+  { id: "light-blue-suit", labelAr: "بدلة سماوي فاتح", labelEn: "Light-blue suit", emoji: "🔵" },
 ] as const;
 
 const CASUAL_OPTIONS = [
