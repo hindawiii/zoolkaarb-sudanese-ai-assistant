@@ -120,6 +120,9 @@ const OutfitterStudio = () => {
   const [headwear, setHeadwear] = useState<string>("none");
   const [mixMatch, setMixMatch] = useState(false);
   const [mixTarget, setMixTarget] = useState<string>("top");
+  const [framing, setFraming] = useState<"full" | "half">("half");
+  const [includeShoes, setIncludeShoes] = useState(false);
+  const [includeCane, setIncludeCane] = useState(false);
 
   useEffect(() => { setRemaining(getRemaining(TOOL_ID)); }, []);
 
