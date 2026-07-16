@@ -11,12 +11,13 @@ import QuotaBadge from "@/components/studio/QuotaBadge";
 
 const TOOL_ID = "clothes-changer" as const;
 
-type CategoryId = "casual" | "heritage" | "formal";
+type CategoryId = "casual" | "heritage" | "formal" | "sport";
 
 const CATEGORIES: { id: CategoryId; labelAr: string; labelEn: string; emoji: string; tone: string }[] = [
   { id: "casual", labelAr: "كاجوال", labelEn: "Casual", emoji: "👕", tone: "from-sky-500/20 to-indigo-500/10" },
   { id: "heritage", labelAr: "تراثي", labelEn: "Heritage", emoji: "🕌", tone: "from-amber-500/25 to-yellow-500/10" },
   { id: "formal", labelAr: "رسمي", labelEn: "Formal", emoji: "🤵", tone: "from-slate-500/20 to-neutral-500/10" },
+  { id: "sport", labelAr: "رياضي وبجامات", labelEn: "Sport & PJs", emoji: "🏃", tone: "from-emerald-500/20 to-teal-500/10" },
 ];
 
 const HERITAGE_OPTIONS = [
