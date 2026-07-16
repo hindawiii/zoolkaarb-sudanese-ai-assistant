@@ -356,7 +356,12 @@ const AnimeStudio = () => {
 
       {/* Props */}
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "السلاح / الأداة" : "Prop in Hand"}</p>
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-1">{isRtl ? "السلاح / الأداة" : "Prop in Hand"}</p>
+        <p className="text-[10px] text-muted-foreground/80 font-cairo mb-2 leading-relaxed">
+          {isRtl
+            ? "الخال بيتأقلم مع وضعيتك: بيستخدم يدك الظاهرة لحمل السلاح. لو يديك مش باينة، السلاح بيطلع كطاقة طايرة جنبك — من غير يد ثالثة."
+            : "Al-Khal adapts to your pose: uses your visible hand for the prop. If no hand is free, it appears as floating energy — never a third hand."}
+        </p>
         <div className="grid grid-cols-4 gap-2">
           {PROPS.map((p) => {
             const Icon = p.icon;
