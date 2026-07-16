@@ -11,12 +11,13 @@ import QuotaBadge from "@/components/studio/QuotaBadge";
 
 const TOOL_ID = "clothes-changer" as const;
 
-type CategoryId = "casual" | "heritage" | "formal";
+type CategoryId = "casual" | "heritage" | "formal" | "sport";
 
 const CATEGORIES: { id: CategoryId; labelAr: string; labelEn: string; emoji: string; tone: string }[] = [
   { id: "casual", labelAr: "كاجوال", labelEn: "Casual", emoji: "👕", tone: "from-sky-500/20 to-indigo-500/10" },
   { id: "heritage", labelAr: "تراثي", labelEn: "Heritage", emoji: "🕌", tone: "from-amber-500/25 to-yellow-500/10" },
   { id: "formal", labelAr: "رسمي", labelEn: "Formal", emoji: "🤵", tone: "from-slate-500/20 to-neutral-500/10" },
+  { id: "sport", labelAr: "رياضي وبجامات", labelEn: "Sport & PJs", emoji: "🏃", tone: "from-emerald-500/20 to-teal-500/10" },
 ];
 
 const HERITAGE_OPTIONS = [
@@ -56,6 +57,21 @@ const CASUAL_OPTIONS = [
   { id: "hoodie", labelAr: "هودي ستريت", labelEn: "Streetwear hoodie", emoji: "🧢" },
   { id: "polo", labelAr: "بولو وشورت", labelEn: "Polo & shorts", emoji: "🩳" },
   { id: "denim-jacket", labelAr: "جاكيت جينز", labelEn: "Denim jacket", emoji: "🧥" },
+] as const;
+
+const SPORT_OPTIONS = [
+  { id: "tracksuit-grey-black", labelAr: "تراك سوت رمادي وأسود", labelEn: "Grey & black tracksuit", emoji: "🎽" },
+  { id: "tracksuit-dragon-navy", labelAr: "طقم دراغون كحلي", labelEn: "Dragon navy set", emoji: "🐉" },
+  { id: "tracksuit-dragon-brown", labelAr: "طقم دراغون بني", labelEn: "Dragon brown set", emoji: "🟤" },
+  { id: "tracksuit-adidas-white", labelAr: "تراك سوت أبيض بخطوط", labelEn: "White striped tracksuit", emoji: "⚪" },
+  { id: "hoodie-dragon-black", labelAr: "هودي تنين أسود", labelEn: "Black dragon hoodie", emoji: "🖤" },
+  { id: "hoodie-sakura-white", labelAr: "هودي ساكورا أبيض", labelEn: "White sakura hoodie", emoji: "🌸" },
+  { id: "hoodie-berserk-white", labelAr: "هودي أنمي أبيض", labelEn: "White anime print hoodie", emoji: "⚔️" },
+  { id: "hoodie-anime-black", labelAr: "هودي أنمي أسود", labelEn: "Black anime hoodie", emoji: "⚡" },
+  { id: "hoodie-jujutsu-navy", labelAr: "هودي راجلن كحلي", labelEn: "Navy raglan hoodie", emoji: "🔷" },
+  { id: "pajama-cotton-set", labelAr: "بجامة قطن مريحة", labelEn: "Cotton pajama set", emoji: "🌙" },
+  { id: "pajama-silk-luxury", labelAr: "بجامة حرير فاخرة", labelEn: "Luxury silk pajamas", emoji: "🛌" },
+  { id: "shorts-tank-gym", labelAr: "شورت وفانلة جيم", labelEn: "Gym shorts & tank", emoji: "💪" },
 ] as const;
 
 const EYEWEAR = [
@@ -131,6 +147,7 @@ const OutfitterStudio = () => {
     if (category === "heritage") setVariant("galabiya-imma");
     if (category === "formal") setVariant("classic");
     if (category === "casual") setVariant("tshirt-jeans");
+    if (category === "sport") setVariant("tracksuit-grey-black");
   }, [category]);
 
   const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +175,7 @@ const OutfitterStudio = () => {
     if (!meta.hasFace) toast({ title: isRtl ? "ما لقينا وجه واضح" : "No clear face" });
   };
 
-  const variants = category === "heritage" ? HERITAGE_OPTIONS : category === "formal" ? FORMAL_OPTIONS : CASUAL_OPTIONS;
+  const variants = category === "heritage" ? HERITAGE_OPTIONS : category === "formal" ? FORMAL_OPTIONS : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
 
   const reallyRun = async () => {
     if (!image) return;
@@ -337,7 +354,7 @@ const OutfitterStudio = () => {
       {/* Categories */}
       <div className="px-4 mt-5">
         <p className="text-[11px] font-bold font-cairo text-gold mb-2">{isRtl ? "اختر النوع" : "Outfit Category"}</p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {CATEGORIES.map((c) => (
             <button
               key={c.id}
