@@ -59,6 +59,21 @@ const CASUAL_OPTIONS = [
   { id: "denim-jacket", labelAr: "جاكيت جينز", labelEn: "Denim jacket", emoji: "🧥" },
 ] as const;
 
+const SPORT_OPTIONS = [
+  { id: "tracksuit-grey-black", labelAr: "تراك سوت رمادي وأسود", labelEn: "Grey & black tracksuit", emoji: "🎽" },
+  { id: "tracksuit-dragon-navy", labelAr: "طقم دراغون كحلي", labelEn: "Dragon navy set", emoji: "🐉" },
+  { id: "tracksuit-dragon-brown", labelAr: "طقم دراغون بني", labelEn: "Dragon brown set", emoji: "🟤" },
+  { id: "tracksuit-adidas-white", labelAr: "تراك سوت أبيض بخطوط", labelEn: "White striped tracksuit", emoji: "⚪" },
+  { id: "hoodie-dragon-black", labelAr: "هودي تنين أسود", labelEn: "Black dragon hoodie", emoji: "🖤" },
+  { id: "hoodie-sakura-white", labelAr: "هودي ساكورا أبيض", labelEn: "White sakura hoodie", emoji: "🌸" },
+  { id: "hoodie-berserk-white", labelAr: "هودي أنمي أبيض", labelEn: "White anime print hoodie", emoji: "⚔️" },
+  { id: "hoodie-anime-black", labelAr: "هودي أنمي أسود", labelEn: "Black anime hoodie", emoji: "⚡" },
+  { id: "hoodie-jujutsu-navy", labelAr: "هودي راجلن كحلي", labelEn: "Navy raglan hoodie", emoji: "🔷" },
+  { id: "pajama-cotton-set", labelAr: "بجامة قطن مريحة", labelEn: "Cotton pajama set", emoji: "🌙" },
+  { id: "pajama-silk-luxury", labelAr: "بجامة حرير فاخرة", labelEn: "Luxury silk pajamas", emoji: "🛌" },
+  { id: "shorts-tank-gym", labelAr: "شورت وفانلة جيم", labelEn: "Gym shorts & tank", emoji: "💪" },
+] as const;
+
 const EYEWEAR = [
   { id: "none", labelAr: "بدون", labelEn: "None" },
   { id: "sunglasses-aviator", labelAr: "شمسية أفياتور", labelEn: "Aviator shades" },
