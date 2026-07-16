@@ -57,11 +57,16 @@ const HAIR_PROMPTS: Record<string, string> = {
   "ssj-gold": "Transform hair into Super Saiyan golden upright flame-shaped spiky hair, glowing yellow.",
   keep: "Keep the original hairstyle but redrawn in the chosen anime style.",
 };
+// Props are POSE-ADAPTIVE. The AI must reuse one of the subject's EXISTING hands
+// (repositioning the arm naturally within anatomically plausible range) — never
+// grow an extra arm. If no hand is free or visible in the frame, the "prop" must
+// be rendered as a floating energy manifestation next to the subject instead of
+// a physical held object. Never duplicate limbs, fingers, or hands.
 const PROP_PROMPTS: Record<string, string> = {
   none: "",
-  saber: "Place a glowing energy saber-style sword held firmly in the subject's hand, matching the detected hand position, with bright blade glow casting light on the face.",
-  rasengan: "Place a swirling blue Rasengan energy sphere held in the subject's open palm, matching the detected hand position, with cyan rim light on the hand and face.",
-  staff: "Place a mystical shonen battle staff in the subject's hand, with subtle glowing runes.",
+  saber: "Give the subject a glowing energy saber-style sword. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is already visible and free, gracefully reposition that same arm so the hand grips the saber hilt in a natural, anatomically correct way (elbow, shoulder, and wrist must remain consistent with a single body). If both hands are occupied, hidden, or cropped out of the frame, render the saber as a floating blade of energy hovering beside the subject instead of a held sword. The blade casts cyan/white rim light on the face and torso.",
+  rasengan: "Give the subject a swirling blue Rasengan chakra sphere. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is visible and free, reposition that same arm so the open palm faces up/forward holding the sphere, keeping the shoulder-elbow-wrist chain anatomically consistent. If no hand is free or visible, render the Rasengan as a floating chakra orb hovering beside the subject with cyan energy trails. Cyan rim light on hand and face.",
+  staff: "Give the subject a mystical shonen battle staff with subtle glowing runes. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is visible and free, reposition that arm so the fingers wrap around the staff naturally. If no hand is free or visible, render the staff as a floating rune-lit staff hovering vertically beside the subject instead of held.",
 };
 
 // ===== Outfitter Studio (ControlNet-style pose-locked outfit composer) =====
@@ -184,16 +189,22 @@ const buildOutfitterPrompt = (p: {
 const buildAnimePrompt = (p: {
   style?: string; hero?: string; aura?: string; hair?: string; prop?: string;
 }) => {
+  const hasProp = p.prop && p.prop !== "none" && PROP_PROMPTS[p.prop];
   const parts = [
     "Transform the person in this photo into a high-fidelity Japanese Shonen anime illustration.",
     "Strictly preserve the subject's base pose, head tilt, facial expression, and any headphones or eyewear they are wearing.",
-    "Preserve recognizable facial identity (eyes shape, face structure) while restyling.",
+    "Preserve recognizable facial identity (natural eye shape, symmetric facial features, one nose, one mouth, correct ear count). No warped, melted, or distorted face. No duplicated facial features.",
+    // Anatomy guardrails — the single most important constraint
+    "STRICT ANATOMY RULES: The subject has exactly ONE head, TWO arms, TWO hands with FIVE fingers each, and TWO legs. Absolutely NO extra limbs, NO third arm, NO third hand, NO floating disembodied hands, NO duplicated fingers, NO merged limbs. If a limb is cropped or hidden in the original photo, keep it cropped/hidden — do not invent a new visible limb to hold objects or make poses.",
     STYLE_PROMPTS[p.style ?? ""] ?? STYLE_PROMPTS["dbz"],
     p.hero && HERO_PROMPTS[p.hero] ? HERO_PROMPTS[p.hero] : "",
     p.hair && HAIR_PROMPTS[p.hair] ? HAIR_PROMPTS[p.hair] : "",
     p.aura && AURA_PROMPTS[p.aura] ? AURA_PROMPTS[p.aura] : "",
-    p.prop && PROP_PROMPTS[p.prop] ? PROP_PROMPTS[p.prop] : "",
-    "Zero tolerance for generic 'anime filter' look. Output a clean, professional, publishable Shonen anime illustration with crisp inking, cel shading, dynamic composition, and accurate hero-specific styling.",
+    hasProp ? PROP_PROMPTS[p.prop!] : "",
+    hasProp
+      ? "POSE ADAPTATION FOR THE PROP: analyze which of the subject's hands is most visible and free in the original photo. Use THAT existing hand — gently re-articulate the same arm (shoulder → elbow → wrist within a natural range of motion) so it holds the item convincingly. Never spawn a new arm from the torso, shoulder, or back. If both hands are already occupied (in pockets, holding something, behind back, or off-frame), DO NOT add the prop as a held object — render it as a floating energy manifestation next to the subject instead."
+      : "",
+    "Zero tolerance for generic 'anime filter' look. Output a clean, professional, publishable Shonen anime illustration with crisp inking, cel shading, dynamic composition, correct anatomy, and accurate hero-specific styling.",
   ].filter(Boolean);
   return parts.join(" ");
 };
