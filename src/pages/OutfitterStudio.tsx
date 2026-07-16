@@ -147,6 +147,7 @@ const OutfitterStudio = () => {
     if (category === "heritage") setVariant("galabiya-imma");
     if (category === "formal") setVariant("classic");
     if (category === "casual") setVariant("tshirt-jeans");
+    if (category === "sport") setVariant("tracksuit-grey-black");
   }, [category]);
 
   const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
