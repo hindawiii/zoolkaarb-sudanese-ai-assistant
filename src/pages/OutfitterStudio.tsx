@@ -175,7 +175,7 @@ const OutfitterStudio = () => {
     if (!meta.hasFace) toast({ title: isRtl ? "ما لقينا وجه واضح" : "No clear face" });
   };
 
-  const variants = category === "heritage" ? HERITAGE_OPTIONS : category === "formal" ? FORMAL_OPTIONS : CASUAL_OPTIONS;
+  const variants = category === "heritage" ? HERITAGE_OPTIONS : category === "formal" ? FORMAL_OPTIONS : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
 
   const reallyRun = async () => {
     if (!image) return;
