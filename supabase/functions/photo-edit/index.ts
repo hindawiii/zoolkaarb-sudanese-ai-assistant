@@ -189,16 +189,22 @@ const buildOutfitterPrompt = (p: {
 const buildAnimePrompt = (p: {
   style?: string; hero?: string; aura?: string; hair?: string; prop?: string;
 }) => {
+  const hasProp = p.prop && p.prop !== "none" && PROP_PROMPTS[p.prop];
   const parts = [
     "Transform the person in this photo into a high-fidelity Japanese Shonen anime illustration.",
     "Strictly preserve the subject's base pose, head tilt, facial expression, and any headphones or eyewear they are wearing.",
-    "Preserve recognizable facial identity (eyes shape, face structure) while restyling.",
+    "Preserve recognizable facial identity (natural eye shape, symmetric facial features, one nose, one mouth, correct ear count). No warped, melted, or distorted face. No duplicated facial features.",
+    // Anatomy guardrails — the single most important constraint
+    "STRICT ANATOMY RULES: The subject has exactly ONE head, TWO arms, TWO hands with FIVE fingers each, and TWO legs. Absolutely NO extra limbs, NO third arm, NO third hand, NO floating disembodied hands, NO duplicated fingers, NO merged limbs. If a limb is cropped or hidden in the original photo, keep it cropped/hidden — do not invent a new visible limb to hold objects or make poses.",
     STYLE_PROMPTS[p.style ?? ""] ?? STYLE_PROMPTS["dbz"],
     p.hero && HERO_PROMPTS[p.hero] ? HERO_PROMPTS[p.hero] : "",
     p.hair && HAIR_PROMPTS[p.hair] ? HAIR_PROMPTS[p.hair] : "",
     p.aura && AURA_PROMPTS[p.aura] ? AURA_PROMPTS[p.aura] : "",
-    p.prop && PROP_PROMPTS[p.prop] ? PROP_PROMPTS[p.prop] : "",
-    "Zero tolerance for generic 'anime filter' look. Output a clean, professional, publishable Shonen anime illustration with crisp inking, cel shading, dynamic composition, and accurate hero-specific styling.",
+    hasProp ? PROP_PROMPTS[p.prop!] : "",
+    hasProp
+      ? "POSE ADAPTATION FOR THE PROP: analyze which of the subject's hands is most visible and free in the original photo. Use THAT existing hand — gently re-articulate the same arm (shoulder → elbow → wrist within a natural range of motion) so it holds the item convincingly. Never spawn a new arm from the torso, shoulder, or back. If both hands are already occupied (in pockets, holding something, behind back, or off-frame), DO NOT add the prop as a held object — render it as a floating energy manifestation next to the subject instead."
+      : "",
+    "Zero tolerance for generic 'anime filter' look. Output a clean, professional, publishable Shonen anime illustration with crisp inking, cel shading, dynamic composition, correct anatomy, and accurate hero-specific styling.",
   ].filter(Boolean);
   return parts.join(" ");
 };
