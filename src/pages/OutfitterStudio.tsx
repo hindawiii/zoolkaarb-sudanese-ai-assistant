@@ -354,7 +354,7 @@ const OutfitterStudio = () => {
       {/* Categories */}
       <div className="px-4 mt-5">
         <p className="text-[11px] font-bold font-cairo text-gold mb-2">{isRtl ? "اختر النوع" : "Outfit Category"}</p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {CATEGORIES.map((c) => (
             <button
               key={c.id}
