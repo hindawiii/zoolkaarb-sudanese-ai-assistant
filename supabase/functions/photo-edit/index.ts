@@ -57,11 +57,16 @@ const HAIR_PROMPTS: Record<string, string> = {
   "ssj-gold": "Transform hair into Super Saiyan golden upright flame-shaped spiky hair, glowing yellow.",
   keep: "Keep the original hairstyle but redrawn in the chosen anime style.",
 };
+// Props are POSE-ADAPTIVE. The AI must reuse one of the subject's EXISTING hands
+// (repositioning the arm naturally within anatomically plausible range) — never
+// grow an extra arm. If no hand is free or visible in the frame, the "prop" must
+// be rendered as a floating energy manifestation next to the subject instead of
+// a physical held object. Never duplicate limbs, fingers, or hands.
 const PROP_PROMPTS: Record<string, string> = {
   none: "",
-  saber: "Place a glowing energy saber-style sword held firmly in the subject's hand, matching the detected hand position, with bright blade glow casting light on the face.",
-  rasengan: "Place a swirling blue Rasengan energy sphere held in the subject's open palm, matching the detected hand position, with cyan rim light on the hand and face.",
-  staff: "Place a mystical shonen battle staff in the subject's hand, with subtle glowing runes.",
+  saber: "Give the subject a glowing energy saber-style sword. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is already visible and free, gracefully reposition that same arm so the hand grips the saber hilt in a natural, anatomically correct way (elbow, shoulder, and wrist must remain consistent with a single body). If both hands are occupied, hidden, or cropped out of the frame, render the saber as a floating blade of energy hovering beside the subject instead of a held sword. The blade casts cyan/white rim light on the face and torso.",
+  rasengan: "Give the subject a swirling blue Rasengan chakra sphere. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is visible and free, reposition that same arm so the open palm faces up/forward holding the sphere, keeping the shoulder-elbow-wrist chain anatomically consistent. If no hand is free or visible, render the Rasengan as a floating chakra orb hovering beside the subject with cyan energy trails. Cyan rim light on hand and face.",
+  staff: "Give the subject a mystical shonen battle staff with subtle glowing runes. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is visible and free, reposition that arm so the fingers wrap around the staff naturally. If no hand is free or visible, render the staff as a floating rune-lit staff hovering vertically beside the subject instead of held.",
 };
 
 // ===== Outfitter Studio (ControlNet-style pose-locked outfit composer) =====
