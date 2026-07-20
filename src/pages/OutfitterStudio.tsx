@@ -257,7 +257,7 @@ const OutfitterStudio = () => {
     } catch { /* ignore */ }
   };
 
-  const reset = () => { setImage(null); setOutput(null); };
+  const reset = () => { setImage(null); setOutput(null); setPendingOutput(null); };
 
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-32" dir={isRtl ? "rtl" : "ltr"}>
