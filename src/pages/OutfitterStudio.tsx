@@ -123,6 +123,7 @@ const OutfitterStudio = () => {
 
   const [image, setImage] = useState<string | null>(null);
   const [output, setOutput] = useState<string | null>(null);
+  const [pendingOutput, setPendingOutput] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [adOpen, setAdOpen] = useState(false);
