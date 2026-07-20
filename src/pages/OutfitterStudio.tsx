@@ -180,21 +180,16 @@ const OutfitterStudio = () => {
 
   const reallyRun = async () => {
     if (!image) return;
-    setLoading(true);
+    setLoading(true); setPendingOutput(null);
     try {
       const { data, error } = await supabase.functions.invoke("photo-edit", {
         body: {
           imageBase64: image,
           action: "outfitter-studio",
           outfitter: {
-            category,
-            variant,
-            eyewear,
-            headwear,
-            mixMatch,
-            mixTarget: mixMatch ? mixTarget : undefined,
-            pose,
-            framing,
+            category, variant, eyewear, headwear,
+            mixMatch, mixTarget: mixMatch ? mixTarget : undefined,
+            pose, framing,
             includeShoes: framing === "full" && includeShoes,
             includeCane: framing === "full" && includeCane,
           },
@@ -216,16 +211,24 @@ const OutfitterStudio = () => {
       if (!data?.imageUrl) throw new Error("No image");
       setAiCreditsExhausted(false);
       const watermarked = await addZoolWatermark(data.imageUrl);
-      setOutput(watermarked);
-      const next = consumeUse(TOOL_ID);
-      setRemaining(next);
-      toast({ title: isRtl ? "جاهزة!" : "Done!", description: isRtl ? "اللبس انضبط" : "Outfit applied" });
+      setPendingOutput(watermarked);
+      toast({ title: isRtl ? "معاينة جاهزة" : "Preview ready", description: isRtl ? "راجع اللبس قبل الحفظ" : "Review before saving" });
     } catch (err) {
       toast({ title: isRtl ? "ما زبط" : "Failed", description: err instanceof Error ? err.message : "Error", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
+
+  const acceptPreview = () => {
+    if (!pendingOutput) return;
+    setOutput(pendingOutput);
+    setPendingOutput(null);
+    const next = consumeUse(TOOL_ID);
+    setRemaining(next);
+    toast({ title: isRtl ? "تم الحفظ" : "Saved" });
+  };
+  const rejectPreview = () => { setPendingOutput(null); };
 
   const triggerRun = () => {
     if (loading || !image) return toast({ title: isRtl ? "ارفع صورة الأول" : "Upload an image first", variant: "destructive" });
