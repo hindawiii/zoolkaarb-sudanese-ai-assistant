@@ -280,6 +280,20 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    // Standalone anatomy verification action (called after generation).
+    if (action === "verify-anime-anatomy") {
+      const toDataUrl2 = (s: string) => s.startsWith("data:") ? s : `data:image/png;base64,${s}`;
+      const verdict = await verifyAnatomy(toDataUrl2(imageList[0]), LOVABLE_API_KEY);
+      return new Response(JSON.stringify(verdict), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     let prompt: string | undefined = PROMPTS[action];
     if (action === "anime-studio") {
       prompt = buildAnimePrompt(anime ?? {});
@@ -293,9 +307,6 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const toDataUrl = (s: string) =>
       s.startsWith("data:") ? s : `data:image/png;base64,${s}`;
