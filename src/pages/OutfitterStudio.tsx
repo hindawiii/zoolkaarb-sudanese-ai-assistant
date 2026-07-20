@@ -1,4 +1,4 @@
-import { ArrowLeft, Upload, Download, Loader2, RotateCcw, Share2, Sparkles, Shirt, Crown, Glasses, Wand2, Check } from "lucide-react";
+import { ArrowLeft, Upload, Download, Loader2, RotateCcw, Share2, Sparkles, Shirt, Crown, Glasses, Wand2, Check, Eye, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
