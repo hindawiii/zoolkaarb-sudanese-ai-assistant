@@ -281,21 +281,26 @@ const OutfitterStudio = () => {
 
       {/* Preview */}
       <div className="px-4 mt-4">
-        {output || loading ? (
+        {output ? (
           <div className="rounded-3xl border border-gold/30 bg-card overflow-hidden relative">
-            {output ? (
-              <img src={output} alt="result" className="w-full h-auto block" />
-            ) : (
-              <div className="aspect-square flex flex-col items-center justify-center gap-3 bg-muted/30">
-                <Loader2 className="w-8 h-8 text-gold animate-spin" />
-                <p className="text-xs text-foreground font-cairo text-center px-6 leading-relaxed">
-                  {isRtl ? "الخال شغال.. بظبط في الملابس" : "Tailoring your new look..."}
-                </p>
-                <div className="w-2/3 h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full gradient-gold animate-pulse" style={{ width: "70%" }} />
-                </div>
-              </div>
-            )}
+            <img src={output} alt="result" className="w-full h-auto block" />
+          </div>
+        ) : pendingOutput ? (
+          <div className="rounded-3xl border-2 border-gold bg-card overflow-hidden relative">
+            <img src={pendingOutput} alt="preview" className="w-full h-auto block" />
+            <div className="absolute top-2 start-2 px-2 py-1 rounded-full bg-gold/95 backdrop-blur text-[10px] font-bold font-cairo text-primary-foreground flex items-center gap-1">
+              <Eye className="w-3 h-3" /> {isRtl ? "معاينة قبل الحفظ" : "Preview before saving"}
+            </div>
+          </div>
+        ) : loading ? (
+          <div className="rounded-3xl border border-gold/30 bg-card overflow-hidden aspect-square flex flex-col items-center justify-center gap-3 bg-muted/30">
+            <Loader2 className="w-8 h-8 text-gold animate-spin" />
+            <p className="text-xs text-foreground font-cairo text-center px-6 leading-relaxed">
+              {isRtl ? "الخال شغال.. بظبط في الملابس" : "Tailoring your new look..."}
+            </p>
+            <div className="w-2/3 h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-full gradient-gold animate-pulse" style={{ width: "70%" }} />
+            </div>
           </div>
         ) : image ? (
           <div className="rounded-3xl border border-gold/30 bg-card overflow-hidden relative">
@@ -325,6 +330,20 @@ const OutfitterStudio = () => {
               {isRtl ? "بنحافظ على وضعيتك بالظبط (وقوف/جلوس)" : "We preserve your exact pose (sit/lean/stand)"}
             </p>
           </button>
+        )}
+
+        {pendingOutput && !output && (
+          <div className="flex gap-2 mt-3">
+            <button onClick={rejectPreview} className="flex-1 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold text-foreground active:scale-95 flex items-center justify-center gap-1.5">
+              <X className="w-3.5 h-3.5" />{isRtl ? "رفض" : "Reject"}
+            </button>
+            <button onClick={reallyRun} disabled={loading} className="flex-1 py-2.5 rounded-xl bg-secondary text-secondary-foreground text-xs font-semibold active:scale-95 flex items-center justify-center gap-1.5">
+              <RotateCcw className="w-3.5 h-3.5" />{isRtl ? "أعِد التوليد" : "Regenerate"}
+            </button>
+            <button onClick={acceptPreview} className="flex-1 py-2.5 rounded-xl gradient-gold text-primary-foreground text-xs font-bold active:scale-95 flex items-center justify-center gap-1.5">
+              <Check className="w-3.5 h-3.5" />{isRtl ? "قبول وحفظ" : "Accept"}
+            </button>
+          </div>
         )}
 
         {output && (
