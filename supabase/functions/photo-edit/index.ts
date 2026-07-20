@@ -188,25 +188,80 @@ const buildOutfitterPrompt = (p: {
 
 const buildAnimePrompt = (p: {
   style?: string; hero?: string; aura?: string; hair?: string; prop?: string;
+  bodyPose?: string; visibleHand?: string; safeMode?: boolean;
 }) => {
   const hasProp = p.prop && p.prop !== "none" && PROP_PROMPTS[p.prop];
+  const forceFloating = !!p.safeMode || p.visibleHand === "none";
+  const bodyPoseHint =
+    p.bodyPose === "standing" ? "The subject is standing upright — preserve the full standing posture with feet planted." :
+    p.bodyPose === "half" ? "The subject is framed from the waist / chest up (half-body portrait) — do NOT invent legs, feet, or ground beyond the original crop." :
+    p.bodyPose === "sitting" ? "The subject is seated — preserve the seated posture, folded legs, and any chair/surface underneath exactly as in the source photo." :
+    "Preserve the subject's natural body posture as it appears in the source photo.";
+  const handHint =
+    p.visibleHand === "left" ? "Only the subject's LEFT hand is clearly visible and free — if a prop is added it MUST be held by that left hand only; the right arm stays exactly where it is." :
+    p.visibleHand === "right" ? "Only the subject's RIGHT hand is clearly visible and free — if a prop is added it MUST be held by that right hand only; the left arm stays exactly where it is." :
+    p.visibleHand === "both" ? "Both hands are visible — you may use either one to hold the prop, but never both and never spawn a new arm." :
+    p.visibleHand === "none" ? "NO hands are clearly visible or free. DO NOT render a held object — the prop MUST appear as floating energy beside the subject instead." :
+    "";
+  const propBlock = hasProp
+    ? (forceFloating
+        ? `${PROP_PROMPTS[p.prop!]} SAFE FALLBACK MODE: render the prop STRICTLY as a floating energy manifestation hovering beside the subject in the direction the body is facing — do NOT render any held-object grip, do NOT reposition any arm, do NOT add a new limb.`
+        : PROP_PROMPTS[p.prop!])
+    : "";
   const parts = [
     "Transform the person in this photo into a high-fidelity Japanese Shonen anime illustration.",
     "Strictly preserve the subject's base pose, head tilt, facial expression, and any headphones or eyewear they are wearing.",
     "Preserve recognizable facial identity (natural eye shape, symmetric facial features, one nose, one mouth, correct ear count). No warped, melted, or distorted face. No duplicated facial features.",
-    // Anatomy guardrails — the single most important constraint
     "STRICT ANATOMY RULES: The subject has exactly ONE head, TWO arms, TWO hands with FIVE fingers each, and TWO legs. Absolutely NO extra limbs, NO third arm, NO third hand, NO floating disembodied hands, NO duplicated fingers, NO merged limbs. If a limb is cropped or hidden in the original photo, keep it cropped/hidden — do not invent a new visible limb to hold objects or make poses.",
+    bodyPoseHint,
+    handHint,
     STYLE_PROMPTS[p.style ?? ""] ?? STYLE_PROMPTS["dbz"],
     p.hero && HERO_PROMPTS[p.hero] ? HERO_PROMPTS[p.hero] : "",
     p.hair && HAIR_PROMPTS[p.hair] ? HAIR_PROMPTS[p.hair] : "",
     p.aura && AURA_PROMPTS[p.aura] ? AURA_PROMPTS[p.aura] : "",
-    hasProp ? PROP_PROMPTS[p.prop!] : "",
-    hasProp
-      ? "POSE ADAPTATION FOR THE PROP: analyze which of the subject's hands is most visible and free in the original photo. Use THAT existing hand — gently re-articulate the same arm (shoulder → elbow → wrist within a natural range of motion) so it holds the item convincingly. Never spawn a new arm from the torso, shoulder, or back. If both hands are already occupied (in pockets, holding something, behind back, or off-frame), DO NOT add the prop as a held object — render it as a floating energy manifestation next to the subject instead."
+    propBlock,
+    hasProp && !forceFloating
+      ? "POSE ADAPTATION FOR THE PROP: analyze which of the subject's hands is most visible and free. Use THAT existing hand — gently re-articulate the same arm (shoulder → elbow → wrist within a natural range of motion) so it holds the item convincingly. Never spawn a new arm from the torso, shoulder, or back. If both hands are already occupied (in pockets, holding something, behind back, or off-frame), render the prop as floating energy instead."
       : "",
     "Zero tolerance for generic 'anime filter' look. Output a clean, professional, publishable Shonen anime illustration with crisp inking, cel shading, dynamic composition, correct anatomy, and accurate hero-specific styling.",
   ].filter(Boolean);
   return parts.join(" ");
+};
+
+// Post-generation anatomy safety check (text-only LLM verdict).
+const verifyAnatomy = async (imageDataUrl: string, apiKey: string): Promise<{
+  ok: boolean; issues: string[]; suggestedProp?: string;
+}> => {
+  try {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [{
+          role: "user",
+          content: [
+            { type: "text", text: "You are an anatomy safety checker for anime image generation. Inspect the image and reply with STRICT JSON only, no prose. Schema: {\"ok\": boolean, \"issues\": string[], \"suggestedProp\": \"none\"|\"saber\"|\"rasengan\"|\"staff\"}. Set ok=false if you detect ANY of: third arm/hand, extra floating disembodied hand, more than 5 fingers on a hand, merged/fused limbs, duplicated faces, or a held prop that clearly grows from the wrong shoulder. If ok=false, suggest \"none\" to drop the prop." },
+            { type: "image_url", image_url: { url: imageDataUrl } },
+          ],
+        }],
+      }),
+    });
+    if (!res.ok) return { ok: true, issues: [] };
+    const data = await res.json();
+    const raw: string = data?.choices?.[0]?.message?.content ?? "";
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return { ok: true, issues: [] };
+    const parsed = JSON.parse(jsonMatch[0]);
+    return {
+      ok: !!parsed.ok,
+      issues: Array.isArray(parsed.issues) ? parsed.issues.slice(0, 5) : [],
+      suggestedProp: typeof parsed.suggestedProp === "string" ? parsed.suggestedProp : undefined,
+    };
+  } catch (e) {
+    console.error("verifyAnatomy failed", e);
+    return { ok: true, issues: [] };
+  }
 };
 
 Deno.serve(async (req) => {
