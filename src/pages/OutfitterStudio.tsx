@@ -562,16 +562,16 @@ const OutfitterStudio = () => {
         <div className="max-w-md mx-auto px-3 py-3">
           <button
             onClick={triggerRun}
-            disabled={loading || !image || analyzing}
+            disabled={loading || !image || analyzing || !!pendingOutput}
             className="w-full py-3.5 rounded-xl gradient-gold text-primary-foreground font-bold font-cairo disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {isRtl ? "غيّر اللبس" : "Apply Outfit"}
+            {pendingOutput ? (isRtl ? "راجع المعاينة أعلاه" : "Review preview above") : (isRtl ? "غيّر اللبس" : "Apply Outfit")}
           </button>
           <p className="text-[10px] text-center text-muted-foreground font-cairo mt-1.5">
             {isRtl
-              ? remaining > 0 ? `${remaining} محاولات مجانية متبقية` : "خلصت — شوف إعلان قصير +3"
-              : remaining > 0 ? `${remaining} free uses left` : "Out — short ad for +3"}
+              ? remaining > 0 ? `${remaining} محاولات — يخصم فقط بعد "قبول وحفظ"` : "خلصت — شوف إعلان قصير +3"
+              : remaining > 0 ? `${remaining} free uses — charged only on Accept` : "Out — short ad for +3"}
           </p>
         </div>
       </div>
