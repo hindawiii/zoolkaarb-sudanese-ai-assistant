@@ -1,4 +1,4 @@
-import { ArrowLeft, Upload, Download, Loader2, RotateCcw, Share2, Sparkles, Shirt, Crown, Glasses, Wand2, Check } from "lucide-react";
+import { ArrowLeft, Upload, Download, Loader2, RotateCcw, Share2, Sparkles, Shirt, Crown, Glasses, Wand2, Check, Eye, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -123,6 +123,7 @@ const OutfitterStudio = () => {
 
   const [image, setImage] = useState<string | null>(null);
   const [output, setOutput] = useState<string | null>(null);
+  const [pendingOutput, setPendingOutput] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [adOpen, setAdOpen] = useState(false);
@@ -179,21 +180,16 @@ const OutfitterStudio = () => {
 
   const reallyRun = async () => {
     if (!image) return;
-    setLoading(true);
+    setLoading(true); setPendingOutput(null);
     try {
       const { data, error } = await supabase.functions.invoke("photo-edit", {
         body: {
           imageBase64: image,
           action: "outfitter-studio",
           outfitter: {
-            category,
-            variant,
-            eyewear,
-            headwear,
-            mixMatch,
-            mixTarget: mixMatch ? mixTarget : undefined,
-            pose,
-            framing,
+            category, variant, eyewear, headwear,
+            mixMatch, mixTarget: mixMatch ? mixTarget : undefined,
+            pose, framing,
             includeShoes: framing === "full" && includeShoes,
             includeCane: framing === "full" && includeCane,
           },
@@ -215,16 +211,24 @@ const OutfitterStudio = () => {
       if (!data?.imageUrl) throw new Error("No image");
       setAiCreditsExhausted(false);
       const watermarked = await addZoolWatermark(data.imageUrl);
-      setOutput(watermarked);
-      const next = consumeUse(TOOL_ID);
-      setRemaining(next);
-      toast({ title: isRtl ? "جاهزة!" : "Done!", description: isRtl ? "اللبس انضبط" : "Outfit applied" });
+      setPendingOutput(watermarked);
+      toast({ title: isRtl ? "معاينة جاهزة" : "Preview ready", description: isRtl ? "راجع اللبس قبل الحفظ" : "Review before saving" });
     } catch (err) {
       toast({ title: isRtl ? "ما زبط" : "Failed", description: err instanceof Error ? err.message : "Error", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
+
+  const acceptPreview = () => {
+    if (!pendingOutput) return;
+    setOutput(pendingOutput);
+    setPendingOutput(null);
+    const next = consumeUse(TOOL_ID);
+    setRemaining(next);
+    toast({ title: isRtl ? "تم الحفظ" : "Saved" });
+  };
+  const rejectPreview = () => { setPendingOutput(null); };
 
   const triggerRun = () => {
     if (loading || !image) return toast({ title: isRtl ? "ارفع صورة الأول" : "Upload an image first", variant: "destructive" });
@@ -253,7 +257,7 @@ const OutfitterStudio = () => {
     } catch { /* ignore */ }
   };
 
-  const reset = () => { setImage(null); setOutput(null); };
+  const reset = () => { setImage(null); setOutput(null); setPendingOutput(null); };
 
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-32" dir={isRtl ? "rtl" : "ltr"}>
@@ -277,21 +281,26 @@ const OutfitterStudio = () => {
 
       {/* Preview */}
       <div className="px-4 mt-4">
-        {output || loading ? (
+        {output ? (
           <div className="rounded-3xl border border-gold/30 bg-card overflow-hidden relative">
-            {output ? (
-              <img src={output} alt="result" className="w-full h-auto block" />
-            ) : (
-              <div className="aspect-square flex flex-col items-center justify-center gap-3 bg-muted/30">
-                <Loader2 className="w-8 h-8 text-gold animate-spin" />
-                <p className="text-xs text-foreground font-cairo text-center px-6 leading-relaxed">
-                  {isRtl ? "الخال شغال.. بظبط في الملابس" : "Tailoring your new look..."}
-                </p>
-                <div className="w-2/3 h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full gradient-gold animate-pulse" style={{ width: "70%" }} />
-                </div>
-              </div>
-            )}
+            <img src={output} alt="result" className="w-full h-auto block" />
+          </div>
+        ) : pendingOutput ? (
+          <div className="rounded-3xl border-2 border-gold bg-card overflow-hidden relative">
+            <img src={pendingOutput} alt="preview" className="w-full h-auto block" />
+            <div className="absolute top-2 start-2 px-2 py-1 rounded-full bg-gold/95 backdrop-blur text-[10px] font-bold font-cairo text-primary-foreground flex items-center gap-1">
+              <Eye className="w-3 h-3" /> {isRtl ? "معاينة قبل الحفظ" : "Preview before saving"}
+            </div>
+          </div>
+        ) : loading ? (
+          <div className="rounded-3xl border border-gold/30 bg-card overflow-hidden aspect-square flex flex-col items-center justify-center gap-3 bg-muted/30">
+            <Loader2 className="w-8 h-8 text-gold animate-spin" />
+            <p className="text-xs text-foreground font-cairo text-center px-6 leading-relaxed">
+              {isRtl ? "الخال شغال.. بظبط في الملابس" : "Tailoring your new look..."}
+            </p>
+            <div className="w-2/3 h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-full gradient-gold animate-pulse" style={{ width: "70%" }} />
+            </div>
           </div>
         ) : image ? (
           <div className="rounded-3xl border border-gold/30 bg-card overflow-hidden relative">
@@ -321,6 +330,20 @@ const OutfitterStudio = () => {
               {isRtl ? "بنحافظ على وضعيتك بالظبط (وقوف/جلوس)" : "We preserve your exact pose (sit/lean/stand)"}
             </p>
           </button>
+        )}
+
+        {pendingOutput && !output && (
+          <div className="flex gap-2 mt-3">
+            <button onClick={rejectPreview} className="flex-1 py-2.5 rounded-xl bg-card border border-border text-xs font-semibold text-foreground active:scale-95 flex items-center justify-center gap-1.5">
+              <X className="w-3.5 h-3.5" />{isRtl ? "رفض" : "Reject"}
+            </button>
+            <button onClick={reallyRun} disabled={loading} className="flex-1 py-2.5 rounded-xl bg-secondary text-secondary-foreground text-xs font-semibold active:scale-95 flex items-center justify-center gap-1.5">
+              <RotateCcw className="w-3.5 h-3.5" />{isRtl ? "أعِد التوليد" : "Regenerate"}
+            </button>
+            <button onClick={acceptPreview} className="flex-1 py-2.5 rounded-xl gradient-gold text-primary-foreground text-xs font-bold active:scale-95 flex items-center justify-center gap-1.5">
+              <Check className="w-3.5 h-3.5" />{isRtl ? "قبول وحفظ" : "Accept"}
+            </button>
+          </div>
         )}
 
         {output && (
@@ -539,16 +562,16 @@ const OutfitterStudio = () => {
         <div className="max-w-md mx-auto px-3 py-3">
           <button
             onClick={triggerRun}
-            disabled={loading || !image || analyzing}
+            disabled={loading || !image || analyzing || !!pendingOutput}
             className="w-full py-3.5 rounded-xl gradient-gold text-primary-foreground font-bold font-cairo disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {isRtl ? "غيّر اللبس" : "Apply Outfit"}
+            {pendingOutput ? (isRtl ? "راجع المعاينة أعلاه" : "Review preview above") : (isRtl ? "غيّر اللبس" : "Apply Outfit")}
           </button>
           <p className="text-[10px] text-center text-muted-foreground font-cairo mt-1.5">
             {isRtl
-              ? remaining > 0 ? `${remaining} محاولات مجانية متبقية` : "خلصت — شوف إعلان قصير +3"
-              : remaining > 0 ? `${remaining} free uses left` : "Out — short ad for +3"}
+              ? remaining > 0 ? `${remaining} محاولات — يخصم فقط بعد "قبول وحفظ"` : "خلصت — شوف إعلان قصير +3"
+              : remaining > 0 ? `${remaining} free uses — charged only on Accept` : "Out — short ad for +3"}
           </p>
         </div>
       </div>
