@@ -57,7 +57,14 @@ const CASUAL_OPTIONS = [
   { id: "hoodie", labelAr: "هودي ستريت", labelEn: "Streetwear hoodie", emoji: "🧢" },
   { id: "polo", labelAr: "بولو وشورت", labelEn: "Polo & shorts", emoji: "🩳" },
   { id: "denim-jacket", labelAr: "جاكيت جينز", labelEn: "Denim jacket", emoji: "🧥" },
+  { id: "black-overshirt-set", labelAr: "أوفر شيرت أسود", labelEn: "Black overshirt set", emoji: "🖤" },
+  { id: "brown-overshirt-beige", labelAr: "أوفر شيرت بني وبيج", labelEn: "Brown overshirt + beige", emoji: "🟤" },
+  { id: "navy-overshirt-cream", labelAr: "أوفر شيرت كحلي وكريمي", labelEn: "Navy overshirt + cream", emoji: "🔷" },
+  { id: "charcoal-overshirt-black", labelAr: "أوفر شيرت رمادي وأسود", labelEn: "Charcoal overshirt", emoji: "🩶" },
+  { id: "grey-bomber-black", labelAr: "بومبر رمادي وجينز أسود", labelEn: "Grey bomber + black", emoji: "🧥" },
+  { id: "camel-jacket-turtleneck", labelAr: "جاكيت جملي وتيرتل", labelEn: "Camel jacket + turtleneck", emoji: "🐫" },
 ] as const;
+
 
 const SPORT_OPTIONS = [
   { id: "tracksuit-grey-black", labelAr: "تراك سوت رمادي وأسود", labelEn: "Grey & black tracksuit", emoji: "🎽" },
