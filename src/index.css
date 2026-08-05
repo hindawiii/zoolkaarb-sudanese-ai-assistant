@@ -144,6 +144,16 @@
   .font-lemonada { font-family: 'Lemonada', 'Tajawal', sans-serif; }
   .font-cairo-display { font-family: 'Cairo', 'Tajawal', sans-serif; }
   .font-mohanad { font-family: 'El Messiri', 'Markazi Text', 'Tajawal', serif; }
+  .font-lateef { font-family: 'Lateef', 'Amiri', serif; }
+  .font-almarai { font-family: 'Almarai', 'Tajawal', sans-serif; }
+  .font-blaka { font-family: 'Blaka', 'Tajawal', sans-serif; }
+  .font-blaka-ink { font-family: 'Blaka Ink', 'Blaka', 'Tajawal', sans-serif; }
+  .font-rakkas { font-family: 'Rakkas', 'Tajawal', serif; }
+  .font-jomhuria { font-family: 'Jomhuria', 'Tajawal', serif; }
+  .font-marhey { font-family: 'Marhey', 'Tajawal', sans-serif; }
+  .font-kufam { font-family: 'Kufam', 'Tajawal', sans-serif; }
+  .font-scheherazade { font-family: 'Scheherazade New', 'Amiri', serif; }
+  .font-nastaliq { font-family: 'Noto Nastaliq Urdu', 'Amiri', serif; }
 
   .text-emerald-rich {
     color: #047857;
