@@ -760,6 +760,7 @@ const TemplateEditor = () => {
 
       <RewardedAdModal
         open={adOpen}
+        isRtl
         onClose={() => setAdOpen(false)}
         onRewarded={() => {
           setAdOpen(false);
