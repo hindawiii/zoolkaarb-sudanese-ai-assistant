@@ -104,6 +104,13 @@ const OUTFIT_VARIANTS: Record<string, string> = {
   "hoodie": "Replace clothing with a premium streetwear hoodie and joggers.",
   "polo": "Replace clothing with a clean polo shirt and casual shorts.",
   "denim-jacket": "Replace clothing with a denim jacket over a plain t-shirt with dark jeans.",
+  "black-overshirt-set": "Replace clothing with a black waffle-knit button-up overshirt jacket with a collar, chest and side flap pockets and silver snap buttons, worn open over a crisp white crew-neck t-shirt, with slim black tapered trousers. Clean modern Korean-style casual menswear, soft studio lighting.",
+  "brown-overshirt-beige": "Replace clothing with a rich chocolate-brown wool overshirt jacket worn open over a white crew-neck t-shirt, tucked-in relaxed fit, with beige / khaki slim chino trousers and clean white leather sneakers. Warm minimal smart-casual outfit-inspiration look.",
+  "navy-overshirt-cream": "Replace clothing with a deep navy-blue textured overshirt jacket worn open over a white crew-neck t-shirt, with cream / off-white slim chino trousers and white leather sneakers. Crisp contemporary smart-casual styling.",
+  "charcoal-overshirt-black": "Replace clothing with a dark charcoal-grey zip-front lightweight overshirt jacket worn open over a white crew-neck t-shirt, with black slim tapered trousers and clean white sneakers. Monochrome modern casual look.",
+  "grey-bomber-black": "Replace clothing with a grey leather bomber jacket with a spread collar, ribbed black cuffs and hem, worn over a plain black crew-neck t-shirt, with slim black jeans and black leather Chelsea boots. Urban street-style editorial mood.",
+  "camel-jacket-turtleneck": "Replace clothing with a camel / beige suede zip-up bomber jacket over a charcoal fine-knit turtleneck sweater, black tailored trousers and black leather Chelsea boots. Refined autumn smart-casual menswear.",
+
   // Sport & Pajamas
   "tracksuit-grey-black": "Replace clothing with a premium two-piece athletic tracksuit: a fitted light-grey zip-up track jacket with a bold black chest panel and small sporty logo, matching slim-fit black joggers with a grey side stripe, and clean white low-top sneakers. Modern athleisure editorial look.",
   "tracksuit-dragon-navy": "Replace clothing with a stylish navy-blue two-piece streetwear tracksuit: long-sleeve navy sweatshirt with a large white oriental dragon print running along one side and vertical white 'DRAGON' lettering, matching navy joggers with the same dragon graphic on one leg and vertical text on the other, and white running sneakers.",
