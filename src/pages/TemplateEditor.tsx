@@ -635,7 +635,7 @@ const TemplateEditor = () => {
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground font-cairo mt-2 text-center">
-          اسحب النص لأي مكان • اسحب الدائرة الذهبية للتكبير والتصغير
+          اسحب النص لأي مكان • أسهم الأطراف للتكبير والتصغير • الدائرة العلوية للتدوير • اضغط كلمة لتظليلها
         </p>
       </div>
 
