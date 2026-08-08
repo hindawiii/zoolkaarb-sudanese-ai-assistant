@@ -825,7 +825,9 @@ const TemplateEditor = () => {
               <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">الخط (للطبقة المحددة)</p>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
                 {FONTS.map((f) => {
-                  const active = f.id === selected.fontId;
+                  const activeFont =
+                    selectedWord !== null ? (selected.wordStyles[selectedWord]?.fontId ?? selected.fontId) : selected.fontId;
+                  const active = f.id === activeFont;
                   return (
                     <button
                       key={f.id}
