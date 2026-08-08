@@ -674,17 +674,34 @@ const TemplateEditor = () => {
             <button onClick={duplicateLayer} className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1">
               <Copy className="w-3.5 h-3.5" /> نسخ
             </button>
-            <button onClick={() => moveOrder(1)} className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1">
-              <ArrowUp className="w-3.5 h-3.5" /> فوق
+            <button
+              onClick={() => selected && patch({ y: Math.max(6, selected.y - 10) })}
+              title="ارفع النص لأعلى الكرت"
+              className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1"
+            >
+              <ArrowUp className="w-3.5 h-3.5" /> أعلى
             </button>
-            <button onClick={() => moveOrder(-1)} className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1">
-              <ArrowDown className="w-3.5 h-3.5" /> تحت
+            <button
+              onClick={() => selected && patch({ y: Math.min(94, selected.y + 10) })}
+              title="نزّل النص لأسفل الكرت"
+              className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1"
+            >
+              <ArrowDown className="w-3.5 h-3.5" /> أسفل
             </button>
             <button onClick={removeLayer} className="flex-1 py-2 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-[11px] font-cairo flex items-center justify-center gap-1">
               <Trash2 className="w-3.5 h-3.5" /> حذف
             </button>
           </div>
+          <div className="flex gap-2 mt-2">
+            <button onClick={() => moveOrder(1)} className="flex-1 py-1.5 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1 text-muted-foreground">
+              <ChevronsUp className="w-3.5 h-3.5" /> تقديم الطبقة
+            </button>
+            <button onClick={() => moveOrder(-1)} className="flex-1 py-1.5 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1 text-muted-foreground">
+              <ChevronsDown className="w-3.5 h-3.5" /> تأخير الطبقة
+            </button>
+          </div>
         </div>
+
 
         {selected && (
           <>
