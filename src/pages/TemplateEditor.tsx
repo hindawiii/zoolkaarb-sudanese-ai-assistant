@@ -843,45 +843,56 @@ const TemplateEditor = () => {
               </div>
             </div>
 
-            {/* Colors */}
+            {/* Colors — single row */}
             <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">اللون</p>
-              <div className="flex gap-2 flex-wrap">
-                {COLORS.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => onPickColor(c)}
-                    className={`relative w-11 h-11 rounded-full border-2 transition-all ${
-                      c.id === selected.colorId ? "border-gold scale-110" : "border-border"
-                    }`}
-                    style={{ background: c.swatch }}
-                    aria-label={c.labelAr}
-                    title={c.labelAr}
-                  >
-                    {c.premium && <Lock className="absolute -top-1 -left-1 w-3 h-3 text-gold bg-card rounded-full p-0.5" />}
-                  </button>
-                ))}
+              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">
+                اللون {selectedWord !== null && <span className="text-gold">(للكلمة المحددة)</span>}
+              </p>
+              <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+                {COLORS.map((c) => {
+                  const activeColor =
+                    selectedWord !== null ? (selected.wordStyles[selectedWord]?.colorId ?? selected.colorId) : selected.colorId;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => onPickColor(c)}
+                      className={`relative shrink-0 w-8 h-8 rounded-full border-2 transition-all ${
+                        c.id === activeColor ? "border-gold scale-110" : "border-border"
+                      }`}
+                      style={{ background: c.swatch }}
+                      aria-label={c.labelAr}
+                      title={c.labelAr}
+                    >
+                      {c.premium && <Lock className="absolute -top-1 -left-1 w-2.5 h-2.5 text-gold bg-card rounded-full p-[1px]" />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Effects */}
+            {/* Effects — single row */}
             <div>
               <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">المؤثر</p>
-              <div className="flex gap-2 flex-wrap">
-                {EFFECTS.map((e) => (
-                  <button
-                    key={e.id}
-                    onClick={() => onPickEffect(e)}
-                    className={`relative px-3 py-1.5 rounded-full text-xs font-cairo font-semibold border transition-all ${
-                      e.id === selected.effect ? "border-gold bg-gold/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {e.labelAr}
-                    {e.premium && <Lock className="inline w-2.5 h-2.5 ms-1 text-gold" />}
-                  </button>
-                ))}
+              <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+                {EFFECTS.map((e) => {
+                  const activeEffect =
+                    selectedWord !== null ? (selected.wordStyles[selectedWord]?.effect ?? selected.effect) : selected.effect;
+                  return (
+                    <button
+                      key={e.id}
+                      onClick={() => onPickEffect(e)}
+                      className={`relative shrink-0 px-3 py-1.5 rounded-full text-[11px] font-cairo font-semibold border transition-all whitespace-nowrap ${
+                        e.id === activeEffect ? "border-gold bg-gold/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {e.labelAr}
+                      {e.premium && <Lock className="inline w-2.5 h-2.5 ms-1 text-gold" />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+
           </>
         )}
 
