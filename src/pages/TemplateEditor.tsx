@@ -161,6 +161,19 @@ const newLayer = (text: string): TextLayer => ({
 });
 
 
+type ToolId = "size" | "rotation" | "letterSpacing" | "lineHeight" | "opacity" | "weight" | "align";
+
+const TOOLS: { id: ToolId; labelAr: string; icon: typeof Type; min: number; max: number; step: number }[] = [
+  { id: "size", labelAr: "الحجم", icon: Maximize2, min: 3, max: 48, step: 0.5 },
+  { id: "rotation", labelAr: "التدوير", icon: RotateCw, min: -180, max: 180, step: 1 },
+  { id: "letterSpacing", labelAr: "تباعد الحروف", icon: MoveHorizontal, min: -0.1, max: 0.6, step: 0.01 },
+  { id: "lineHeight", labelAr: "تباعد الأسطر", icon: MoveVertical, min: 0.8, max: 2.5, step: 0.05 },
+  { id: "opacity", labelAr: "الشفافية", icon: Droplet, min: 0.1, max: 1, step: 0.05 },
+  { id: "weight", labelAr: "السماكة", icon: Bold, min: 200, max: 900, step: 100 },
+  { id: "align", labelAr: "المحاذاة", icon: AlignCenter, min: 0, max: 0, step: 1 },
+];
+
+
 const TemplateEditor = () => {
   const navigate = useNavigate();
   const { id = "custom" } = useParams();
