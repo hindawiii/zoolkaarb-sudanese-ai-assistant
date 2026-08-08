@@ -246,9 +246,28 @@ const TemplateEditor = () => {
     });
   };
 
-  const onPickFont = (f: FontDef) => (f.premium ? tryPremium(() => patch({ fontId: f.id })) : patch({ fontId: f.id }));
-  const onPickColor = (c: ColorDef) => (c.premium ? tryPremium(() => patch({ colorId: c.id })) : patch({ colorId: c.id }));
-  const onPickEffect = (e: EffectDef) => (e.premium ? tryPremium(() => patch({ effect: e.id })) : patch({ effect: e.id }));
+  /** Apply a style either to the whole layer or to the highlighted word only. */
+  const applyStyle = (p: WordStyle) => {
+    if (!selected) return;
+    if (selectedWord !== null) {
+      const prev = selected.wordStyles[selectedWord] ?? {};
+      patch({ wordStyles: { ...selected.wordStyles, [selectedWord]: { ...prev, ...p } } });
+    } else {
+      patch(p as Partial<TextLayer>);
+    }
+  };
+
+  const onPickFont = (f: FontDef) => (f.premium ? tryPremium(() => applyStyle({ fontId: f.id })) : applyStyle({ fontId: f.id }));
+  const onPickColor = (c: ColorDef) => (c.premium ? tryPremium(() => applyStyle({ colorId: c.id })) : applyStyle({ colorId: c.id }));
+  const onPickEffect = (e: EffectDef) => (e.premium ? tryPremium(() => applyStyle({ effect: e.id })) : applyStyle({ effect: e.id }));
+
+  const clearWordStyle = () => {
+    if (!selected || selectedWord === null) return;
+    const ws = { ...selected.wordStyles };
+    delete ws[selectedWord];
+    patch({ wordStyles: ws });
+  };
+
 
   const addLayer = () => {
     const l = newLayer("نص جديد");
