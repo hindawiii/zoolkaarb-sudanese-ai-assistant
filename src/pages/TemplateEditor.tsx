@@ -209,7 +209,17 @@ const TemplateEditor = () => {
 
   const fileRef = useRef<HTMLInputElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const dragState = useRef<{ id: string; mode: "move" | "scale"; startX: number; startY: number; base: TextLayer; rect: DOMRect } | null>(null);
+  const dragState = useRef<{
+    id: string;
+    mode: "move" | "scale" | "rotate";
+    startX: number;
+    startY: number;
+    base: TextLayer;
+    rect: DOMRect;
+    cx?: number;
+    cy?: number;
+    startAngle?: number;
+  } | null>(null);
 
   useEffect(() => {
     setPremiumRemaining(getPremiumRemaining());
