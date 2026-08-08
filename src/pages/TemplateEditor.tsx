@@ -168,6 +168,8 @@ const TemplateEditor = () => {
 
   const [layers, setLayers] = useState<TextLayer[]>([{ ...newLayer(meta.defaultText) }]);
   const [selectedId, setSelectedId] = useState<string>("");
+  const [selectedWord, setSelectedWord] = useState<number | null>(null);
+  const [activeTool, setActiveTool] = useState<ToolId | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [cutoutUrl, setCutoutUrl] = useState<string | null>(null);
   const [removingBg, setRemovingBg] = useState(false);
