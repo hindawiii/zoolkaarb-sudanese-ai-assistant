@@ -20,6 +20,15 @@ import {
   AlignLeft,
   Bold,
   Scissors,
+  Maximize2,
+  MoveHorizontal,
+  MoveVertical,
+  Droplet,
+  RefreshCw,
+  ChevronsUp,
+  ChevronsDown,
+  Palette,
+
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
@@ -112,6 +121,13 @@ const SPLITS: { id: SplitId; labelAr: string; premium: boolean }[] = [
 
 type Align = "right" | "center" | "left";
 
+interface WordStyle {
+  fontId?: string;
+  colorId?: string;
+  effect?: EffectId;
+  scale?: number;
+}
+
 interface TextLayer {
   id: string;
   text: string;
@@ -129,6 +145,7 @@ interface TextLayer {
   opacity: number;
   align: Align;
   curve: number;
+  wordStyles: Record<number, WordStyle>;
 }
 
 let uid = 0;
@@ -149,7 +166,22 @@ const newLayer = (text: string): TextLayer => ({
   opacity: 1,
   align: "center",
   curve: 0,
+  wordStyles: {},
 });
+
+
+type ToolId = "size" | "rotation" | "letterSpacing" | "lineHeight" | "opacity" | "weight" | "align";
+
+const TOOLS: { id: ToolId; labelAr: string; icon: typeof Type; min: number; max: number; step: number }[] = [
+  { id: "size", labelAr: "الحجم", icon: Maximize2, min: 3, max: 48, step: 0.5 },
+  { id: "rotation", labelAr: "التدوير", icon: RotateCw, min: -180, max: 180, step: 1 },
+  { id: "letterSpacing", labelAr: "تباعد الحروف", icon: MoveHorizontal, min: -0.1, max: 0.6, step: 0.01 },
+  { id: "lineHeight", labelAr: "تباعد الأسطر", icon: MoveVertical, min: 0.8, max: 2.5, step: 0.05 },
+  { id: "opacity", labelAr: "الشفافية", icon: Droplet, min: 0.1, max: 1, step: 0.05 },
+  { id: "weight", labelAr: "السماكة", icon: Bold, min: 200, max: 900, step: 100 },
+  { id: "align", labelAr: "المحاذاة", icon: AlignCenter, min: 0, max: 0, step: 1 },
+];
+
 
 const TemplateEditor = () => {
   const navigate = useNavigate();
@@ -158,6 +190,8 @@ const TemplateEditor = () => {
 
   const [layers, setLayers] = useState<TextLayer[]>([{ ...newLayer(meta.defaultText) }]);
   const [selectedId, setSelectedId] = useState<string>("");
+  const [selectedWord, setSelectedWord] = useState<number | null>(null);
+  const [activeTool, setActiveTool] = useState<ToolId | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [cutoutUrl, setCutoutUrl] = useState<string | null>(null);
   const [removingBg, setRemovingBg] = useState(false);
@@ -175,7 +209,17 @@ const TemplateEditor = () => {
 
   const fileRef = useRef<HTMLInputElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const dragState = useRef<{ id: string; mode: "move" | "scale"; startX: number; startY: number; base: TextLayer; rect: DOMRect } | null>(null);
+  const dragState = useRef<{
+    id: string;
+    mode: "move" | "scale" | "rotate";
+    startX: number;
+    startY: number;
+    base: TextLayer;
+    rect: DOMRect;
+    cx?: number;
+    cy?: number;
+    startAngle?: number;
+  } | null>(null);
 
   useEffect(() => {
     setPremiumRemaining(getPremiumRemaining());
@@ -202,9 +246,28 @@ const TemplateEditor = () => {
     });
   };
 
-  const onPickFont = (f: FontDef) => (f.premium ? tryPremium(() => patch({ fontId: f.id })) : patch({ fontId: f.id }));
-  const onPickColor = (c: ColorDef) => (c.premium ? tryPremium(() => patch({ colorId: c.id })) : patch({ colorId: c.id }));
-  const onPickEffect = (e: EffectDef) => (e.premium ? tryPremium(() => patch({ effect: e.id })) : patch({ effect: e.id }));
+  /** Apply a style either to the whole layer or to the highlighted word only. */
+  const applyStyle = (p: WordStyle) => {
+    if (!selected) return;
+    if (selectedWord !== null) {
+      const prev = selected.wordStyles[selectedWord] ?? {};
+      patch({ wordStyles: { ...selected.wordStyles, [selectedWord]: { ...prev, ...p } } });
+    } else {
+      patch(p as Partial<TextLayer>);
+    }
+  };
+
+  const onPickFont = (f: FontDef) => (f.premium ? tryPremium(() => applyStyle({ fontId: f.id })) : applyStyle({ fontId: f.id }));
+  const onPickColor = (c: ColorDef) => (c.premium ? tryPremium(() => applyStyle({ colorId: c.id })) : applyStyle({ colorId: c.id }));
+  const onPickEffect = (e: EffectDef) => (e.premium ? tryPremium(() => applyStyle({ effect: e.id })) : applyStyle({ effect: e.id }));
+
+  const clearWordStyle = () => {
+    if (!selected || selectedWord === null) return;
+    const ws = { ...selected.wordStyles };
+    delete ws[selectedWord];
+    patch({ wordStyles: ws });
+  };
+
 
   const addLayer = () => {
     const l = newLayer("نص جديد");
@@ -235,14 +298,17 @@ const TemplateEditor = () => {
     });
   };
 
-  // ---- pointer drag / scale ----
-  const startDrag = (e: React.PointerEvent, layer: TextLayer, mode: "move" | "scale") => {
+  // ---- pointer drag / scale / rotate ----
+  const startDrag = (e: React.PointerEvent, layer: TextLayer, mode: "move" | "scale" | "rotate") => {
     e.stopPropagation();
     e.preventDefault();
     const rect = frameRef.current?.getBoundingClientRect();
     if (!rect) return;
     setSelectedId(layer.id);
-    dragState.current = { id: layer.id, mode, startX: e.clientX, startY: e.clientY, base: layer, rect };
+    const cx = rect.left + (layer.x / 100) * rect.width;
+    const cy = rect.top + (layer.y / 100) * rect.height;
+    const startAngle = (Math.atan2(e.clientY - cy, e.clientX - cx) * 180) / Math.PI;
+    dragState.current = { id: layer.id, mode, startX: e.clientX, startY: e.clientY, base: layer, rect, cx, cy, startAngle };
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
@@ -259,14 +325,23 @@ const TemplateEditor = () => {
         },
         d.id,
       );
+    } else if (d.mode === "rotate") {
+      const angle = (Math.atan2(e.clientY - (d.cy ?? 0), e.clientX - (d.cx ?? 0)) * 180) / Math.PI;
+      let next = d.base.rotation + (angle - (d.startAngle ?? 0));
+      next = ((((next + 180) % 360) + 360) % 360) - 180;
+      patch({ rotation: Math.round(next) }, d.id);
     } else {
-      const delta = (dx + dy) / 2;
-      patch({ size: Math.max(3, Math.min(48, d.base.size + (delta / d.rect.width) * 100)) }, d.id);
+      // uniform scale based on distance from the layer center
+      const startDist = Math.hypot(d.startX - (d.cx ?? 0), d.startY - (d.cy ?? 0)) || 1;
+      const dist = Math.hypot(e.clientX - (d.cx ?? 0), e.clientY - (d.cy ?? 0));
+      const ratio = dist / startDist;
+      patch({ size: Math.max(3, Math.min(60, d.base.size * ratio)) }, d.id);
     }
   };
   const endDrag = () => {
     dragState.current = null;
   };
+
 
   // Al-Khal Touch
   const PRESETS = [
@@ -329,6 +404,7 @@ const TemplateEditor = () => {
   const handleDownload = async () => {
     if (!frameRef.current) return;
     setSelectedId("");
+    setSelectedWord(null);
     setExporting(true);
     setProgressOpen(true);
     setProgress(0.1);
@@ -384,6 +460,38 @@ const TemplateEditor = () => {
     const font = FONTS.find((f) => f.id === l.fontId) ?? FONTS[0];
     const color = COLORS.find((c) => c.id === l.colorId) ?? COLORS[0];
     const isSel = l.id === selectedId;
+
+    // tokenize keeping whitespace so words can be styled individually
+    const tokens = l.text.split(/(\s+)/);
+    let wordIdx = -1;
+    const rendered = tokens.map((tok, i) => {
+      if (/^\s+$/.test(tok) || tok === "") return <span key={i}>{tok}</span>;
+      wordIdx += 1;
+      const wi = wordIdx;
+      const ws = l.wordStyles[wi];
+      const wFont = ws?.fontId ? (FONTS.find((f) => f.id === ws.fontId) ?? font) : font;
+      const wColor = ws?.colorId ? (COLORS.find((c) => c.id === ws.colorId) ?? color) : color;
+      const wEffect = ws?.effect ?? l.effect;
+      const highlighted = isSel && selectedWord === wi;
+      return (
+        <span
+          key={i}
+          onPointerDown={(e) => {
+            if (!isSel) return;
+            e.stopPropagation();
+            setSelectedWord((s) => (s === wi ? null : wi));
+          }}
+          className={`${wFont.className} ${wColor.className} ${highlighted ? "bg-gold/30 rounded-[0.2em]" : ""}`}
+          style={{
+            textShadow: textShadowFor(wEffect),
+            WebkitTextStroke: wEffect === "outline" ? "1.5px rgba(0,0,0,0.85)" : undefined,
+          }}
+        >
+          {tok}
+        </span>
+      );
+    });
+
     const inner = (
       <p
         dir="rtl"
@@ -398,9 +506,17 @@ const TemplateEditor = () => {
           WebkitTextStroke: l.effect === "outline" ? "1.5px rgba(0,0,0,0.85)" : undefined,
         }}
       >
-        {l.text}
+        {rendered}
       </p>
     );
+
+    const corners: { pos: string; rot: number }[] = [
+      { pos: "-top-3 -right-3", rot: 45 },
+      { pos: "-top-3 -left-3", rot: 135 },
+      { pos: "-bottom-3 -left-3", rot: 225 },
+      { pos: "-bottom-3 -right-3", rot: 315 },
+    ];
+
     return (
       <div
         key={l.id}
@@ -428,15 +544,27 @@ const TemplateEditor = () => {
         {isSel && (
           <>
             <div className="absolute -inset-2 border border-dashed border-gold/80 rounded-lg pointer-events-none" />
+            {corners.map((c) => (
+              <div
+                key={c.pos}
+                onPointerDown={(e) => startDrag(e, l, "scale")}
+                className={`absolute ${c.pos} w-6 h-6 rounded-full bg-gold border-2 border-white shadow touch-none flex items-center justify-center`}
+              >
+                <MoveHorizontal className="w-3 h-3 text-primary-foreground" style={{ transform: `rotate(${c.rot}deg)` }} />
+              </div>
+            ))}
             <div
-              onPointerDown={(e) => startDrag(e, l, "scale")}
-              className="absolute -bottom-3 -left-3 w-6 h-6 rounded-full bg-gold border-2 border-white shadow touch-none"
-            />
+              onPointerDown={(e) => startDrag(e, l, "rotate")}
+              className="absolute -top-9 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-card border-2 border-gold shadow touch-none flex items-center justify-center"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-gold" />
+            </div>
           </>
         )}
       </div>
     );
   };
+
 
   const behindLayers = layers.filter((l) => l.behind);
   const frontLayers = layers.filter((l) => !l.behind);
@@ -473,7 +601,7 @@ const TemplateEditor = () => {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
-            onPointerDown={() => setSelectedId("")}
+            onPointerDown={() => { setSelectedId(""); setSelectedWord(null); }}
             className={`relative aspect-square ${frame === "circular" ? "" : "rounded-3xl"} overflow-hidden bg-gradient-to-br ${meta.gradient} ${frame === "polaroid" || frame === "geometric" ? "" : "border border-border shadow-lg"}`}
             style={{ containerType: "inline-size" }}
           >
@@ -508,7 +636,7 @@ const TemplateEditor = () => {
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground font-cairo mt-2 text-center">
-          اسحب النص لأي مكان • اسحب الدائرة الذهبية للتكبير والتصغير
+          اسحب النص لأي مكان • أسهم الأطراف للتكبير والتصغير • الدائرة العلوية للتدوير • اضغط كلمة لتظليلها
         </p>
       </div>
 
@@ -531,7 +659,7 @@ const TemplateEditor = () => {
             {layers.map((l, i) => (
               <button
                 key={l.id}
-                onClick={() => setSelectedId(l.id)}
+                onClick={() => { setSelectedId(l.id); setSelectedWord(null); }}
                 className={`shrink-0 max-w-[110px] px-3 py-2 rounded-xl border text-[11px] font-cairo truncate ${
                   l.id === selectedId ? "border-gold bg-gold/10 text-foreground" : "border-border bg-card text-muted-foreground"
                 }`}
@@ -547,22 +675,40 @@ const TemplateEditor = () => {
             <button onClick={duplicateLayer} className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1">
               <Copy className="w-3.5 h-3.5" /> نسخ
             </button>
-            <button onClick={() => moveOrder(1)} className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1">
-              <ArrowUp className="w-3.5 h-3.5" /> فوق
+            <button
+              onClick={() => selected && patch({ y: Math.max(6, selected.y - 10) })}
+              title="ارفع النص لأعلى الكرت"
+              className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1"
+            >
+              <ArrowUp className="w-3.5 h-3.5" /> أعلى
             </button>
-            <button onClick={() => moveOrder(-1)} className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1">
-              <ArrowDown className="w-3.5 h-3.5" /> تحت
+            <button
+              onClick={() => selected && patch({ y: Math.min(94, selected.y + 10) })}
+              title="نزّل النص لأسفل الكرت"
+              className="flex-1 py-2 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1"
+            >
+              <ArrowDown className="w-3.5 h-3.5" /> أسفل
             </button>
             <button onClick={removeLayer} className="flex-1 py-2 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-[11px] font-cairo flex items-center justify-center gap-1">
               <Trash2 className="w-3.5 h-3.5" /> حذف
             </button>
           </div>
+          <div className="flex gap-2 mt-2">
+            <button onClick={() => moveOrder(1)} className="flex-1 py-1.5 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1 text-muted-foreground">
+              <ChevronsUp className="w-3.5 h-3.5" /> تقديم الطبقة
+            </button>
+            <button onClick={() => moveOrder(-1)} className="flex-1 py-1.5 rounded-xl bg-card border border-border text-[11px] font-cairo flex items-center justify-center gap-1 text-muted-foreground">
+              <ChevronsDown className="w-3.5 h-3.5" /> تأخير الطبقة
+            </button>
+          </div>
         </div>
+
 
         {selected && (
           <>
-            <div>
-              <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground mb-2 font-cairo">
+            {/* Text box + compact icon toolbar */}
+            <div className="rounded-2xl border border-border bg-card p-3 space-y-3">
+              <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground font-cairo">
                 <Type className="w-3.5 h-3.5" /> النص
               </label>
               <textarea
@@ -571,46 +717,83 @@ const TemplateEditor = () => {
                 onFocus={() => setSelectedId(selected.id)}
                 rows={2}
                 dir="rtl"
-                className="w-full rounded-2xl bg-card border border-border p-3 text-sm font-cairo text-foreground focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
+                className="w-full rounded-2xl bg-background border border-border p-3 text-sm font-cairo text-foreground focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
                 placeholder="اكتب رسالتك..."
               />
-            </div>
 
-            {/* Transform sliders */}
-            <div className="space-y-3 rounded-2xl border border-border bg-card p-3">
-              <Slider label="الحجم" value={selected.size} min={3} max={48} step={0.5} onChange={(v) => patch({ size: v })} />
-              <Slider
-                label="التدوير"
-                value={selected.rotation}
-                min={-180}
-                max={180}
-                step={1}
-                icon={<RotateCw className="w-3 h-3" />}
-                onChange={(v) => patch({ rotation: v })}
-              />
-              <Slider label="تباعد الحروف" value={selected.letterSpacing} min={-0.1} max={0.6} step={0.01} onChange={(v) => patch({ letterSpacing: v })} />
-              <Slider label="تباعد الأسطر" value={selected.lineHeight} min={0.8} max={2.5} step={0.05} onChange={(v) => patch({ lineHeight: v })} />
-              <Slider label="الشفافية" value={selected.opacity} min={0.1} max={1} step={0.05} onChange={(v) => patch({ opacity: v })} />
-              <Slider label="السماكة" value={selected.weight} min={200} max={900} step={100} icon={<Bold className="w-3 h-3" />} onChange={(v) => patch({ weight: v })} />
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-cairo text-muted-foreground w-16">المحاذاة</span>
-                {([["right", AlignRight], ["center", AlignCenter], ["left", AlignLeft]] as const).map(([a, Icon]) => (
-                  <button
-                    key={a}
-                    onClick={() => patch({ align: a })}
-                    className={`p-2 rounded-lg border ${selected.align === a ? "border-gold bg-gold/10 text-gold" : "border-border text-muted-foreground"}`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                  </button>
-                ))}
+              {/* icon toolbar */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                {TOOLS.map((t) => {
+                  const active = activeTool === t.id;
+                  const Icon = t.icon;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setActiveTool(active ? null : t.id)}
+                      title={t.labelAr}
+                      className={`shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center transition-all ${
+                        active ? "border-gold bg-gold/15 text-gold" : "border-border bg-background text-muted-foreground"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </button>
+                  );
+                })}
                 <button
                   onClick={() => patch({ rotation: 0, x: 50, y: 50 })}
-                  className="ms-auto px-3 py-1.5 rounded-lg border border-border text-[11px] font-cairo text-muted-foreground"
+                  className="shrink-0 px-3 h-9 rounded-xl border border-border bg-background text-[11px] font-cairo text-muted-foreground"
                 >
                   توسيط
                 </button>
               </div>
+
+              {/* active tool control */}
+              {activeTool && activeTool !== "align" && (
+                <Slider
+                  label={TOOLS.find((t) => t.id === activeTool)!.labelAr}
+                  value={selected[activeTool] as number}
+                  min={TOOLS.find((t) => t.id === activeTool)!.min}
+                  max={TOOLS.find((t) => t.id === activeTool)!.max}
+                  step={TOOLS.find((t) => t.id === activeTool)!.step}
+                  onChange={(v) => patch({ [activeTool]: v } as Partial<TextLayer>)}
+                />
+              )}
+              {activeTool === "align" && (
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-cairo text-muted-foreground w-16">المحاذاة</span>
+                  {([["right", AlignRight], ["center", AlignCenter], ["left", AlignLeft]] as const).map(([a, Icon]) => (
+                    <button
+                      key={a}
+                      onClick={() => patch({ align: a })}
+                      className={`p-2 rounded-lg border ${selected.align === a ? "border-gold bg-gold/10 text-gold" : "border-border text-muted-foreground"}`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* word-level selection status */}
+              <div className="flex items-center gap-2 text-[10px] font-cairo text-muted-foreground">
+                <Palette className="w-3 h-3 text-gold" />
+                {selectedWord !== null ? (
+                  <>
+                    <span className="text-gold font-bold">
+                      تعديل كلمة: «{selected.text.split(/\s+/).filter(Boolean)[selectedWord] ?? ""}»
+                    </span>
+                    <button onClick={clearWordStyle} className="px-2 py-0.5 rounded-full border border-border">
+                      إلغاء تنسيق الكلمة
+                    </button>
+                    <button onClick={() => setSelectedWord(null)} className="px-2 py-0.5 rounded-full border border-gold/50 text-gold">
+                      كل النص
+                    </button>
+                  </>
+                ) : (
+                  <span>اضغط على أي كلمة داخل الكرت لتظليلها وتعديل خطها ولونها لوحدها</span>
+                )}
+              </div>
             </div>
+
 
             {/* Behind image */}
             <div className="rounded-2xl border border-border bg-card p-3 space-y-2">
@@ -640,10 +823,14 @@ const TemplateEditor = () => {
 
             {/* Font picker */}
             <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">الخط (للطبقة المحددة)</p>
+              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">
+                الخط {selectedWord !== null ? <span className="text-gold">(للكلمة المحددة)</span> : "(للطبقة المحددة)"}
+              </p>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
                 {FONTS.map((f) => {
-                  const active = f.id === selected.fontId;
+                  const activeFont =
+                    selectedWord !== null ? (selected.wordStyles[selectedWord]?.fontId ?? selected.fontId) : selected.fontId;
+                  const active = f.id === activeFont;
                   return (
                     <button
                       key={f.id}
@@ -661,45 +848,56 @@ const TemplateEditor = () => {
               </div>
             </div>
 
-            {/* Colors */}
+            {/* Colors — single row */}
             <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">اللون</p>
-              <div className="flex gap-2 flex-wrap">
-                {COLORS.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => onPickColor(c)}
-                    className={`relative w-11 h-11 rounded-full border-2 transition-all ${
-                      c.id === selected.colorId ? "border-gold scale-110" : "border-border"
-                    }`}
-                    style={{ background: c.swatch }}
-                    aria-label={c.labelAr}
-                    title={c.labelAr}
-                  >
-                    {c.premium && <Lock className="absolute -top-1 -left-1 w-3 h-3 text-gold bg-card rounded-full p-0.5" />}
-                  </button>
-                ))}
+              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">
+                اللون {selectedWord !== null && <span className="text-gold">(للكلمة المحددة)</span>}
+              </p>
+              <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+                {COLORS.map((c) => {
+                  const activeColor =
+                    selectedWord !== null ? (selected.wordStyles[selectedWord]?.colorId ?? selected.colorId) : selected.colorId;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => onPickColor(c)}
+                      className={`relative shrink-0 w-8 h-8 rounded-full border-2 transition-all ${
+                        c.id === activeColor ? "border-gold scale-110" : "border-border"
+                      }`}
+                      style={{ background: c.swatch }}
+                      aria-label={c.labelAr}
+                      title={c.labelAr}
+                    >
+                      {c.premium && <Lock className="absolute -top-1 -left-1 w-2.5 h-2.5 text-gold bg-card rounded-full p-[1px]" />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Effects */}
+            {/* Effects — single row */}
             <div>
               <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">المؤثر</p>
-              <div className="flex gap-2 flex-wrap">
-                {EFFECTS.map((e) => (
-                  <button
-                    key={e.id}
-                    onClick={() => onPickEffect(e)}
-                    className={`relative px-3 py-1.5 rounded-full text-xs font-cairo font-semibold border transition-all ${
-                      e.id === selected.effect ? "border-gold bg-gold/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {e.labelAr}
-                    {e.premium && <Lock className="inline w-2.5 h-2.5 ms-1 text-gold" />}
-                  </button>
-                ))}
+              <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+                {EFFECTS.map((e) => {
+                  const activeEffect =
+                    selectedWord !== null ? (selected.wordStyles[selectedWord]?.effect ?? selected.effect) : selected.effect;
+                  return (
+                    <button
+                      key={e.id}
+                      onClick={() => onPickEffect(e)}
+                      className={`relative shrink-0 px-3 py-1.5 rounded-full text-[11px] font-cairo font-semibold border transition-all whitespace-nowrap ${
+                        e.id === activeEffect ? "border-gold bg-gold/10 text-foreground" : "border-border bg-card text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {e.labelAr}
+                      {e.premium && <Lock className="inline w-2.5 h-2.5 ms-1 text-gold" />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+
           </>
         )}
 
