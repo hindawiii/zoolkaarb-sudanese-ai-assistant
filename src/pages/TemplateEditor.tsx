@@ -112,6 +112,13 @@ const SPLITS: { id: SplitId; labelAr: string; premium: boolean }[] = [
 
 type Align = "right" | "center" | "left";
 
+interface WordStyle {
+  fontId?: string;
+  colorId?: string;
+  effect?: EffectId;
+  scale?: number;
+}
+
 interface TextLayer {
   id: string;
   text: string;
@@ -129,6 +136,7 @@ interface TextLayer {
   opacity: number;
   align: Align;
   curve: number;
+  wordStyles: Record<number, WordStyle>;
 }
 
 let uid = 0;
@@ -149,7 +157,9 @@ const newLayer = (text: string): TextLayer => ({
   opacity: 1,
   align: "center",
   curve: 0,
+  wordStyles: {},
 });
+
 
 const TemplateEditor = () => {
   const navigate = useNavigate();
