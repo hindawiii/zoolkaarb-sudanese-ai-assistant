@@ -404,6 +404,7 @@ const TemplateEditor = () => {
   const handleDownload = async () => {
     if (!frameRef.current) return;
     setSelectedId("");
+    setSelectedWord(null);
     setExporting(true);
     setProgressOpen(true);
     setProgress(0.1);
@@ -600,7 +601,7 @@ const TemplateEditor = () => {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
-            onPointerDown={() => setSelectedId("")}
+            onPointerDown={() => { setSelectedId(""); setSelectedWord(null); }}
             className={`relative aspect-square ${frame === "circular" ? "" : "rounded-3xl"} overflow-hidden bg-gradient-to-br ${meta.gradient} ${frame === "polaroid" || frame === "geometric" ? "" : "border border-border shadow-lg"}`}
             style={{ containerType: "inline-size" }}
           >
@@ -658,7 +659,7 @@ const TemplateEditor = () => {
             {layers.map((l, i) => (
               <button
                 key={l.id}
-                onClick={() => setSelectedId(l.id)}
+                onClick={() => { setSelectedId(l.id); setSelectedWord(null); }}
                 className={`shrink-0 max-w-[110px] px-3 py-2 rounded-xl border text-[11px] font-cairo truncate ${
                   l.id === selectedId ? "border-gold bg-gold/10 text-foreground" : "border-border bg-card text-muted-foreground"
                 }`}
