@@ -705,8 +705,9 @@ const TemplateEditor = () => {
 
         {selected && (
           <>
-            <div>
-              <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground mb-2 font-cairo">
+            {/* Text box + compact icon toolbar */}
+            <div className="rounded-2xl border border-border bg-card p-3 space-y-3">
+              <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground font-cairo">
                 <Type className="w-3.5 h-3.5" /> النص
               </label>
               <textarea
@@ -715,46 +716,83 @@ const TemplateEditor = () => {
                 onFocus={() => setSelectedId(selected.id)}
                 rows={2}
                 dir="rtl"
-                className="w-full rounded-2xl bg-card border border-border p-3 text-sm font-cairo text-foreground focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
+                className="w-full rounded-2xl bg-background border border-border p-3 text-sm font-cairo text-foreground focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
                 placeholder="اكتب رسالتك..."
               />
-            </div>
 
-            {/* Transform sliders */}
-            <div className="space-y-3 rounded-2xl border border-border bg-card p-3">
-              <Slider label="الحجم" value={selected.size} min={3} max={48} step={0.5} onChange={(v) => patch({ size: v })} />
-              <Slider
-                label="التدوير"
-                value={selected.rotation}
-                min={-180}
-                max={180}
-                step={1}
-                icon={<RotateCw className="w-3 h-3" />}
-                onChange={(v) => patch({ rotation: v })}
-              />
-              <Slider label="تباعد الحروف" value={selected.letterSpacing} min={-0.1} max={0.6} step={0.01} onChange={(v) => patch({ letterSpacing: v })} />
-              <Slider label="تباعد الأسطر" value={selected.lineHeight} min={0.8} max={2.5} step={0.05} onChange={(v) => patch({ lineHeight: v })} />
-              <Slider label="الشفافية" value={selected.opacity} min={0.1} max={1} step={0.05} onChange={(v) => patch({ opacity: v })} />
-              <Slider label="السماكة" value={selected.weight} min={200} max={900} step={100} icon={<Bold className="w-3 h-3" />} onChange={(v) => patch({ weight: v })} />
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-cairo text-muted-foreground w-16">المحاذاة</span>
-                {([["right", AlignRight], ["center", AlignCenter], ["left", AlignLeft]] as const).map(([a, Icon]) => (
-                  <button
-                    key={a}
-                    onClick={() => patch({ align: a })}
-                    className={`p-2 rounded-lg border ${selected.align === a ? "border-gold bg-gold/10 text-gold" : "border-border text-muted-foreground"}`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                  </button>
-                ))}
+              {/* icon toolbar */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                {TOOLS.map((t) => {
+                  const active = activeTool === t.id;
+                  const Icon = t.icon;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setActiveTool(active ? null : t.id)}
+                      title={t.labelAr}
+                      className={`shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center transition-all ${
+                        active ? "border-gold bg-gold/15 text-gold" : "border-border bg-background text-muted-foreground"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </button>
+                  );
+                })}
                 <button
                   onClick={() => patch({ rotation: 0, x: 50, y: 50 })}
-                  className="ms-auto px-3 py-1.5 rounded-lg border border-border text-[11px] font-cairo text-muted-foreground"
+                  className="shrink-0 px-3 h-9 rounded-xl border border-border bg-background text-[11px] font-cairo text-muted-foreground"
                 >
                   توسيط
                 </button>
               </div>
+
+              {/* active tool control */}
+              {activeTool && activeTool !== "align" && (
+                <Slider
+                  label={TOOLS.find((t) => t.id === activeTool)!.labelAr}
+                  value={selected[activeTool] as number}
+                  min={TOOLS.find((t) => t.id === activeTool)!.min}
+                  max={TOOLS.find((t) => t.id === activeTool)!.max}
+                  step={TOOLS.find((t) => t.id === activeTool)!.step}
+                  onChange={(v) => patch({ [activeTool]: v } as Partial<TextLayer>)}
+                />
+              )}
+              {activeTool === "align" && (
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-cairo text-muted-foreground w-16">المحاذاة</span>
+                  {([["right", AlignRight], ["center", AlignCenter], ["left", AlignLeft]] as const).map(([a, Icon]) => (
+                    <button
+                      key={a}
+                      onClick={() => patch({ align: a })}
+                      className={`p-2 rounded-lg border ${selected.align === a ? "border-gold bg-gold/10 text-gold" : "border-border text-muted-foreground"}`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* word-level selection status */}
+              <div className="flex items-center gap-2 text-[10px] font-cairo text-muted-foreground">
+                <Palette className="w-3 h-3 text-gold" />
+                {selectedWord !== null ? (
+                  <>
+                    <span className="text-gold font-bold">
+                      تعديل كلمة: «{selected.text.split(/\s+/).filter(Boolean)[selectedWord] ?? ""}»
+                    </span>
+                    <button onClick={clearWordStyle} className="px-2 py-0.5 rounded-full border border-border">
+                      إلغاء تنسيق الكلمة
+                    </button>
+                    <button onClick={() => setSelectedWord(null)} className="px-2 py-0.5 rounded-full border border-gold/50 text-gold">
+                      كل النص
+                    </button>
+                  </>
+                ) : (
+                  <span>اضغط على أي كلمة داخل الكرت لتظليلها وتعديل خطها ولونها لوحدها</span>
+                )}
+              </div>
             </div>
+
 
             {/* Behind image */}
             <div className="rounded-2xl border border-border bg-card p-3 space-y-2">
