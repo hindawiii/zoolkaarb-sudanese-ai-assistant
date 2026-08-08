@@ -459,6 +459,38 @@ const TemplateEditor = () => {
     const font = FONTS.find((f) => f.id === l.fontId) ?? FONTS[0];
     const color = COLORS.find((c) => c.id === l.colorId) ?? COLORS[0];
     const isSel = l.id === selectedId;
+
+    // tokenize keeping whitespace so words can be styled individually
+    const tokens = l.text.split(/(\s+)/);
+    let wordIdx = -1;
+    const rendered = tokens.map((tok, i) => {
+      if (/^\s+$/.test(tok) || tok === "") return <span key={i}>{tok}</span>;
+      wordIdx += 1;
+      const wi = wordIdx;
+      const ws = l.wordStyles[wi];
+      const wFont = ws?.fontId ? (FONTS.find((f) => f.id === ws.fontId) ?? font) : font;
+      const wColor = ws?.colorId ? (COLORS.find((c) => c.id === ws.colorId) ?? color) : color;
+      const wEffect = ws?.effect ?? l.effect;
+      const highlighted = isSel && selectedWord === wi;
+      return (
+        <span
+          key={i}
+          onPointerDown={(e) => {
+            if (!isSel) return;
+            e.stopPropagation();
+            setSelectedWord((s) => (s === wi ? null : wi));
+          }}
+          className={`${wFont.className} ${wColor.className} ${highlighted ? "bg-gold/30 rounded-[0.2em]" : ""}`}
+          style={{
+            textShadow: textShadowFor(wEffect),
+            WebkitTextStroke: wEffect === "outline" ? "1.5px rgba(0,0,0,0.85)" : undefined,
+          }}
+        >
+          {tok}
+        </span>
+      );
+    });
+
     const inner = (
       <p
         dir="rtl"
@@ -473,9 +505,17 @@ const TemplateEditor = () => {
           WebkitTextStroke: l.effect === "outline" ? "1.5px rgba(0,0,0,0.85)" : undefined,
         }}
       >
-        {l.text}
+        {rendered}
       </p>
     );
+
+    const corners: { pos: string; rot: number }[] = [
+      { pos: "-top-3 -right-3", rot: 45 },
+      { pos: "-top-3 -left-3", rot: 135 },
+      { pos: "-bottom-3 -left-3", rot: 225 },
+      { pos: "-bottom-3 -right-3", rot: 315 },
+    ];
+
     return (
       <div
         key={l.id}
@@ -503,15 +543,27 @@ const TemplateEditor = () => {
         {isSel && (
           <>
             <div className="absolute -inset-2 border border-dashed border-gold/80 rounded-lg pointer-events-none" />
+            {corners.map((c) => (
+              <div
+                key={c.pos}
+                onPointerDown={(e) => startDrag(e, l, "scale")}
+                className={`absolute ${c.pos} w-6 h-6 rounded-full bg-gold border-2 border-white shadow touch-none flex items-center justify-center`}
+              >
+                <MoveHorizontal className="w-3 h-3 text-primary-foreground" style={{ transform: `rotate(${c.rot}deg)` }} />
+              </div>
+            ))}
             <div
-              onPointerDown={(e) => startDrag(e, l, "scale")}
-              className="absolute -bottom-3 -left-3 w-6 h-6 rounded-full bg-gold border-2 border-white shadow touch-none"
-            />
+              onPointerDown={(e) => startDrag(e, l, "rotate")}
+              className="absolute -top-9 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-card border-2 border-gold shadow touch-none flex items-center justify-center"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-gold" />
+            </div>
           </>
         )}
       </div>
     );
   };
+
 
   const behindLayers = layers.filter((l) => l.behind);
   const frontLayers = layers.filter((l) => !l.behind);
