@@ -298,14 +298,17 @@ const TemplateEditor = () => {
     });
   };
 
-  // ---- pointer drag / scale ----
-  const startDrag = (e: React.PointerEvent, layer: TextLayer, mode: "move" | "scale") => {
+  // ---- pointer drag / scale / rotate ----
+  const startDrag = (e: React.PointerEvent, layer: TextLayer, mode: "move" | "scale" | "rotate") => {
     e.stopPropagation();
     e.preventDefault();
     const rect = frameRef.current?.getBoundingClientRect();
     if (!rect) return;
     setSelectedId(layer.id);
-    dragState.current = { id: layer.id, mode, startX: e.clientX, startY: e.clientY, base: layer, rect };
+    const cx = rect.left + (layer.x / 100) * rect.width;
+    const cy = rect.top + (layer.y / 100) * rect.height;
+    const startAngle = (Math.atan2(e.clientY - cy, e.clientX - cx) * 180) / Math.PI;
+    dragState.current = { id: layer.id, mode, startX: e.clientX, startY: e.clientY, base: layer, rect, cx, cy, startAngle };
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
 
@@ -322,14 +325,23 @@ const TemplateEditor = () => {
         },
         d.id,
       );
+    } else if (d.mode === "rotate") {
+      const angle = (Math.atan2(e.clientY - (d.cy ?? 0), e.clientX - (d.cx ?? 0)) * 180) / Math.PI;
+      let next = d.base.rotation + (angle - (d.startAngle ?? 0));
+      next = ((((next + 180) % 360) + 360) % 360) - 180;
+      patch({ rotation: Math.round(next) }, d.id);
     } else {
-      const delta = (dx + dy) / 2;
-      patch({ size: Math.max(3, Math.min(48, d.base.size + (delta / d.rect.width) * 100)) }, d.id);
+      // uniform scale based on distance from the layer center
+      const startDist = Math.hypot(d.startX - (d.cx ?? 0), d.startY - (d.cy ?? 0)) || 1;
+      const dist = Math.hypot(e.clientX - (d.cx ?? 0), e.clientY - (d.cy ?? 0));
+      const ratio = dist / startDist;
+      patch({ size: Math.max(3, Math.min(60, d.base.size * ratio)) }, d.id);
     }
   };
   const endDrag = () => {
     dragState.current = null;
   };
+
 
   // Al-Khal Touch
   const PRESETS = [
