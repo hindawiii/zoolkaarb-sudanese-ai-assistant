@@ -822,7 +822,9 @@ const TemplateEditor = () => {
 
             {/* Font picker */}
             <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">الخط (للطبقة المحددة)</p>
+              <p className="text-xs font-semibold text-muted-foreground mb-2 font-cairo">
+                الخط {selectedWord !== null ? <span className="text-gold">(للكلمة المحددة)</span> : "(للطبقة المحددة)"}
+              </p>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
                 {FONTS.map((f) => {
                   const activeFont =
