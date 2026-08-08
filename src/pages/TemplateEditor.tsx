@@ -20,6 +20,15 @@ import {
   AlignLeft,
   Bold,
   Scissors,
+  Maximize2,
+  MoveHorizontal,
+  MoveVertical,
+  Droplet,
+  RefreshCw,
+  ChevronsUp,
+  ChevronsDown,
+  Palette,
+
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
