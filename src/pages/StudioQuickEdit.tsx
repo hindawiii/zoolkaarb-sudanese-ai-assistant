@@ -27,7 +27,6 @@ import {
   Scan,
   Stars,
   Scissors,
-  LayoutGrid,
   Focus,
   Droplet,
   Thermometer,
