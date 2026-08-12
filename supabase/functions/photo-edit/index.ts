@@ -316,13 +316,14 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { imageBase64, images, action, anime, outfitter } = await req.json();
+    const { imageBase64, images, action, anime, outfitter, sceneSwap } = await req.json();
     const imageList: string[] = Array.isArray(images) && images.length > 0
       ? images
       : imageBase64
         ? [imageBase64]
         : [];
-    if (imageList.length === 0) {
+    const noImageActions = ["outfit-swatch"];
+    if (imageList.length === 0 && !noImageActions.includes(action)) {
       return new Response(JSON.stringify({ error: "imageBase64 or images is required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -343,6 +344,28 @@ Deno.serve(async (req) => {
     }
 
     let prompt: string | undefined = PROMPTS[action];
+    if (action === "outfit-swatch") {
+      const desc = OUTFIT_VARIANTS[outfitter?.variant ?? ""] ?? "";
+      prompt = [
+        "Studio product photo of a men's outfit displayed on an invisible mannequin (ghost mannequin effect), full outfit visible head-to-toe, centered, on a clean neutral light-beige seamless background with soft professional studio lighting and a subtle shadow.",
+        "No human face, no person, no text, no watermark. E-commerce lookbook quality, ultra sharp fabric texture.",
+        `Outfit to display: ${desc.replace(/^Replace clothing with /i, "")}`,
+      ].join(" ");
+    }
+    if (action === "anime-scene-swap") {
+      prompt = [
+        "You are given TWO images. The FIRST image is the reference artwork/scene. The SECOND image is a real photo of a person.",
+        "Task: replace the specified character inside the FIRST image with the person from the SECOND image, keeping that character's exact pose, outfit, scale, camera angle, lighting and position in the composition.",
+        sceneSwap?.targetHint
+          ? `Target character to replace: ${sceneSwap.targetHint}.`
+          : "Target character to replace: the main/most prominent character in the scene.",
+        sceneSwap?.characterName ? `The user wants to become the character known as: ${sceneSwap.characterName}.` : "",
+        "CRITICAL: preserve the real person's exact facial identity, facial proportions, skin tone and hairline — only restyle them into the artwork's rendering style. No identity drift, no generic anime face.",
+        "Keep every other character and every background element of the FIRST image pixel-identical.",
+        "STRICT ANATOMY: one head, two arms, two hands with five fingers each, two legs. No extra limbs, no duplicated faces, no warped features.",
+        "Blend lighting, shading, color grading and line weight so the replacement looks natively drawn in the original artwork.",
+      ].filter(Boolean).join(" ");
+    }
     if (action === "anime-studio") {
       prompt = buildAnimePrompt(anime ?? {});
     }
