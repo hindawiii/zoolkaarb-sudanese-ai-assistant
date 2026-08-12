@@ -27,14 +27,12 @@ import {
   Scan,
   Stars,
   Scissors,
-  LayoutGrid,
   Focus,
   Droplet,
   Thermometer,
   CircleDot,
   Zap,
 } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -1012,7 +1010,7 @@ const ZoolProToolsHub = () => {
   /* ============================================================ */
   return (
     <div
-      className="min-h-screen bg-background max-w-md mx-auto relative pb-24"
+      className={`min-h-screen bg-background max-w-md mx-auto relative pb-24 ${currentImage ? (isRtl ? "pr-[58px]" : "pl-[58px]") : ""}`}
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundImage: "radial-gradient(ellipse at top, hsl(var(--gold) / 0.08), transparent 60%)",
@@ -1551,78 +1549,55 @@ const ZoolProToolsHub = () => {
         </div>
       )}
 
-      {/* Floating side-drawer trigger — image stays fully visible */}
+      {/* Docked side rail — always visible, image stays fully in view */}
       {currentImage && (
-        <Sheet>
-          <SheetTrigger asChild>
-            <button
-              className="fixed bottom-5 z-40 flex items-center gap-2 px-4 py-3 rounded-full gradient-gold text-primary-foreground shadow-xl shadow-gold/30 active:scale-95 font-cairo font-bold text-xs"
-              style={isRtl ? { left: "1rem" } : { right: "1rem" }}
-              aria-label={isRtl ? "الأدوات" : "Tools"}
-            >
-              <LayoutGrid className="w-4 h-4" />
-              <span>{isRtl ? `أدوات (${TOOLS.length})` : `Tools (${TOOLS.length})`}</span>
-            </button>
-          </SheetTrigger>
-          <SheetContent
-            side={isRtl ? "right" : "left"}
-            className="w-[82vw] sm:w-[340px] p-0 bg-card/95 backdrop-blur-2xl border-gold/30"
-          >
-            <div className="h-full flex flex-col">
-              <div className="px-4 py-3 border-b border-gold/20 flex items-center justify-between">
-                <span className="text-sm font-cairo font-bold text-gold">
-                  {isRtl ? "أدوات مدار الاحترافية" : "Madar Pro Tools"}
-                </span>
-                <span className="text-[10px] font-cairo text-muted-foreground">{TOOLS.length}</span>
-              </div>
-              <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4" style={{ scrollbarWidth: "none" }}>
-                {CATEGORIES.map((cat) => {
-                  const tools = TOOLS.filter((t) => t.cat === cat.id);
-                  if (!tools.length) return null;
-                  return (
-                    <div key={cat.id}>
-                      <p className="text-[10px] font-cairo font-bold text-gold/80 mb-2 px-1 tracking-wide">
-                        {isRtl ? cat.ar : cat.en}
-                      </p>
-                      <div className="grid grid-cols-4 gap-1.5">
-                        {tools.map((t) => {
-                          const active = activeTool === t.id;
-                          return (
-                            <button
-                              key={t.id}
-                              onClick={() => {
-                                setActiveTool((prev) => (prev === t.id ? null : t.id));
-                              }}
-                              disabled={loading}
-                              className={`flex flex-col items-center justify-center gap-1 h-[60px] rounded-xl border transition-all active:scale-95 disabled:opacity-50 ${
-                                active
-                                  ? "gradient-gold text-primary-foreground shadow shadow-gold/40 border-gold"
-                                  : "bg-background/60 text-foreground border-gold/20 hover:border-gold/50"
-                              }`}
-                            >
-                              <t.icon className="w-4 h-4" />
-                              <span className="text-[8px] font-cairo font-bold leading-none text-center px-0.5 line-clamp-1">
-                                {isRtl ? t.ar : t.en}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="px-4 py-2 border-t border-gold/20">
-                <p className="text-[9px] font-cairo text-muted-foreground text-center leading-relaxed">
-                  {isRtl
-                    ? "اختر أداة ثم أغلق القائمة لضبطها فوق الصورة"
-                    : "Pick a tool, then close to adjust over the image"}
-                </p>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+        <aside
+          className="fixed top-[68px] bottom-3 z-40 flex flex-col rounded-2xl border border-gold/25 bg-card/85 backdrop-blur-2xl shadow-xl shadow-black/20 overflow-hidden"
+          style={isRtl ? { right: 4 } : { left: 4 }}
+          dir={isRtl ? "rtl" : "ltr"}
+        >
+          <div className="px-1.5 py-1 border-b border-gold/20 text-center">
+            <span className="text-[8px] font-cairo font-bold text-gold leading-none">
+              {isRtl ? "أدوات" : "Tools"}
+            </span>
+          </div>
+          <div className="flex-1 overflow-y-auto px-1 py-1.5 space-y-2 w-[52px]" style={{ scrollbarWidth: "none" }}>
+            {CATEGORIES.map((cat) => {
+              const tools = TOOLS.filter((t) => t.cat === cat.id);
+              if (!tools.length) return null;
+              return (
+                <div key={cat.id} className="space-y-1">
+                  <p className="text-[7px] font-cairo font-bold text-gold/70 text-center leading-none border-b border-gold/10 pb-0.5">
+                    {isRtl ? cat.ar : cat.en}
+                  </p>
+                  {tools.map((t) => {
+                    const active = activeTool === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setActiveTool((prev) => (prev === t.id ? null : t.id))}
+                        disabled={loading}
+                        title={isRtl ? t.ar : t.en}
+                        className={`w-full flex flex-col items-center justify-center gap-0.5 py-1 rounded-lg border transition-all active:scale-95 disabled:opacity-50 ${
+                          active
+                            ? "gradient-gold text-primary-foreground border-gold shadow shadow-gold/40"
+                            : "bg-background/50 text-foreground border-transparent hover:border-gold/40"
+                        }`}
+                      >
+                        <t.icon className="w-3.5 h-3.5" />
+                        <span className="text-[6.5px] font-cairo font-bold leading-none text-center px-0.5 line-clamp-1">
+                          {isRtl ? t.ar : t.en}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </aside>
       )}
+
 
 
 

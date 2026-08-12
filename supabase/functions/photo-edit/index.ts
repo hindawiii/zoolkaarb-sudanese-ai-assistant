@@ -40,10 +40,37 @@ const STYLE_PROMPTS: Record<string, string> = {
   "one-piece": "Eiichiro Oda One Piece style: exaggerated proportions, expressive cartoon-leaning faces, bold inking, vibrant tropical adventure palette, pirate-era ambience.",
   hxh: "Yoshihiro Togashi Hunter x Hunter style: refined detailed line art, painterly soft cel-shading, rich saturated highlights, mature shonen character design.",
   conan: "Gosho Aoyama Detective Conan style: classic 90s shonen mystery look, cleaner softer line art, realistic proportions, urban detective ambience.",
+  "black-clover": "Black Clover (Yūki Tabata) style: heavy dramatic inking, high-contrast cel shading, magic-knight uniforms with capes, swirling grimoire magic particles, fierce determined expressions, dark fantasy battlefield ambience.",
+  "seven-deadly-sins": "The Seven Deadly Sins (Nakaba Suzuki) style: soft rounded line art with vivid saturated colors, ornate fantasy armor, glowing demonic/holy power marks, medieval fantasy lighting, dramatic power surges.",
+  bleach: "Bleach (Tite Kubo) style: sleek elongated proportions, razor-sharp minimalist inking, monochrome black shihakusho robes with white accents, cold blue-white reiatsu spirit pressure distorting the air, stylish cinematic framing.",
+  "sakamoto-days": "Sakamoto Days (Yuto Suzuki) style: modern crisp clean line art, semi-realistic proportions, slick urban action-thriller ambience, precise motion blur, sharp confident deadpan expression.",
+  "demon-slayer": "Demon Slayer / Kimetsu no Yaiba (ufotabe) style: exquisite ukiyo-e influenced effects, water/flame breathing energy painted like traditional Japanese woodblock waves, checkered haori patterns, Taisho-era ambience, luminous particle VFX.",
+  "jujutsu-kaisen": "Jujutsu Kaisen (Gege Akutami) style: gritty modern shonen inking, dark cursed-energy smoke, school uniform silhouettes, intense sharp eyes, cinematic contrast and heavy shadow.",
+  aot: "Attack on Titan (Hajime Isayama) style: rough gritty realistic line art, muted desaturated military palette, Survey Corps uniform with green cape, ODM gear straps, grim war-torn atmosphere.",
+  "one-punch": "One Punch Man (Murata) style: hyper-detailed realistic rendering with immaculate line work, explosive impact shockwaves, dramatic destruction debris, cinematic hero framing.",
+  "tokyo-ghoul": "Tokyo Ghoul (Sui Ishida) style: dark gothic palette, red-black kagune tendrils, cracked mask aesthetics, melancholic horror atmosphere, fine detailed hatching.",
+  "chainsaw-man": "Chainsaw Man (Tatsuki Fujimoto) style: raw sketchy expressive inking, grim urban devil-hunter mood, blood-red highlights, unhinged intense energy.",
+  "solo-leveling": "Solo Leveling manhwa style: ultra-polished digital painting, glowing purple-blue shadow monarch aura, sharp cinematic rim lighting, dark armored fantasy design, epic scale.",
+  "fairy-tail": "Fairy Tail (Hiro Mashima) style: energetic bold line art, warm vivid palette, fiery/celestial magic effects, guild-mark tattoo, adventurous heroic mood.",
 };
 const HERO_PROMPTS: Record<string, string> = {
   goku: "Force the identity of Son Goku from Dragon Ball Z: signature spiky black (or golden Super Saiyan) upright spiky hair, orange gi with blue undershirt and belt, Kanji symbol on chest, confident grin.",
   naruto: "Force the identity of Naruto Uzumaki: bright spiky blond hair, blue eyes, three whisker marks on each cheek, orange and black tracksuit jacket, Konoha forehead protector.",
+  asta: "Force the identity of Asta from Black Clover: short spiky ash-blond hair, fierce green eyes, black Bull squad robe, giant black anti-magic demon-slayer sword, faint black demon aura.",
+  yami: "Force the identity of Yami Sukehiro: tall imposing build, slicked-back black hair, cigarette, Black Bulls captain coat, dark cursed katana with black dark-magic slashes.",
+  meliodas: "Force the identity of Meliodas from Seven Deadly Sins: messy blond hair, green eyes, black Boar Hat outfit with white cravat, dragon sin mark, dark demonic aura swirling.",
+  escanor: "Force the identity of Escanor at noon: towering muscular build, blazing golden sunlight aura, Divine Axe Rhitta, immense prideful presence.",
+  ichigo: "Force the identity of Ichigo Kurosaki: bright orange spiky hair, black shihakusho robe, giant Zangetsu cleaver blade, blue-white reiatsu spirit pressure.",
+  sakamoto: "Force the identity of Taro Sakamoto (Sakamoto Days): calm deadpan expression, slick black hair, dark suit, effortless lethal poise.",
+  tanjiro: "Force the identity of Tanjiro Kamado: burgundy-tipped dark hair, scar on forehead, green-black checkered haori, nichirin katana, water-breathing wave effects.",
+  gojo: "Force the identity of Satoru Gojo: white spiky hair, glowing blue infinity eyes (or black blindfold), dark high-collar jujutsu uniform, limitless cursed energy distortion.",
+  sukuna: "Force the identity of Ryomen Sukuna: pink-blond hair, black tattoo markings across the face and body, cruel grin, crimson cursed slashes in the air.",
+  levi: "Force the identity of Levi Ackerman: black undercut hair, cold sharp eyes, Survey Corps uniform with green cape and ODM gear, dual blades.",
+  saitama: "Force the identity of Saitama: completely bald head, plain blank expression, yellow hero jumpsuit with red gloves, boots and white cape, devastating shockwave behind.",
+  kaneki: "Force the identity of Ken Kaneki: white hair, one red kakugan eye, black leather mask with steel teeth, red kagune tendrils.",
+  denji: "Force the identity of Denji / Chainsaw Man: messy blond hair, sharp-toothed grin, white shirt with black tie, chainsaw pull-cord chest, chainsaw blades.",
+  "sung-jinwoo": "Force the identity of Sung Jinwoo (Solo Leveling): black hair, glowing violet eyes, black shadow-monarch armored coat, purple shadow aura and kneeling shadow soldiers.",
+  natsu: "Force the identity of Natsu Dragneel: spiky pink hair, white scaled scarf, black open vest, blazing orange fire fists.",
   luffy: "Force the identity of Monkey D. Luffy: messy black hair under iconic straw hat with red ribbon, scar under left eye, red open vest, blue shorts, wide carefree smile.",
 };
 const AURA_PROMPTS: Record<string, string> = {
@@ -67,6 +94,19 @@ const PROP_PROMPTS: Record<string, string> = {
   saber: "Give the subject a glowing energy saber-style sword. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is already visible and free, gracefully reposition that same arm so the hand grips the saber hilt in a natural, anatomically correct way (elbow, shoulder, and wrist must remain consistent with a single body). If both hands are occupied, hidden, or cropped out of the frame, render the saber as a floating blade of energy hovering beside the subject instead of a held sword. The blade casts cyan/white rim light on the face and torso.",
   rasengan: "Give the subject a swirling blue Rasengan chakra sphere. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is visible and free, reposition that same arm so the open palm faces up/forward holding the sphere, keeping the shoulder-elbow-wrist chain anatomically consistent. If no hand is free or visible, render the Rasengan as a floating chakra orb hovering beside the subject with cyan energy trails. Cyan rim light on hand and face.",
   staff: "Give the subject a mystical shonen battle staff with subtle glowing runes. IMPORTANT: do NOT add a new arm — reuse one of the subject's existing hands. If a hand is visible and free, reposition that arm so the fingers wrap around the staff naturally. If no hand is free or visible, render the staff as a floating rune-lit staff hovering vertically beside the subject instead of held.",
+};
+
+// ===== Mythical Guardian / spirit beast manifestations =====
+const GUARDIAN_PROMPTS: Record<string, string> = {
+  none: "",
+  "dragon-behind": "Manifest a colossal oriental dragon spirit rising BEHIND the subject as a loyal guardian: massive scaled serpentine body, glowing eyes, whiskers flowing in the wind, smoke and embers, towering far above the subject while the subject stays exactly the same size and position in the frame. The dragon must be clearly behind, never overlapping the subject's face.",
+  "dragon-coil": "Manifest a translucent dragon made of pure energy COILING around the subject's body and arms like a living aura ribbon, emerging from the subject's own power, glowing scales, energy particles trailing. The dragon never covers the subject's face and never adds limbs to the subject.",
+  "phoenix-behind": "Manifest a giant blazing phoenix spirit spreading its wings BEHIND the subject, feathers of fire and gold light, embers rising, radiant halo of flame.",
+  "wolf-behind": "Manifest a colossal spectral wolf standing BEHIND the subject as a guardian beast, glowing blue-white spirit fur, bared fangs, frozen mist breath.",
+  "tiger-aura": "Manifest a roaring spirit tiger made of energy lunging outward from the subject's aura, striped light trails, ferocious presence.",
+  "serpent-coil": "Manifest an enormous energy serpent coiling in spirals around the subject from feet to shoulders, hypnotic glowing scales, venomous mist.",
+  "oni-behind": "Manifest a towering demonic Oni spirit looming BEHIND the subject with horned mask, glowing red eyes and dark purple smoke, oppressive intimidating presence.",
+  "kitsune-behind": "Manifest a nine-tailed spirit fox (kitsune) BEHIND the subject, tails fanned out in glowing amber-orange flame, ancient mystical presence.",
 };
 
 // ===== Outfitter Studio (ControlNet-style pose-locked outfit composer) =====
@@ -195,7 +235,7 @@ const buildOutfitterPrompt = (p: {
 
 const buildAnimePrompt = (p: {
   style?: string; hero?: string; aura?: string; hair?: string; prop?: string;
-  bodyPose?: string; visibleHand?: string; safeMode?: boolean;
+  bodyPose?: string; visibleHand?: string; safeMode?: boolean; guardian?: string;
 }) => {
   const hasProp = p.prop && p.prop !== "none" && PROP_PROMPTS[p.prop];
   const forceFloating = !!p.safeMode || p.visibleHand === "none";
@@ -226,6 +266,7 @@ const buildAnimePrompt = (p: {
     p.hero && HERO_PROMPTS[p.hero] ? HERO_PROMPTS[p.hero] : "",
     p.hair && HAIR_PROMPTS[p.hair] ? HAIR_PROMPTS[p.hair] : "",
     p.aura && AURA_PROMPTS[p.aura] ? AURA_PROMPTS[p.aura] : "",
+    p.guardian && GUARDIAN_PROMPTS[p.guardian] ? `${GUARDIAN_PROMPTS[p.guardian]} The guardian creature is an energy manifestation of the subject's own willpower and destructive strength — it must never replace, occlude, or deform the subject, and must never add extra human limbs.` : "",
     propBlock,
     hasProp && !forceFloating
       ? "POSE ADAPTATION FOR THE PROP: analyze which of the subject's hands is most visible and free. Use THAT existing hand — gently re-articulate the same arm (shoulder → elbow → wrist within a natural range of motion) so it holds the item convincingly. Never spawn a new arm from the torso, shoulder, or back. If both hands are already occupied (in pockets, holding something, behind back, or off-frame), render the prop as floating energy instead."
@@ -275,13 +316,14 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { imageBase64, images, action, anime, outfitter } = await req.json();
+    const { imageBase64, images, action, anime, outfitter, sceneSwap } = await req.json();
     const imageList: string[] = Array.isArray(images) && images.length > 0
       ? images
       : imageBase64
         ? [imageBase64]
         : [];
-    if (imageList.length === 0) {
+    const noImageActions = ["outfit-swatch"];
+    if (imageList.length === 0 && !noImageActions.includes(action)) {
       return new Response(JSON.stringify({ error: "imageBase64 or images is required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -302,6 +344,28 @@ Deno.serve(async (req) => {
     }
 
     let prompt: string | undefined = PROMPTS[action];
+    if (action === "outfit-swatch") {
+      const desc = OUTFIT_VARIANTS[outfitter?.variant ?? ""] ?? "";
+      prompt = [
+        "Studio product photo of a men's outfit displayed on an invisible mannequin (ghost mannequin effect), full outfit visible head-to-toe, centered, on a clean neutral light-beige seamless background with soft professional studio lighting and a subtle shadow.",
+        "No human face, no person, no text, no watermark. E-commerce lookbook quality, ultra sharp fabric texture.",
+        `Outfit to display: ${desc.replace(/^Replace clothing with /i, "")}`,
+      ].join(" ");
+    }
+    if (action === "anime-scene-swap") {
+      prompt = [
+        "You are given TWO images. The FIRST image is the reference artwork/scene. The SECOND image is a real photo of a person.",
+        "Task: replace the specified character inside the FIRST image with the person from the SECOND image, keeping that character's exact pose, outfit, scale, camera angle, lighting and position in the composition.",
+        sceneSwap?.targetHint
+          ? `Target character to replace: ${sceneSwap.targetHint}.`
+          : "Target character to replace: the main/most prominent character in the scene.",
+        sceneSwap?.characterName ? `The user wants to become the character known as: ${sceneSwap.characterName}.` : "",
+        "CRITICAL: preserve the real person's exact facial identity, facial proportions, skin tone and hairline — only restyle them into the artwork's rendering style. No identity drift, no generic anime face.",
+        "Keep every other character and every background element of the FIRST image pixel-identical.",
+        "STRICT ANATOMY: one head, two arms, two hands with five fingers each, two legs. No extra limbs, no duplicated faces, no warped features.",
+        "Blend lighting, shading, color grading and line weight so the replacement looks natively drawn in the original artwork.",
+      ].filter(Boolean).join(" ");
+    }
     if (action === "anime-studio") {
       prompt = buildAnimePrompt(anime ?? {});
     }
