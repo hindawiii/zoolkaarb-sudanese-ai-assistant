@@ -148,6 +148,13 @@ const OutfitterStudio = () => {
   const [includeShoes, setIncludeShoes] = useState(false);
   const [includeCane, setIncludeCane] = useState(false);
 
+  // Outfit preview (garment-only swatch + applied-on-user try-on)
+  const [previewFor, setPreviewFor] = useState<string | null>(null);
+  const [previewTab, setPreviewTab] = useState<"garment" | "onme">("garment");
+  const [swatchCache, setSwatchCache] = useState<Record<string, string>>({});
+  const [tryOnCache, setTryOnCache] = useState<Record<string, string>>({});
+  const [previewLoading, setPreviewLoading] = useState(false);
+
   useEffect(() => { setRemaining(getRemaining(TOOL_ID)); }, []);
 
   // sync default variant per category
@@ -184,6 +191,47 @@ const OutfitterStudio = () => {
   };
 
   const variants = category === "heritage" ? HERITAGE_OPTIONS : category === "formal" ? FORMAL_OPTIONS : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
+
+  const loadPreview = async (variantId: string, tab: "garment" | "onme") => {
+    if (tab === "garment" && swatchCache[variantId]) return;
+    if (tab === "onme" && tryOnCache[variantId]) return;
+    if (tab === "onme" && !image) {
+      toast({ title: isRtl ? "ارفع صورتك الأول" : "Upload your photo first", variant: "destructive" });
+      return;
+    }
+    setPreviewLoading(true);
+    try {
+      const body = tab === "garment"
+        ? { action: "outfit-swatch", outfitter: { variant: variantId } }
+        : {
+            imageBase64: image,
+            action: "outfitter-studio",
+            outfitter: {
+              category, variant: variantId, eyewear, headwear,
+              pose, framing,
+              includeShoes: framing === "full" && includeShoes,
+              includeCane: framing === "full" && includeCane,
+            },
+          };
+      const { data, error } = await supabase.functions.invoke("photo-edit", { body });
+      if (error) throw error;
+      if (data?.code === "AI_CREDITS_EXHAUSTED") { setAiCreditsExhausted(true); throw new Error(isRtl ? "رصيد الذكاء الاصطناعي خلص" : "AI balance exhausted"); }
+      if (data?.error) throw new Error(data.error);
+      if (!data?.imageUrl) throw new Error("No image");
+      if (tab === "garment") setSwatchCache((c) => ({ ...c, [variantId]: data.imageUrl }));
+      else setTryOnCache((c) => ({ ...c, [variantId]: data.imageUrl }));
+    } catch (err) {
+      toast({ title: isRtl ? "ما زبط" : "Failed", description: err instanceof Error ? err.message : "Error", variant: "destructive" });
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const openPreview = (variantId: string) => {
+    setPreviewFor(variantId);
+    setPreviewTab("garment");
+    loadPreview(variantId, "garment");
+  };
 
   const reallyRun = async () => {
     if (!image) return;
@@ -471,17 +519,26 @@ const OutfitterStudio = () => {
         <p className="text-[11px] font-bold font-cairo text-gold mb-2">{isRtl ? "التفاصيل" : "Details"}</p>
         <div className="flex flex-col gap-2">
           {variants.map((v) => (
-            <button
+            <div
               key={v.id}
-              onClick={() => setVariant(v.id)}
-              className={`flex items-center gap-3 p-3 rounded-xl border text-start active:scale-[0.98] ${
+              className={`flex items-center gap-2 p-2.5 rounded-xl border ${
                 variant === v.id ? "border-gold bg-gold/10" : "border-border bg-card"
               }`}
             >
-              <span className="text-xl">{v.emoji}</span>
-              <span className="flex-1 text-[12px] font-bold font-cairo text-foreground">{isRtl ? v.labelAr : v.labelEn}</span>
-              {variant === v.id && <Check className="w-4 h-4 text-gold" />}
-            </button>
+              <button onClick={() => setVariant(v.id)} className="flex-1 flex items-center gap-3 text-start active:scale-[0.98]">
+                <span className="text-xl">{v.emoji}</span>
+                <span className="flex-1 text-[12px] font-bold font-cairo text-foreground">{isRtl ? v.labelAr : v.labelEn}</span>
+                {variant === v.id && <Check className="w-4 h-4 text-gold" />}
+              </button>
+              <button
+                onClick={() => { setVariant(v.id); openPreview(v.id); }}
+                className="px-2 py-1.5 rounded-lg border border-gold/40 text-gold active:scale-95 flex items-center gap-1"
+                aria-label={isRtl ? "معاينة" : "Preview"}
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span className="text-[9px] font-cairo font-bold">{isRtl ? "معاينة" : "View"}</span>
+              </button>
+            </div>
           ))}
         </div>
       </div>
@@ -491,12 +548,12 @@ const OutfitterStudio = () => {
         <p className="text-[11px] font-bold font-cairo text-gold mb-2 flex items-center gap-1.5">
           <Glasses className="w-3.5 h-3.5" /> {isRtl ? "نظارات" : "Eyewear"}
         </p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-4 gap-1.5">
           {EYEWEAR.map((e) => (
             <button
               key={e.id}
               onClick={() => setEyewear(e.id)}
-              className={`py-2.5 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 ${
+              className={`py-1.5 px-1 rounded-lg border text-[9px] leading-tight font-cairo font-bold active:scale-95 ${
                 eyewear === e.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
               }`}
             >
@@ -510,12 +567,12 @@ const OutfitterStudio = () => {
         <p className="text-[11px] font-bold font-cairo text-gold mb-2 flex items-center gap-1.5">
           <Crown className="w-3.5 h-3.5" /> {isRtl ? "غطاء الرأس" : "Headwear"}
         </p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-4 gap-1.5">
           {HEADWEAR.map((h) => (
             <button
               key={h.id}
               onClick={() => setHeadwear(h.id)}
-              className={`py-2.5 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 ${
+              className={`py-1.5 px-1 rounded-lg border text-[9px] leading-tight font-cairo font-bold active:scale-95 ${
                 headwear === h.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
               }`}
             >
@@ -582,6 +639,65 @@ const OutfitterStudio = () => {
           </p>
         </div>
       </div>
+
+      {/* Full-screen outfit preview */}
+      {previewFor && (
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col" dir={isRtl ? "rtl" : "ltr"}>
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-gold/25">
+            <button onClick={() => setPreviewFor(null)} className="p-1.5 rounded-lg hover:bg-muted"><X className="w-5 h-5 text-foreground" /></button>
+            <p className="flex-1 text-[13px] font-bold font-cairo text-foreground truncate">
+              {(() => { const v = variants.find((x) => x.id === previewFor); return v ? (isRtl ? v.labelAr : v.labelEn) : ""; })()}
+            </p>
+          </div>
+          <div className="px-4 py-2 grid grid-cols-2 gap-2">
+            {(["garment", "onme"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => { setPreviewTab(t); loadPreview(previewFor, t); }}
+                className={`py-2 rounded-xl text-[11px] font-cairo font-bold border active:scale-95 ${
+                  previewTab === t ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+                }`}
+              >
+                {t === "garment" ? (isRtl ? "اللبس منفصل" : "Garment only") : (isRtl ? "عليك أنت" : "On you")}
+              </button>
+            ))}
+          </div>
+          <div className="flex-1 overflow-auto px-4 pb-4 flex items-center justify-center">
+            {previewLoading ? (
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="w-8 h-8 text-gold animate-spin" />
+                <p className="text-xs font-cairo text-foreground text-center px-6">
+                  {isRtl ? "الخال شغال.. بظبط في الملابس" : "Preparing the look..."}
+                </p>
+              </div>
+            ) : (previewTab === "garment" ? swatchCache[previewFor] : tryOnCache[previewFor]) ? (
+              <img
+                src={(previewTab === "garment" ? swatchCache[previewFor] : tryOnCache[previewFor]) as string}
+                alt="outfit preview"
+                className="w-full h-auto max-h-full object-contain rounded-2xl border border-gold/25"
+              />
+            ) : (
+              <button onClick={() => loadPreview(previewFor, previewTab)} className="px-4 py-2 rounded-xl gradient-gold text-primary-foreground text-xs font-cairo font-bold">
+                {isRtl ? "اعرض المعاينة" : "Load preview"}
+              </button>
+            )}
+          </div>
+          <div className="px-4 py-3 border-t border-gold/25 flex gap-2">
+            <button onClick={() => setPreviewFor(null)} className="flex-1 py-2.5 rounded-xl bg-card border border-border text-xs font-cairo font-bold text-foreground">
+              {isRtl ? "إغلاق" : "Close"}
+            </button>
+            <button
+              onClick={() => { setVariant(previewFor); setPreviewFor(null); }}
+              className="flex-1 py-2.5 rounded-xl gradient-gold text-primary-foreground text-xs font-cairo font-bold"
+            >
+              {isRtl ? "اختر هذا اللبس" : "Choose this outfit"}
+            </button>
+          </div>
+          <p className="text-[9.5px] text-center text-muted-foreground font-cairo pb-2 px-4">
+            {isRtl ? "المعاينة مجانية — الرصيد يخصم فقط بعد \"قبول وحفظ\"" : "Preview is free — credits are charged only on Accept"}
+          </p>
+        </div>
+      )}
 
       <RewardedAdModal open={adOpen} isRtl={isRtl} onClose={() => setAdOpen(false)} onRewarded={onAdRewarded} />
     </div>
