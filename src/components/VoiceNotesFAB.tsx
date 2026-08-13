@@ -350,14 +350,164 @@ const VoiceNotesFAB = () => {
           <SheetHeader className="p-5 pb-3 border-b border-border">
             <SheetTitle className="text-start font-cairo flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
-              {isAr ? "مفكرة الخال الصوتية" : "Al-Khal Voice Notes"}
+              {isAr ? "مفكرة الخال" : "Al-Khal Notepad"}
             </SheetTitle>
             <p className="text-xs text-muted-foreground text-start font-cairo">
               {isAr
-                ? "سجّل، فرتق، لخّص، وشارك بسرعة 🎙️"
-                : "Record, transcribe, summarize, share."}
+                ? "اكتب، ذكّر نفسك، سجّل صوت — كله في مكان واحد ✍️🎙️"
+                : "Write, set reminders, record voice — all in one place."}
             </p>
+            <div className="flex gap-2 pt-2">
+              {(["text", "voice"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={cn(
+                    "flex-1 py-2 rounded-xl text-[11px] font-cairo font-bold border active:scale-95 flex items-center justify-center gap-1.5",
+                    tab === t
+                      ? "gradient-gold text-primary-foreground border-transparent"
+                      : "bg-card border-border text-foreground",
+                  )}
+                >
+                  {t === "text" ? <StickyNote className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+                  {t === "text" ? (isAr ? "كتابة وتذكير" : "Notes & Reminders") : (isAr ? "ملاحظات صوتية" : "Voice notes")}
+                </button>
+              ))}
+            </div>
           </SheetHeader>
+
+          {tab === "text" && (
+            <ScrollArea className="flex-1">
+              <div className="p-4 space-y-3" dir={isAr ? "rtl" : "ltr"}>
+                {!editing && (
+                  <Button onClick={startNewNote} className="w-full gradient-gold text-primary-foreground font-cairo rounded-xl">
+                    <Plus className="w-4 h-4" />
+                    {isAr ? "ملاحظة أو تذكير جديد" : "New note or reminder"}
+                  </Button>
+                )}
+
+                {editing && (
+                  <div className="rounded-2xl border border-gold/40 bg-card p-3 space-y-2.5">
+                    <input
+                      value={editing.title}
+                      onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+                      placeholder={isAr ? "العنوان — مثلاً: اجتماع مع الخال" : "Title"}
+                      className="w-full px-3 py-2.5 rounded-xl bg-background border border-border text-sm font-cairo text-foreground outline-none focus:border-gold"
+                    />
+                    <textarea
+                      value={editing.body}
+                      onChange={(e) => setEditing({ ...editing, body: e.target.value })}
+                      placeholder={isAr ? "التفاصيل..." : "Details..."}
+                      rows={3}
+                      className="w-full px-3 py-2.5 rounded-xl bg-background border border-border text-sm font-cairo text-foreground outline-none focus:border-gold resize-none"
+                    />
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {REMINDER_KINDS.map((k) => (
+                        <button
+                          key={k.id}
+                          onClick={() => setEditing({ ...editing, kind: k.id as ReminderKind })}
+                          className={cn(
+                            "py-2 rounded-lg border text-[10px] font-cairo font-bold active:scale-95 flex flex-col items-center gap-0.5",
+                            editing.kind === k.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-background border-border text-foreground",
+                          )}
+                        >
+                          <span className="text-sm leading-none">{k.emoji}</span>
+                          {isAr ? k.ar : k.en}
+                        </button>
+                      ))}
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-cairo text-muted-foreground mb-1 flex items-center gap-1">
+                        <Bell className="w-3 h-3 text-gold" />
+                        {isAr ? "وقت التذكير (التاريخ والساعة)" : "Reminder date & time"}
+                      </p>
+                      <input
+                        type="datetime-local"
+                        value={toLocalInput(editing.dueAt)}
+                        onChange={(e) => setEditing({ ...editing, dueAt: fromLocalInput(e.target.value) })}
+                        className="w-full px-3 py-2.5 rounded-xl bg-background border border-border text-sm font-cairo text-foreground outline-none focus:border-gold"
+                      />
+                      <div className="flex gap-1.5 mt-1.5">
+                        {[
+                          { m: 60, ar: "بعد ساعة", en: "+1h" },
+                          { m: 60 * 3, ar: "بعد 3 ساعات", en: "+3h" },
+                          { m: 60 * 24, ar: "بكرة", en: "Tomorrow" },
+                        ].map((q) => (
+                          <button
+                            key={q.m}
+                            onClick={() => setEditing({ ...editing, dueAt: Date.now() + q.m * 60000 })}
+                            className="flex-1 py-1.5 rounded-lg border border-gold/30 bg-background text-[10px] font-cairo font-bold text-foreground active:scale-95"
+                          >
+                            {isAr ? q.ar : q.en}
+                          </button>
+                        ))}
+                        {editing.dueAt && (
+                          <button
+                            onClick={() => setEditing({ ...editing, dueAt: undefined })}
+                            className="px-2 rounded-lg border border-border bg-background text-muted-foreground active:scale-95"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 pt-1">
+                      <Button variant="outline" className="flex-1 font-cairo rounded-xl" onClick={() => setEditing(null)}>
+                        {isAr ? "إلغاء" : "Cancel"}
+                      </Button>
+                      <Button className="flex-1 gradient-gold text-primary-foreground font-cairo rounded-xl" onClick={saveEditing}>
+                        {isAr ? "حفظ" : "Save"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {textNotes.length === 0 && !editing && (
+                  <p className="text-xs text-muted-foreground text-start font-cairo py-6">
+                    {isAr ? "ما في ملاحظات لسه — اكتب أول تذكير للخال." : "No notes yet — write your first reminder."}
+                  </p>
+                )}
+
+                {textNotes.map((n) => {
+                  const k = REMINDER_KINDS.find((x) => x.id === n.kind);
+                  const overdue = !!n.dueAt && n.dueAt < Date.now() && !n.done;
+                  return (
+                    <div key={n.id} className={cn("rounded-2xl border bg-card p-3 space-y-1.5", n.done ? "border-border opacity-60" : overdue ? "border-destructive/50" : "border-gold/25")}>
+                      <div className="flex items-start gap-2">
+                        <span className="text-base leading-none mt-0.5">{k?.emoji}</span>
+                        <div className="flex-1 min-w-0 text-start">
+                          <p className={cn("text-sm font-cairo font-bold text-foreground break-words", n.done && "line-through")}>{n.title}</p>
+                          {n.body && <p className="text-xs font-cairo text-muted-foreground whitespace-pre-wrap">{n.body}</p>}
+                          {n.dueAt && (
+                            <p className={cn("mt-1 text-[10px] font-cairo flex items-center gap-1", overdue ? "text-destructive" : "text-gold")}>
+                              <Clock className="w-3 h-3" />
+                              {new Date(n.dueAt).toLocaleString(isAr ? "ar" : "en", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {!n.done && (
+                            <button onClick={() => { completeNote(n.id); setTextNotes(loadTextNotes()); }} className="w-8 h-8 rounded-full text-muted-foreground hover:text-emerald-500 flex items-center justify-center" aria-label="done">
+                              <CheckCircle2 className="w-4 h-4" />
+                            </button>
+                          )}
+                          <button onClick={() => setEditing(n)} className="w-8 h-8 rounded-full text-muted-foreground hover:text-gold flex items-center justify-center" aria-label="edit">
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => { deleteTextNote(n.id); setTextNotes(loadTextNotes()); }} className="w-8 h-8 rounded-full text-muted-foreground hover:text-destructive flex items-center justify-center" aria-label="delete">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          )}
+
+          {tab === "voice" && (
+            <>
 
           {/* Recorder */}
           <div className="p-5 border-b border-border">
