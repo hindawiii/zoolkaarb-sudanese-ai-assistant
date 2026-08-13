@@ -697,6 +697,8 @@ const VoiceNotesFAB = () => {
               })}
             </div>
           </ScrollArea>
+            </>
+          )}
         </SheetContent>
       </Sheet>
     </>
