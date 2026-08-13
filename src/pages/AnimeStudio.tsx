@@ -17,12 +17,51 @@ const STYLES = [
   { id: "one-piece", labelAr: "ون بيس", labelEn: "One Piece", color: "from-red-500 to-rose-600" },
   { id: "hxh", labelAr: "هانتر × هانتر", labelEn: "Hunter x Hunter", color: "from-emerald-500 to-green-700" },
   { id: "conan", labelAr: "المحقق كونان", labelEn: "Detective Conan", color: "from-blue-600 to-indigo-700" },
+  { id: "black-clover", labelAr: "بلاك كلوفر", labelEn: "Black Clover", color: "from-slate-800 to-emerald-600" },
+  { id: "seven-deadly-sins", labelAr: "الخطايا السبع", labelEn: "Seven Deadly Sins", color: "from-yellow-500 to-red-700" },
+  { id: "bleach", labelAr: "بليتش", labelEn: "Bleach", color: "from-zinc-800 to-sky-500" },
+  { id: "sakamoto-days", labelAr: "ساكاموتو دايز", labelEn: "Sakamoto Days", color: "from-neutral-700 to-neutral-400" },
+  { id: "demon-slayer", labelAr: "قاتل الشياطين", labelEn: "Demon Slayer", color: "from-teal-600 to-rose-600" },
+  { id: "jujutsu-kaisen", labelAr: "جوجوتسو كايسن", labelEn: "Jujutsu Kaisen", color: "from-indigo-900 to-fuchsia-600" },
+  { id: "aot", labelAr: "هجوم العمالقة", labelEn: "Attack on Titan", color: "from-stone-700 to-lime-700" },
+  { id: "one-punch", labelAr: "ون بانش مان", labelEn: "One Punch Man", color: "from-yellow-400 to-orange-600" },
+  { id: "tokyo-ghoul", labelAr: "طوكيو غول", labelEn: "Tokyo Ghoul", color: "from-black to-red-700" },
+  { id: "chainsaw-man", labelAr: "تشين سو مان", labelEn: "Chainsaw Man", color: "from-orange-700 to-red-900" },
+  { id: "solo-leveling", labelAr: "سولو ليفلنغ", labelEn: "Solo Leveling", color: "from-violet-800 to-indigo-500" },
+  { id: "fairy-tail", labelAr: "فيري تيل", labelEn: "Fairy Tail", color: "from-rose-500 to-amber-500" },
 ] as const;
 
 const HEROES = [
   { id: "goku", labelAr: "غوكو", labelEn: "Goku", style: "dbz" },
   { id: "naruto", labelAr: "ناروتو", labelEn: "Naruto", style: "naruto" },
   { id: "luffy", labelAr: "لوفي", labelEn: "Luffy", style: "one-piece" },
+  { id: "asta", labelAr: "أستا", labelEn: "Asta", style: "black-clover" },
+  { id: "yami", labelAr: "يامي", labelEn: "Yami", style: "black-clover" },
+  { id: "meliodas", labelAr: "ميليوداس", labelEn: "Meliodas", style: "seven-deadly-sins" },
+  { id: "escanor", labelAr: "إسكانور", labelEn: "Escanor", style: "seven-deadly-sins" },
+  { id: "ichigo", labelAr: "إيتشيغو", labelEn: "Ichigo", style: "bleach" },
+  { id: "sakamoto", labelAr: "ساكاموتو", labelEn: "Sakamoto", style: "sakamoto-days" },
+  { id: "tanjiro", labelAr: "تانجيرو", labelEn: "Tanjiro", style: "demon-slayer" },
+  { id: "gojo", labelAr: "غوجو", labelEn: "Gojo", style: "jujutsu-kaisen" },
+  { id: "sukuna", labelAr: "سوكونا", labelEn: "Sukuna", style: "jujutsu-kaisen" },
+  { id: "levi", labelAr: "ليفاي", labelEn: "Levi", style: "aot" },
+  { id: "saitama", labelAr: "سايتاما", labelEn: "Saitama", style: "one-punch" },
+  { id: "kaneki", labelAr: "كانيكي", labelEn: "Kaneki", style: "tokyo-ghoul" },
+  { id: "denji", labelAr: "دينجي", labelEn: "Denji", style: "chainsaw-man" },
+  { id: "sung-jinwoo", labelAr: "سونغ جين وو", labelEn: "Sung Jinwoo", style: "solo-leveling" },
+  { id: "natsu", labelAr: "ناتسو", labelEn: "Natsu", style: "fairy-tail" },
+] as const;
+
+const GUARDIANS = [
+  { id: "none", labelAr: "بدون", labelEn: "None", emoji: "🚫" },
+  { id: "dragon-behind", labelAr: "تنين حارس", labelEn: "Guardian Dragon", emoji: "🐉" },
+  { id: "dragon-coil", labelAr: "تنين ملتف", labelEn: "Coiling Dragon", emoji: "🌀" },
+  { id: "phoenix-behind", labelAr: "طائر العنقاء", labelEn: "Phoenix", emoji: "🔥" },
+  { id: "wolf-behind", labelAr: "ذئب الأرواح", labelEn: "Spirit Wolf", emoji: "🐺" },
+  { id: "tiger-aura", labelAr: "نمر الطاقة", labelEn: "Tiger Aura", emoji: "🐯" },
+  { id: "serpent-coil", labelAr: "أفعى ملتفة", labelEn: "Coiling Serpent", emoji: "🐍" },
+  { id: "oni-behind", labelAr: "عفريت أوني", labelEn: "Oni Demon", emoji: "👹" },
+  { id: "kitsune-behind", labelAr: "ثعلب الأذناب", labelEn: "Nine-tail Kitsune", emoji: "🦊" },
 ] as const;
 
 const AURAS = [
@@ -111,6 +150,12 @@ const AnimeStudio = () => {
   const [bodyPose, setBodyPose] = useState<string>("auto");
   const [visibleHand, setVisibleHand] = useState<string>("auto");
   const [safeMode, setSafeMode] = useState(false);
+  const [guardian, setGuardian] = useState<string>("none");
+
+  // Scene swap (put yourself inside an anime scene)
+  const sceneInputRef = useRef<HTMLInputElement>(null);
+  const [sceneImage, setSceneImage] = useState<string | null>(null);
+  const [sceneTarget, setSceneTarget] = useState<string>("");
 
   const [log, setLog] = useState<LogEntry[]>([]);
   const logId = useRef(0);
@@ -145,7 +190,7 @@ const AnimeStudio = () => {
           imageBase64: image,
           action: "anime-studio",
           anime: {
-            style, hero: hero || undefined, aura, hair, prop,
+            style, hero: hero || undefined, aura, hair, prop, guardian,
             bodyPose: bodyPose === "auto" ? undefined : bodyPose,
             visibleHand: visibleHand === "auto" ? undefined : visibleHand,
             safeMode,
@@ -188,6 +233,56 @@ const AnimeStudio = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleScenePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !file.type.startsWith("image/")) return;
+    if (file.size > 8 * 1024 * 1024) return toast({ title: isRtl ? "الصورة كبيرة (max 8MB)" : "Too large", variant: "destructive" });
+    setSceneImage(await fileToBase64(file));
+  };
+
+  const generateSceneSwap = async () => {
+    if (!image || !sceneImage) return;
+    setLoading(true); setPendingOutput(null);
+    pushLog("info", isRtl ? "الخال شغال.. بركبك مكان الشخصية" : "Placing you into the scene...");
+    try {
+      const heroLabel = HEROES.find((h) => h.id === hero);
+      const { data, error } = await supabase.functions.invoke("photo-edit", {
+        body: {
+          images: [sceneImage, image],
+          action: "anime-scene-swap",
+          sceneSwap: {
+            targetHint: sceneTarget || undefined,
+            characterName: heroLabel ? heroLabel.labelEn : undefined,
+          },
+        },
+      });
+      if (error) throw error;
+      if (isAiCreditsExhausted(data)) {
+        pushLog("error", isRtl ? "رصيد الذكاء الاصطناعي خلص." : "AI balance exhausted.");
+        return;
+      }
+      if (data?.error) throw new Error(data.error);
+      if (!data?.imageUrl) throw new Error("No image returned");
+      const watermarked = await addZoolWatermark(data.imageUrl);
+      setPendingOutput(watermarked);
+      pushLog("ok", isRtl ? "المعاينة جاهزة — راجعها قبل الحفظ" : "Preview ready — review before saving");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed";
+      pushLog("error", msg);
+      toast({ title: isRtl ? "ما زبط" : "Failed", description: msg, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const triggerSceneSwap = () => {
+    if (!image) return toast({ title: isRtl ? "ارفع صورتك الأول" : "Upload your photo first", variant: "destructive" });
+    if (!sceneImage) return toast({ title: isRtl ? "ارفع صورة المشهد" : "Upload a scene image", variant: "destructive" });
+    if (remaining <= 0) { setAdOpen(true); return; }
+    generateSceneSwap();
   };
 
   const triggerRun = () => {
@@ -437,7 +532,7 @@ const AnimeStudio = () => {
       <div className="px-4 mt-4">
         <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "التحول لبطل محدد" : "Transform to Specific Hero"}</p>
         <div className="grid grid-cols-3 gap-2">
-          {HEROES.map((h) => (
+          {HEROES.filter((h) => !style || h.style === style || hero === h.id).map((h) => (
             <button key={h.id} onClick={() => pickHero(h)}
               className={`py-3 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 ${
                 hero === h.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
@@ -506,6 +601,63 @@ const AnimeStudio = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Mythical Guardian */}
+      <div className="px-4 mt-5">
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-1">{isRtl ? "الحارس الأسطوري" : "Mythical Guardian"}</p>
+        <p className="text-[10px] text-muted-foreground/80 font-cairo mb-2 leading-relaxed">
+          {isRtl ? "تنين أو كائن أسطوري يقف خلفك أو يلتف حولك كطاقة تنبعث منك." : "A beast standing behind you or coiling around you as raw energy."}
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          {GUARDIANS.map((g) => (
+            <button key={g.id} onClick={() => setGuardian(g.id)}
+              className={`py-2.5 rounded-xl border flex flex-col items-center gap-1 active:scale-95 ${
+                guardian === g.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+              }`}>
+              <span className="text-base leading-none">{g.emoji}</span>
+              <span className="text-[9.5px] font-cairo font-bold leading-tight text-center">{isRtl ? g.labelAr : g.labelEn}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Scene swap */}
+      <div className="px-4 mt-5">
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-1">{isRtl ? "حط نفسك في مشهد أنمي" : "Put yourself in a scene"}</p>
+        <p className="text-[10px] text-muted-foreground/80 font-cairo mb-2 leading-relaxed">
+          {isRtl ? "ارفع صورة مشهد، وحدد الشخصية اللي عايز تكون مكانها — بنحافظ على ملامح وجهك بالظبط." : "Upload a scene and name the character you want to replace — your face stays identical."}
+        </p>
+        <input ref={sceneInputRef} type="file" accept="image/*" onChange={handleScenePick} className="hidden" />
+        <div className="flex gap-2">
+          <button onClick={() => sceneInputRef.current?.click()} className="flex-1 py-2.5 rounded-xl border border-gold/40 bg-card text-[11px] font-cairo font-bold text-foreground active:scale-95">
+            {sceneImage ? (isRtl ? "غيّر صورة المشهد" : "Change scene") : (isRtl ? "ارفع صورة المشهد" : "Upload scene")}
+          </button>
+          {sceneImage && (
+            <button onClick={() => setSceneImage(null)} className="px-3 rounded-xl border border-border bg-card text-muted-foreground active:scale-95">
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        {sceneImage && (
+          <>
+            <img src={sceneImage} alt="scene" className="mt-2 w-full h-auto rounded-2xl border border-gold/25" />
+            <input
+              value={sceneTarget}
+              onChange={(e) => setSceneTarget(e.target.value)}
+              placeholder={isRtl ? "أي شخصية؟ مثلاً: الشخصية اليمين بالسيف" : "Which character? e.g. the one on the right"}
+              className="mt-2 w-full px-3 py-2.5 rounded-xl bg-card border border-border text-[11px] font-cairo text-foreground outline-none focus:border-gold"
+            />
+            <button
+              onClick={triggerSceneSwap}
+              disabled={loading || !image}
+              className="mt-2 w-full py-3 rounded-xl gradient-gold text-primary-foreground text-xs font-cairo font-bold disabled:opacity-50 active:scale-95 flex items-center justify-center gap-2"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {isRtl ? "خليني الشخصية دي" : "Become this character"}
+            </button>
+          </>
+        )}
       </div>
 
       {/* CTA */}
