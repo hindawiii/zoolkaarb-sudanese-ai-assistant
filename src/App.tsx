@@ -30,6 +30,7 @@ import Converter from "./pages/office/Converter.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import VoiceNotesFAB from "./components/VoiceNotesFAB.tsx";
 import DailyChestModal from "./components/DailyChestModal.tsx";
+import ReminderAlert from "./components/ReminderAlert.tsx";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const App = () => (
         </Routes>
         <VoiceNotesFAB />
         <DailyChestModal />
+        <ReminderAlert />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

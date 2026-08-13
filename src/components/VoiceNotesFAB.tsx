@@ -12,6 +12,11 @@ import {
   Play,
   Pause,
   Cloud,
+  Plus,
+  Pencil,
+  Clock,
+  CheckCircle2,
+  StickyNote,
 } from "lucide-react";
 import {
   Sheet,
@@ -31,6 +36,18 @@ import {
   type VoiceNote,
 } from "@/lib/voiceNotesStore";
 import { cn } from "@/lib/utils";
+import {
+  loadTextNotes,
+  upsertTextNote,
+  deleteTextNote,
+  createTextNote,
+  completeNote,
+  toLocalInput,
+  fromLocalInput,
+  REMINDER_KINDS,
+  type TextNote,
+  type ReminderKind,
+} from "@/lib/remindersStore";
 
 const FAB_KEY = "zoolkaarb-fab-pos";
 
@@ -61,6 +78,9 @@ const VoiceNotesFAB = () => {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [notes, setNotes] = useState<VoiceNote[]>([]);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [tab, setTab] = useState<"text" | "voice">("text");
+  const [textNotes, setTextNotes] = useState<TextNote[]>([]);
+  const [editing, setEditing] = useState<TextNote | null>(null);
 
   const mediaRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -86,6 +106,32 @@ const VoiceNotesFAB = () => {
   }>({ active: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0 });
 
   useEffect(() => setNotes(loadNotes()), [open]);
+
+  useEffect(() => {
+    const refresh = () => setTextNotes(loadTextNotes());
+    refresh();
+    window.addEventListener("madar:notes-changed", refresh);
+    return () => window.removeEventListener("madar:notes-changed", refresh);
+  }, [open]);
+
+  const startNewNote = () => {
+    setEditing(createTextNote({ title: "", kind: "task" }));
+  };
+
+  const saveEditing = () => {
+    if (!editing) return;
+    if (!editing.title.trim()) {
+      toast({ title: isAr ? "اكتب عنوان الملاحظة" : "Add a title", variant: "destructive" });
+      return;
+    }
+    if (editing.dueAt && "Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+    upsertTextNote({ ...editing, title: editing.title.trim(), updatedAt: Date.now() });
+    setTextNotes(loadTextNotes());
+    setEditing(null);
+    toast({ title: isAr ? "انحفظت 👌" : "Saved" });
+  };
 
   // Allow other components (e.g. BottomNav center button) to open the sheet
   useEffect(() => {
