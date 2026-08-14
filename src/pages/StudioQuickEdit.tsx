@@ -1010,7 +1010,7 @@ const ZoolProToolsHub = () => {
   /* ============================================================ */
   return (
     <div
-      className={`min-h-screen bg-background max-w-md mx-auto relative pb-24 ${currentImage ? (isRtl ? "pr-[58px]" : "pl-[58px]") : ""}`}
+      className={`min-h-screen bg-background max-w-md mx-auto relative pb-24 ${currentImage ? (isRtl ? "pr-[142px]" : "pl-[142px]") : ""}`}
       dir={isRtl ? "rtl" : "ltr"}
       style={{
         backgroundImage: "radial-gradient(ellipse at top, hsl(var(--gold) / 0.08), transparent 60%)",
@@ -1561,15 +1561,16 @@ const ZoolProToolsHub = () => {
               {isRtl ? "أدوات" : "Tools"}
             </span>
           </div>
-          <div className="flex-1 overflow-y-auto px-1 py-1.5 space-y-2 w-[52px]" style={{ scrollbarWidth: "none" }}>
+          <div className="flex-1 overflow-y-auto px-1.5 py-1.5 space-y-2 w-[136px]" style={{ scrollbarWidth: "none" }}>
             {CATEGORIES.map((cat) => {
               const tools = TOOLS.filter((t) => t.cat === cat.id);
               if (!tools.length) return null;
               return (
                 <div key={cat.id} className="space-y-1">
-                  <p className="text-[7px] font-cairo font-bold text-gold/70 text-center leading-none border-b border-gold/10 pb-0.5">
+                  <p className="text-[7.5px] font-cairo font-bold text-gold/70 text-center leading-none border-b border-gold/10 pb-0.5">
                     {isRtl ? cat.ar : cat.en}
                   </p>
+                  <div className="grid grid-cols-3 gap-1">
                   {tools.map((t) => {
                     const active = activeTool === t.id;
                     return (
@@ -1591,6 +1592,7 @@ const ZoolProToolsHub = () => {
                       </button>
                     );
                   })}
+                  </div>
                 </div>
               );
             })}
