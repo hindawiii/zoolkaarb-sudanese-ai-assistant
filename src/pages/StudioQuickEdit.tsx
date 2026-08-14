@@ -1592,6 +1592,7 @@ const ZoolProToolsHub = () => {
                       </button>
                     );
                   })}
+                  </div>
                 </div>
               );
             })}
