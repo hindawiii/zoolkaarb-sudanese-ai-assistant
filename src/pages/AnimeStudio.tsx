@@ -282,7 +282,7 @@ const AnimeStudio = () => {
           action: "anime-scene-swap",
           sceneSwap: {
             targetHint: sceneTarget || undefined,
-            characterName: heroLabel ? heroLabel.labelEn : undefined,
+            characterName: heroLabel ? heroLabel.en : undefined,
           },
         },
       });
