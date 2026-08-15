@@ -39,27 +39,6 @@ const STYLES = [
   { id: "fairy-tail", labelAr: "فيري تيل", labelEn: "Fairy Tail", color: "from-rose-500 to-amber-500" },
 ] as const;
 
-const HEROES = [
-  { id: "goku", labelAr: "غوكو", labelEn: "Goku", style: "dbz" },
-  { id: "naruto", labelAr: "ناروتو", labelEn: "Naruto", style: "naruto" },
-  { id: "luffy", labelAr: "لوفي", labelEn: "Luffy", style: "one-piece" },
-  { id: "asta", labelAr: "أستا", labelEn: "Asta", style: "black-clover" },
-  { id: "yami", labelAr: "يامي", labelEn: "Yami", style: "black-clover" },
-  { id: "meliodas", labelAr: "ميليوداس", labelEn: "Meliodas", style: "seven-deadly-sins" },
-  { id: "escanor", labelAr: "إسكانور", labelEn: "Escanor", style: "seven-deadly-sins" },
-  { id: "ichigo", labelAr: "إيتشيغو", labelEn: "Ichigo", style: "bleach" },
-  { id: "sakamoto", labelAr: "ساكاموتو", labelEn: "Sakamoto", style: "sakamoto-days" },
-  { id: "tanjiro", labelAr: "تانجيرو", labelEn: "Tanjiro", style: "demon-slayer" },
-  { id: "gojo", labelAr: "غوجو", labelEn: "Gojo", style: "jujutsu-kaisen" },
-  { id: "sukuna", labelAr: "سوكونا", labelEn: "Sukuna", style: "jujutsu-kaisen" },
-  { id: "levi", labelAr: "ليفاي", labelEn: "Levi", style: "aot" },
-  { id: "saitama", labelAr: "سايتاما", labelEn: "Saitama", style: "one-punch" },
-  { id: "kaneki", labelAr: "كانيكي", labelEn: "Kaneki", style: "tokyo-ghoul" },
-  { id: "denji", labelAr: "دينجي", labelEn: "Denji", style: "chainsaw-man" },
-  { id: "sung-jinwoo", labelAr: "سونغ جين وو", labelEn: "Sung Jinwoo", style: "solo-leveling" },
-  { id: "natsu", labelAr: "ناتسو", labelEn: "Natsu", style: "fairy-tail" },
-] as const;
-
 const GUARDIANS = [
   { id: "none", labelAr: "بدون", labelEn: "None", emoji: "🚫" },
   { id: "dragon-behind", labelAr: "تنين حارس", labelEn: "Guardian Dragon", emoji: "🐉" },
@@ -72,18 +51,6 @@ const GUARDIANS = [
   { id: "kitsune-behind", labelAr: "ثعلب الأذناب", labelEn: "Nine-tail Kitsune", emoji: "🦊" },
 ] as const;
 
-const AURAS = [
-  { id: "kaio", labelAr: "كي (Kai)", labelEn: "Ki", icon: Flame },
-  { id: "chakra", labelAr: "تشاكرا", labelEn: "Chakra", icon: Wind },
-  { id: "nen", labelAr: "نين", labelEn: "Nen", icon: Sparkles },
-  { id: "haki", labelAr: "هاكي", labelEn: "Haki", icon: Zap },
-] as const;
-
-const HAIRS = [
-  { id: "keep", labelAr: "نفس الشعر", labelEn: "Keep" },
-  { id: "spiky", labelAr: "شعر سبايكي", labelEn: "Spiky" },
-  { id: "ssj-gold", labelAr: "سوبر ساين", labelEn: "Super Saiyan" },
-] as const;
 
 const PROPS = [
   { id: "none", labelAr: "بدون", labelEn: "None", icon: Check },
