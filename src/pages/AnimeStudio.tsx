@@ -191,6 +191,12 @@ const AnimeStudio = () => {
           action: "anime-studio",
           anime: {
             style, hero: hero || undefined, aura, hair, prop, guardian,
+            heroText: activeChar
+              ? `${activeChar.prompt} ${activeChar.forms.find((f) => f.id === heroForm)?.prompt ?? ""}`.trim()
+              : undefined,
+            formLabel: activeChar?.forms.find((f) => f.id === heroForm)?.en,
+            auraText: styleAuras.find((a) => a.id === aura)?.prompt,
+            hairText: styleHairs.find((h) => h.id === hair)?.prompt,
             bodyPose: bodyPose === "auto" ? undefined : bodyPose,
             visibleHand: visibleHand === "auto" ? undefined : visibleHand,
             safeMode,
