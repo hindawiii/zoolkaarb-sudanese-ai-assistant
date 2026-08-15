@@ -144,8 +144,21 @@ const AnimeStudio = () => {
 
   const [style, setStyle] = useState<string>("dbz");
   const [hero, setHero] = useState<string>("");
-  const [aura, setAura] = useState<string>("kaio");
-  const [hair, setHair] = useState<string>("spiky");
+  const [heroForm, setHeroForm] = useState<string>("");
+  const [aura, setAura] = useState<string>("ki");
+  const [hair, setHair] = useState<string>("keep");
+
+  const styleChars = charactersFor(style);
+  const styleAuras = aurasFor(style);
+  const styleHairs = hairsFor(style);
+  const activeChar = CHARACTERS.find((c) => c.id === hero);
+
+  // keep aura/hair valid whenever the universe changes
+  useEffect(() => {
+    if (!aurasFor(style).some((a) => a.id === aura)) setAura(aurasFor(style)[0].id);
+    if (!hairsFor(style).some((h) => h.id === hair)) setHair(hairsFor(style)[0].id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [style]);
   const [prop, setProp] = useState<string>("none");
   const [bodyPose, setBodyPose] = useState<string>("auto");
   const [visibleHand, setVisibleHand] = useState<string>("auto");
