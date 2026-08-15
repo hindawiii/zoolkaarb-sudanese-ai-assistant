@@ -8,6 +8,14 @@ import { consumeUse, getRemaining, grantAdReward } from "@/lib/studioQuota";
 import { addZoolWatermark } from "@/lib/watermark";
 import RewardedAdModal from "@/components/studio/RewardedAdModal";
 import QuotaBadge from "@/components/studio/QuotaBadge";
+import {
+  CHARACTERS,
+  ROLE_LABEL,
+  aurasFor,
+  charactersFor,
+  hairsFor,
+  type AnimeCharacter,
+} from "@/lib/animeData";
 
 const TOOL_ID = "anime-hero" as const;
 
