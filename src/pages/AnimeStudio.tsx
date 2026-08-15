@@ -8,6 +8,14 @@ import { consumeUse, getRemaining, grantAdReward } from "@/lib/studioQuota";
 import { addZoolWatermark } from "@/lib/watermark";
 import RewardedAdModal from "@/components/studio/RewardedAdModal";
 import QuotaBadge from "@/components/studio/QuotaBadge";
+import {
+  CHARACTERS,
+  ROLE_LABEL,
+  aurasFor,
+  charactersFor,
+  hairsFor,
+  type AnimeCharacter,
+} from "@/lib/animeData";
 
 const TOOL_ID = "anime-hero" as const;
 
@@ -31,27 +39,6 @@ const STYLES = [
   { id: "fairy-tail", labelAr: "فيري تيل", labelEn: "Fairy Tail", color: "from-rose-500 to-amber-500" },
 ] as const;
 
-const HEROES = [
-  { id: "goku", labelAr: "غوكو", labelEn: "Goku", style: "dbz" },
-  { id: "naruto", labelAr: "ناروتو", labelEn: "Naruto", style: "naruto" },
-  { id: "luffy", labelAr: "لوفي", labelEn: "Luffy", style: "one-piece" },
-  { id: "asta", labelAr: "أستا", labelEn: "Asta", style: "black-clover" },
-  { id: "yami", labelAr: "يامي", labelEn: "Yami", style: "black-clover" },
-  { id: "meliodas", labelAr: "ميليوداس", labelEn: "Meliodas", style: "seven-deadly-sins" },
-  { id: "escanor", labelAr: "إسكانور", labelEn: "Escanor", style: "seven-deadly-sins" },
-  { id: "ichigo", labelAr: "إيتشيغو", labelEn: "Ichigo", style: "bleach" },
-  { id: "sakamoto", labelAr: "ساكاموتو", labelEn: "Sakamoto", style: "sakamoto-days" },
-  { id: "tanjiro", labelAr: "تانجيرو", labelEn: "Tanjiro", style: "demon-slayer" },
-  { id: "gojo", labelAr: "غوجو", labelEn: "Gojo", style: "jujutsu-kaisen" },
-  { id: "sukuna", labelAr: "سوكونا", labelEn: "Sukuna", style: "jujutsu-kaisen" },
-  { id: "levi", labelAr: "ليفاي", labelEn: "Levi", style: "aot" },
-  { id: "saitama", labelAr: "سايتاما", labelEn: "Saitama", style: "one-punch" },
-  { id: "kaneki", labelAr: "كانيكي", labelEn: "Kaneki", style: "tokyo-ghoul" },
-  { id: "denji", labelAr: "دينجي", labelEn: "Denji", style: "chainsaw-man" },
-  { id: "sung-jinwoo", labelAr: "سونغ جين وو", labelEn: "Sung Jinwoo", style: "solo-leveling" },
-  { id: "natsu", labelAr: "ناتسو", labelEn: "Natsu", style: "fairy-tail" },
-] as const;
-
 const GUARDIANS = [
   { id: "none", labelAr: "بدون", labelEn: "None", emoji: "🚫" },
   { id: "dragon-behind", labelAr: "تنين حارس", labelEn: "Guardian Dragon", emoji: "🐉" },
@@ -64,18 +51,6 @@ const GUARDIANS = [
   { id: "kitsune-behind", labelAr: "ثعلب الأذناب", labelEn: "Nine-tail Kitsune", emoji: "🦊" },
 ] as const;
 
-const AURAS = [
-  { id: "kaio", labelAr: "كي (Kai)", labelEn: "Ki", icon: Flame },
-  { id: "chakra", labelAr: "تشاكرا", labelEn: "Chakra", icon: Wind },
-  { id: "nen", labelAr: "نين", labelEn: "Nen", icon: Sparkles },
-  { id: "haki", labelAr: "هاكي", labelEn: "Haki", icon: Zap },
-] as const;
-
-const HAIRS = [
-  { id: "keep", labelAr: "نفس الشعر", labelEn: "Keep" },
-  { id: "spiky", labelAr: "شعر سبايكي", labelEn: "Spiky" },
-  { id: "ssj-gold", labelAr: "سوبر ساين", labelEn: "Super Saiyan" },
-] as const;
 
 const PROPS = [
   { id: "none", labelAr: "بدون", labelEn: "None", icon: Check },
@@ -144,8 +119,21 @@ const AnimeStudio = () => {
 
   const [style, setStyle] = useState<string>("dbz");
   const [hero, setHero] = useState<string>("");
-  const [aura, setAura] = useState<string>("kaio");
-  const [hair, setHair] = useState<string>("spiky");
+  const [heroForm, setHeroForm] = useState<string>("");
+  const [aura, setAura] = useState<string>("ki");
+  const [hair, setHair] = useState<string>("keep");
+
+  const styleChars = charactersFor(style);
+  const styleAuras = aurasFor(style);
+  const styleHairs = hairsFor(style);
+  const activeChar = CHARACTERS.find((c) => c.id === hero);
+
+  // keep aura/hair valid whenever the universe changes
+  useEffect(() => {
+    if (!aurasFor(style).some((a) => a.id === aura)) setAura(aurasFor(style)[0].id);
+    if (!hairsFor(style).some((h) => h.id === hair)) setHair(hairsFor(style)[0].id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [style]);
   const [prop, setProp] = useState<string>("none");
   const [bodyPose, setBodyPose] = useState<string>("auto");
   const [visibleHand, setVisibleHand] = useState<string>("auto");
@@ -191,6 +179,12 @@ const AnimeStudio = () => {
           action: "anime-studio",
           anime: {
             style, hero: hero || undefined, aura, hair, prop, guardian,
+            heroText: activeChar
+              ? `${activeChar.prompt} ${activeChar.forms.find((f) => f.id === heroForm)?.prompt ?? ""}`.trim()
+              : undefined,
+            formLabel: activeChar?.forms.find((f) => f.id === heroForm)?.en,
+            auraText: styleAuras.find((a) => a.id === aura)?.prompt,
+            hairText: styleHairs.find((h) => h.id === hair)?.prompt,
             bodyPose: bodyPose === "auto" ? undefined : bodyPose,
             visibleHand: visibleHand === "auto" ? undefined : visibleHand,
             safeMode,
@@ -248,14 +242,14 @@ const AnimeStudio = () => {
     setLoading(true); setPendingOutput(null);
     pushLog("info", isRtl ? "الخال شغال.. بركبك مكان الشخصية" : "Placing you into the scene...");
     try {
-      const heroLabel = HEROES.find((h) => h.id === hero);
+      const heroLabel = CHARACTERS.find((h) => h.id === hero);
       const { data, error } = await supabase.functions.invoke("photo-edit", {
         body: {
           images: [sceneImage, image],
           action: "anime-scene-swap",
           sceneSwap: {
             targetHint: sceneTarget || undefined,
-            characterName: heroLabel ? heroLabel.labelEn : undefined,
+            characterName: heroLabel ? heroLabel.en : undefined,
           },
         },
       });
@@ -331,10 +325,11 @@ const AnimeStudio = () => {
 
   const reset = () => { setImage(null); setOutput(null); setPendingOutput(null); setLog([]); };
 
-  const pickHero = (h: typeof HEROES[number]) => {
-    setHero(h.id); setStyle(h.style);
-    if (h.id === "goku") setHair("spiky");
-    if (h.id === "naruto" || h.id === "luffy") setHair("keep");
+  const pickHero = (c: AnimeCharacter) => {
+    if (hero === c.id) { setHero(""); setHeroForm(""); return; }
+    setHero(c.id);
+    setStyle(c.style);
+    setHeroForm(c.forms[0]?.id ?? "");
   };
 
   const previewShown = pendingOutput && !output;
@@ -530,51 +525,81 @@ const AnimeStudio = () => {
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "التحول لبطل محدد" : "Transform to Specific Hero"}</p>
-        <div className="grid grid-cols-3 gap-2">
-          {HEROES.filter((h) => !style || h.style === style || hero === h.id).map((h) => (
-            <button key={h.id} onClick={() => pickHero(h)}
-              className={`py-3 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 ${
-                hero === h.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
-              }`}>
-              {isRtl ? h.labelAr : h.labelEn}
-            </button>
-          ))}
-        </div>
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-1">{isRtl ? "التحول لشخصية محددة" : "Transform to a Character"}</p>
+        <p className="text-[10px] text-muted-foreground/80 font-cairo mb-2 leading-relaxed">
+          {isRtl ? "اضغط على اسم الشخصية عشان تظهر كل أطوار التحول الخاصة بيها." : "Tap a character to reveal all of its transformation forms."}
+        </p>
+        {(["hero", "villain", "power"] as const).map((role) => {
+          const list = styleChars.filter((c) => c.role === role);
+          if (!list.length) return null;
+          return (
+            <div key={role} className="mb-2.5">
+              <p className="text-[9.5px] font-cairo font-bold text-gold/80 mb-1">
+                {ROLE_LABEL[role].emoji} {isRtl ? ROLE_LABEL[role].ar : ROLE_LABEL[role].en}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {list.map((c) => (
+                  <button key={c.id} onClick={() => pickHero(c)}
+                    className={`py-2.5 rounded-xl border text-[10.5px] font-cairo font-bold active:scale-95 ${
+                      hero === c.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+                    }`}>
+                    {isRtl ? c.ar : c.en}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
+        {activeChar && activeChar.forms.length > 0 && (
+          <div className="mt-1 p-2.5 rounded-2xl border border-gold/30 bg-gold/5">
+            <p className="text-[10px] font-cairo font-bold text-gold mb-1.5">
+              {isRtl ? `أطوار ${activeChar.ar}` : `${activeChar.en} forms`}
+            </p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {activeChar.forms.map((f) => (
+                <button key={f.id} onClick={() => setHeroForm(f.id)}
+                  className={`py-2 rounded-lg border text-[9.5px] font-cairo font-bold active:scale-95 ${
+                    heroForm === f.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+                  }`}>
+                  {isRtl ? f.ar : f.en}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {hero && (
-          <button onClick={() => setHero("")} className="mt-2 text-[10px] text-muted-foreground font-cairo underline">
-            {isRtl ? "إلغاء البطل المحدد" : "Clear hero"}
+          <button onClick={() => { setHero(""); setHeroForm(""); }} className="mt-2 text-[10px] text-muted-foreground font-cairo underline">
+            {isRtl ? "إلغاء الشخصية المحددة" : "Clear character"}
           </button>
         )}
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "الهالة القتالية" : "Power Aura"}</p>
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "المهارات والهالة القتالية" : "Skills & Power Aura"}</p>
         <div className="grid grid-cols-4 gap-2">
-          {AURAS.map((a) => {
-            const Icon = a.icon;
-            return (
-              <button key={a.id} onClick={() => setAura(a.id)}
-                className={`py-2.5 rounded-xl border flex flex-col items-center gap-1 active:scale-95 ${
-                  aura === a.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
-                }`}>
-                <Icon className="w-4 h-4" />
-                <span className="text-[10px] font-cairo font-bold">{isRtl ? a.labelAr : a.labelEn}</span>
-              </button>
-            );
-          })}
+          {styleAuras.map((a) => (
+            <button key={a.id} onClick={() => setAura(a.id)}
+              className={`py-2.5 rounded-xl border flex flex-col items-center gap-1 active:scale-95 ${
+                aura === a.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+              }`}>
+              <span className="text-sm leading-none">{a.emoji}</span>
+              <span className="text-[9px] font-cairo font-bold leading-tight text-center line-clamp-2">{isRtl ? a.ar : a.en}</span>
+            </button>
+          ))}
         </div>
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "الشعر" : "Hair"}</p>
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "تحولات الشعر" : "Hair Transformations"}</p>
         <div className="grid grid-cols-3 gap-2">
-          {HAIRS.map((h) => (
+          {styleHairs.map((h) => (
             <button key={h.id} onClick={() => setHair(h.id)}
-              className={`py-2.5 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 ${
+              className={`py-2.5 rounded-xl border text-[10.5px] font-cairo font-bold active:scale-95 ${
                 hair === h.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
               }`}>
-              {isRtl ? h.labelAr : h.labelEn}
+              {isRtl ? h.ar : h.en}
             </button>
           ))}
         </div>
@@ -609,14 +634,14 @@ const AnimeStudio = () => {
         <p className="text-[10px] text-muted-foreground/80 font-cairo mb-2 leading-relaxed">
           {isRtl ? "تنين أو كائن أسطوري يقف خلفك أو يلتف حولك كطاقة تنبعث منك." : "A beast standing behind you or coiling around you as raw energy."}
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-5 gap-1.5">
           {GUARDIANS.map((g) => (
             <button key={g.id} onClick={() => setGuardian(g.id)}
-              className={`py-2.5 rounded-xl border flex flex-col items-center gap-1 active:scale-95 ${
+              className={`py-1.5 rounded-lg border flex flex-col items-center gap-0.5 active:scale-95 ${
                 guardian === g.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
               }`}>
-              <span className="text-base leading-none">{g.emoji}</span>
-              <span className="text-[9.5px] font-cairo font-bold leading-tight text-center">{isRtl ? g.labelAr : g.labelEn}</span>
+              <span className="text-[13px] leading-none">{g.emoji}</span>
+              <span className="text-[7.5px] font-cairo font-bold leading-tight text-center line-clamp-2">{isRtl ? g.labelAr : g.labelEn}</span>
             </button>
           ))}
         </div>

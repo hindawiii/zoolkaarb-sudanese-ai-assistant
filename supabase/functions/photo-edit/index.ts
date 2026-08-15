@@ -236,6 +236,7 @@ const buildOutfitterPrompt = (p: {
 const buildAnimePrompt = (p: {
   style?: string; hero?: string; aura?: string; hair?: string; prop?: string;
   bodyPose?: string; visibleHand?: string; safeMode?: boolean; guardian?: string;
+  heroText?: string; formLabel?: string; auraText?: string; hairText?: string;
 }) => {
   const hasProp = p.prop && p.prop !== "none" && PROP_PROMPTS[p.prop];
   const forceFloating = !!p.safeMode || p.visibleHand === "none";
@@ -263,9 +264,10 @@ const buildAnimePrompt = (p: {
     bodyPoseHint,
     handHint,
     STYLE_PROMPTS[p.style ?? ""] ?? STYLE_PROMPTS["dbz"],
-    p.hero && HERO_PROMPTS[p.hero] ? HERO_PROMPTS[p.hero] : "",
-    p.hair && HAIR_PROMPTS[p.hair] ? HAIR_PROMPTS[p.hair] : "",
-    p.aura && AURA_PROMPTS[p.aura] ? AURA_PROMPTS[p.aura] : "",
+    p.heroText || (p.hero && HERO_PROMPTS[p.hero] ? HERO_PROMPTS[p.hero] : ""),
+    p.formLabel ? `Render the character specifically in the "${p.formLabel}" transformation state, with all of its signature visual traits (hair, eyes, aura, costume changes) applied to the subject while keeping the subject's real facial identity recognizable.` : "",
+    p.hairText || (p.hair && HAIR_PROMPTS[p.hair] ? HAIR_PROMPTS[p.hair] : ""),
+    p.auraText || (p.aura && AURA_PROMPTS[p.aura] ? AURA_PROMPTS[p.aura] : ""),
     p.guardian && GUARDIAN_PROMPTS[p.guardian] ? `${GUARDIAN_PROMPTS[p.guardian]} The guardian creature is an energy manifestation of the subject's own willpower and destructive strength — it must never replace, occlude, or deform the subject, and must never add extra human limbs.` : "",
     propBlock,
     hasProp && !forceFloating
