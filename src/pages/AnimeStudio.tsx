@@ -530,51 +530,81 @@ const AnimeStudio = () => {
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "التحول لبطل محدد" : "Transform to Specific Hero"}</p>
-        <div className="grid grid-cols-3 gap-2">
-          {HEROES.filter((h) => !style || h.style === style || hero === h.id).map((h) => (
-            <button key={h.id} onClick={() => pickHero(h)}
-              className={`py-3 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 ${
-                hero === h.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
-              }`}>
-              {isRtl ? h.labelAr : h.labelEn}
-            </button>
-          ))}
-        </div>
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-1">{isRtl ? "التحول لشخصية محددة" : "Transform to a Character"}</p>
+        <p className="text-[10px] text-muted-foreground/80 font-cairo mb-2 leading-relaxed">
+          {isRtl ? "اضغط على اسم الشخصية عشان تظهر كل أطوار التحول الخاصة بيها." : "Tap a character to reveal all of its transformation forms."}
+        </p>
+        {(["hero", "villain", "power"] as const).map((role) => {
+          const list = styleChars.filter((c) => c.role === role);
+          if (!list.length) return null;
+          return (
+            <div key={role} className="mb-2.5">
+              <p className="text-[9.5px] font-cairo font-bold text-gold/80 mb-1">
+                {ROLE_LABEL[role].emoji} {isRtl ? ROLE_LABEL[role].ar : ROLE_LABEL[role].en}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {list.map((c) => (
+                  <button key={c.id} onClick={() => pickHero(c)}
+                    className={`py-2.5 rounded-xl border text-[10.5px] font-cairo font-bold active:scale-95 ${
+                      hero === c.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+                    }`}>
+                    {isRtl ? c.ar : c.en}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
+        {activeChar && activeChar.forms.length > 0 && (
+          <div className="mt-1 p-2.5 rounded-2xl border border-gold/30 bg-gold/5">
+            <p className="text-[10px] font-cairo font-bold text-gold mb-1.5">
+              {isRtl ? `أطوار ${activeChar.ar}` : `${activeChar.en} forms`}
+            </p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {activeChar.forms.map((f) => (
+                <button key={f.id} onClick={() => setHeroForm(f.id)}
+                  className={`py-2 rounded-lg border text-[9.5px] font-cairo font-bold active:scale-95 ${
+                    heroForm === f.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+                  }`}>
+                  {isRtl ? f.ar : f.en}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {hero && (
-          <button onClick={() => setHero("")} className="mt-2 text-[10px] text-muted-foreground font-cairo underline">
-            {isRtl ? "إلغاء البطل المحدد" : "Clear hero"}
+          <button onClick={() => { setHero(""); setHeroForm(""); }} className="mt-2 text-[10px] text-muted-foreground font-cairo underline">
+            {isRtl ? "إلغاء الشخصية المحددة" : "Clear character"}
           </button>
         )}
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "الهالة القتالية" : "Power Aura"}</p>
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "المهارات والهالة القتالية" : "Skills & Power Aura"}</p>
         <div className="grid grid-cols-4 gap-2">
-          {AURAS.map((a) => {
-            const Icon = a.icon;
-            return (
-              <button key={a.id} onClick={() => setAura(a.id)}
-                className={`py-2.5 rounded-xl border flex flex-col items-center gap-1 active:scale-95 ${
-                  aura === a.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
-                }`}>
-                <Icon className="w-4 h-4" />
-                <span className="text-[10px] font-cairo font-bold">{isRtl ? a.labelAr : a.labelEn}</span>
-              </button>
-            );
-          })}
+          {styleAuras.map((a) => (
+            <button key={a.id} onClick={() => setAura(a.id)}
+              className={`py-2.5 rounded-xl border flex flex-col items-center gap-1 active:scale-95 ${
+                aura === a.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+              }`}>
+              <span className="text-sm leading-none">{a.emoji}</span>
+              <span className="text-[9px] font-cairo font-bold leading-tight text-center line-clamp-2">{isRtl ? a.ar : a.en}</span>
+            </button>
+          ))}
         </div>
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "الشعر" : "Hair"}</p>
+        <p className="text-[11px] font-bold font-cairo text-muted-foreground mb-2">{isRtl ? "تحولات الشعر" : "Hair Transformations"}</p>
         <div className="grid grid-cols-3 gap-2">
-          {HAIRS.map((h) => (
+          {styleHairs.map((h) => (
             <button key={h.id} onClick={() => setHair(h.id)}
-              className={`py-2.5 rounded-xl border text-[11px] font-cairo font-bold active:scale-95 ${
+              className={`py-2.5 rounded-xl border text-[10.5px] font-cairo font-bold active:scale-95 ${
                 hair === h.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
               }`}>
-              {isRtl ? h.labelAr : h.labelEn}
+              {isRtl ? h.ar : h.en}
             </button>
           ))}
         </div>
