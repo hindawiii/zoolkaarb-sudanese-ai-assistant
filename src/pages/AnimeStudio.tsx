@@ -331,10 +331,11 @@ const AnimeStudio = () => {
 
   const reset = () => { setImage(null); setOutput(null); setPendingOutput(null); setLog([]); };
 
-  const pickHero = (h: typeof HEROES[number]) => {
-    setHero(h.id); setStyle(h.style);
-    if (h.id === "goku") setHair("spiky");
-    if (h.id === "naruto" || h.id === "luffy") setHair("keep");
+  const pickHero = (c: AnimeCharacter) => {
+    if (hero === c.id) { setHero(""); setHeroForm(""); return; }
+    setHero(c.id);
+    setStyle(c.style);
+    setHeroForm(c.forms[0]?.id ?? "");
   };
 
   const previewShown = pendingOutput && !output;
