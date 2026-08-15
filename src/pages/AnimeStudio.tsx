@@ -609,14 +609,14 @@ const AnimeStudio = () => {
         <p className="text-[10px] text-muted-foreground/80 font-cairo mb-2 leading-relaxed">
           {isRtl ? "تنين أو كائن أسطوري يقف خلفك أو يلتف حولك كطاقة تنبعث منك." : "A beast standing behind you or coiling around you as raw energy."}
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-5 gap-1.5">
           {GUARDIANS.map((g) => (
             <button key={g.id} onClick={() => setGuardian(g.id)}
-              className={`py-2.5 rounded-xl border flex flex-col items-center gap-1 active:scale-95 ${
+              className={`py-1.5 rounded-lg border flex flex-col items-center gap-0.5 active:scale-95 ${
                 guardian === g.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
               }`}>
-              <span className="text-base leading-none">{g.emoji}</span>
-              <span className="text-[9.5px] font-cairo font-bold leading-tight text-center">{isRtl ? g.labelAr : g.labelEn}</span>
+              <span className="text-[13px] leading-none">{g.emoji}</span>
+              <span className="text-[7.5px] font-cairo font-bold leading-tight text-center line-clamp-2">{isRtl ? g.labelAr : g.labelEn}</span>
             </button>
           ))}
         </div>
