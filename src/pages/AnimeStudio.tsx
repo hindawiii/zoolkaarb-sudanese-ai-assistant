@@ -248,7 +248,7 @@ const AnimeStudio = () => {
     setLoading(true); setPendingOutput(null);
     pushLog("info", isRtl ? "الخال شغال.. بركبك مكان الشخصية" : "Placing you into the scene...");
     try {
-      const heroLabel = HEROES.find((h) => h.id === hero);
+      const heroLabel = CHARACTERS.find((h) => h.id === hero);
       const { data, error } = await supabase.functions.invoke("photo-edit", {
         body: {
           images: [sceneImage, image],
