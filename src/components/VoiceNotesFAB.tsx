@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import ReminderTonePicker from "@/components/ReminderTonePicker";
 import { useUser } from "@/store/userStore";
 import {
   loadNotes,
@@ -379,6 +380,8 @@ const VoiceNotesFAB = () => {
           {tab === "text" && (
             <ScrollArea className="flex-1">
               <div className="p-4 space-y-3" dir={isAr ? "rtl" : "ltr"}>
+                {!editing && <ReminderTonePicker />}
+
                 {!editing && (
                   <Button onClick={startNewNote} className="w-full gradient-gold text-primary-foreground font-cairo rounded-xl">
                     <Plus className="w-4 h-4" />
