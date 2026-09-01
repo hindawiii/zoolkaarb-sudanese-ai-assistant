@@ -44,6 +44,12 @@ const ReminderAlert = () => {
     };
   }, [active]);
 
+  const close = (action?: () => void) => {
+    stopRingtone();
+    action?.();
+    setActive(null);
+  };
+
   if (!active) return null;
 
   const kind = REMINDER_KINDS.find((k) => k.id === active.kind);
