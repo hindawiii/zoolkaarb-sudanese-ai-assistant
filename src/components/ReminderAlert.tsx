@@ -9,6 +9,8 @@ import {
   snoozeNote,
   type TextNote,
 } from "@/lib/remindersStore";
+import { getReminderTone } from "@/lib/reminderTone";
+import { startRingtone, stopRingtone } from "@/lib/ringtone";
 
 const SNOOZES = [5, 15, 60];
 
@@ -29,7 +31,7 @@ const ReminderAlert = () => {
           if ("Notification" in window && Notification.permission === "granted") {
             new Notification(due[0].title, { body: due[0].body || "مدار — تذكير الخال" });
           }
-          navigator.vibrate?.([220, 90, 220]);
+          startRingtone(getReminderTone());
         } catch { /* ignore */ }
       }
     };
@@ -41,6 +43,12 @@ const ReminderAlert = () => {
       window.removeEventListener("madar:notes-changed", check);
     };
   }, [active]);
+
+  const close = (action?: () => void) => {
+    stopRingtone();
+    action?.();
+    setActive(null);
+  };
 
   if (!active) return null;
 
@@ -86,7 +94,7 @@ const ReminderAlert = () => {
           {SNOOZES.map((m) => (
             <button
               key={m}
-              onClick={() => { snoozeNote(active.id, m); setActive(null); }}
+              onClick={() => close(() => snoozeNote(active.id, m))}
               className="py-2.5 rounded-xl border border-gold/30 bg-background/60 text-[11px] font-cairo font-bold text-foreground active:scale-95"
             >
               {isAr ? `بعد ${m} د` : `+${m}m`}
@@ -96,14 +104,14 @@ const ReminderAlert = () => {
 
         <div className="mt-2 flex gap-2">
           <button
-            onClick={() => setActive(null)}
+            onClick={() => close()}
             className="flex-1 py-3 rounded-xl bg-background/60 border border-border text-xs font-cairo font-bold text-foreground active:scale-95 flex items-center justify-center gap-1.5"
           >
             <X className="w-4 h-4" />
             {isAr ? "إغلاق" : "Dismiss"}
           </button>
           <button
-            onClick={() => { completeNote(active.id); setActive(null); }}
+            onClick={() => close(() => completeNote(active.id))}
             className="flex-1 py-3 rounded-xl gradient-gold text-primary-foreground text-xs font-cairo font-bold active:scale-95 flex items-center justify-center gap-1.5"
           >
             <Check className="w-4 h-4" />
