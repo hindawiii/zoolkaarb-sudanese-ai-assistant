@@ -31,7 +31,7 @@ const ReminderAlert = () => {
           if ("Notification" in window && Notification.permission === "granted") {
             new Notification(due[0].title, { body: due[0].body || "مدار — تذكير الخال" });
           }
-          navigator.vibrate?.([220, 90, 220]);
+          startRingtone(getReminderTone());
         } catch { /* ignore */ }
       }
     };
