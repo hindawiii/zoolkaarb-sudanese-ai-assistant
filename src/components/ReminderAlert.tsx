@@ -9,6 +9,8 @@ import {
   snoozeNote,
   type TextNote,
 } from "@/lib/remindersStore";
+import { getReminderTone } from "@/lib/reminderTone";
+import { startRingtone, stopRingtone } from "@/lib/ringtone";
 
 const SNOOZES = [5, 15, 60];
 
