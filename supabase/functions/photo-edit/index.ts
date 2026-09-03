@@ -268,6 +268,10 @@ const buildOutfitterPrompt = (p: {
     headwearPrompt,
     accessoryOverride,
     mixMatchPrompt,
+    p.gender === "female"
+      ? "MODESTY RULE (mandatory, Islamic modest dress): the garment must be loose, opaque and non-figure-hugging, with full-length sleeves down to the wrists, a closed high neckline (no cleavage, no bare shoulders, no bare arms, no bare legs), and a hem reaching the ankles. If a head covering is requested, cover ALL hair completely with no strands showing. Never sexualize, never slim or reshape the body, keep the subject's face and expression identical."
+      : "",
+
     "Match lighting direction, shadows, color temperature, and grain of the original photo perfectly so the new clothing looks naturally photographed on the subject. No deformation of body proportions. No extra limbs. No identity drift.",
   ].filter(Boolean).join(" ");
 };
