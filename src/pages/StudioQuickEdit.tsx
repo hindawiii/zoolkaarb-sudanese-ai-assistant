@@ -37,6 +37,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useUser } from "@/store/userStore";
+import ZoomPanViewer from "@/components/studio/ZoomPanViewer";
+
 
 /* ============================================================
    Madar Tools Hub – fully client-side image processing
