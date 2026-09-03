@@ -220,7 +220,7 @@ const HEADWEAR_PROMPTS: Record<string, string> = {
 const buildOutfitterPrompt = (p: {
   category?: string; variant?: string; eyewear?: string; headwear?: string;
   mixMatch?: boolean; mixTarget?: string; pose?: string;
-  framing?: string; includeShoes?: boolean; includeCane?: boolean;
+  framing?: string; includeShoes?: boolean; includeCane?: boolean; gender?: string;
 }) => {
   let variantPrompt = OUTFIT_VARIANTS[p.variant ?? ""] ?? OUTFIT_VARIANTS["galabiya-imma"];
   const eyewearPrompt = EYEWEAR_PROMPTS[p.eyewear ?? "none"];
