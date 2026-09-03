@@ -139,7 +139,39 @@ const OUTFIT_VARIANTS: Record<string, string> = {
   "overcoat-suit": "Replace clothing with a long tailored wool overcoat (camel or charcoal grey) worn open over a full grey three-piece suit with white shirt and tie, plus polished leather Oxford shoes. Sophisticated winter-formal ensemble.",
   "grey-suit-turtleneck": "Replace clothing with a light-grey tailored two-piece suit worn over a fine white turtleneck sweater (no tie), and clean white leather sneakers. Modern minimalist formal.",
   "light-blue-suit": "Replace clothing with a light sky-blue tailored two-piece suit, crisp white shirt, dark navy tie with subtle pattern, and brown leather brogues. Fresh contemporary formal look.",
+  // ===== WOMEN — Heritage (modest Islamic dress: Sudanese / Maghrebi / Gulf) =====
+  "w-thob-sudani-garmasees": "Replace clothing with an authentic Sudanese women's Thob (toub): a single long 4.5-meter lightweight fabric elegantly wrapped over a full-length modest under-dress with long sleeves, in a vivid Garmasees silk style with a glossy sheen and a decorative woven border, draped over the head and one shoulder in the traditional Sudanese manner. Fully modest, loose, opaque, covering hair, arms, and ankles.",
+  "w-thob-chiffon-embroidered": "Replace clothing with a Sudanese women's chiffon Thob (toub) in a soft pastel tone with delicate floral embroidery and a beaded border, wrapped over a long-sleeved full-length modest inner dress, draped over the head and shoulder. Airy, elegant, completely opaque and modest.",
+  "w-thob-zaffa-bridal": "Replace clothing with a festive Sudanese bridal Zaffa Thob in rich saturated colors (gold, magenta, emerald) with shimmering metallic threads and an ornate wide border, wrapped over a long-sleeved floor-length modest dress, draped gracefully over the head and shoulder. Ceremonial, luxurious, fully modest.",
+  "w-thob-white-classic": "Replace clothing with a classic plain white Sudanese women's Thob (toub) of fine cotton, wrapped over a modest long-sleeved ankle-length white dress, draped over the head and one shoulder. Simple, dignified, fully covering.",
+  "w-kaftan-moroccan": "Replace clothing with a luxurious Moroccan Kaftan: floor-length loose robe with long sleeves, handmade Sfifa braid trim and Aqad button detailing along the front placket, rich jewel-tone satin/brocade fabric with subtle gold embroidery. Fully modest, loose fit, high neckline.",
+  "w-takchita-belted": "Replace clothing with a two-layer Moroccan Takchita: an inner Tahtiya dress and a sheer embroidered outer layer (Dfina), cinched with an ornate wide Mdamma belt at the waist, long sleeves, floor length, opulent embroidery. Modest and completely opaque.",
+  "w-djellaba-hooded": "Replace clothing with a Moroccan women's Djellaba: loose ankle-length hooded robe (with the pointed Qob hood resting on the back), long sleeves, soft neutral or pastel fabric with tone-on-tone embroidered trim along the placket and cuffs. Everyday modest Maghrebi elegance.",
+  "w-jabador-maghrebi": "Replace clothing with a Maghrebi women's Jabador set: an embroidered long tunic top with long sleeves over matching loose wide-leg Serwal trousers, silk fabric with fine Randa trim. Modest two-piece traditional set.",
+  "w-melhfa-mauritanian": "Replace clothing with a Mauritanian Melhfa: a long flowing colorful veil-wrap of light fabric with tie-dye or printed patterns, wound around the entire body and head over a modest long dress, one edge draped over the shoulder. Fully covering, airy desert elegance.",
+  "w-jebba-tunisian": "Replace clothing with a Tunisian women's traditional Jebba/Fouta-Blouza inspired ensemble: a long embroidered silk dress with gold Tel embroidery on the chest and sleeves, worn with a matching modest head covering. Floor-length, long-sleeved, opaque.",
+  "w-karakou-algerian": "Replace clothing with an Algerian Karakou: a velvet jacket richly embroidered with gold Medjboud thread over a floor-length skirt or wide Serwal Chalka trousers, long sleeves, ceremonial Algerian elegance, fully modest.",
+  "w-abaya-black-embroidered": "Replace clothing with a classic black Gulf Abaya: floor-length loose open-front overgarment in flowing crepe fabric with tasteful embroidery and crystal detailing along the sleeves and front edges, worn with a matching black Shayla headscarf covering the hair. Completely modest, opaque and non-figure-hugging.",
+  "w-abaya-butterfly": "Replace clothing with an elegant butterfly-sleeve Abaya (Farasha): flowing wide-cut floor-length abaya with dramatic draped kimono sleeves in black or deep charcoal with a subtle satin border, matching headscarf covering the hair. Loose, modest, graceful movement.",
+  "w-abaya-colored-cloche": "Replace clothing with a modern colored Kloosh (cloche) Abaya in a soft muted tone (beige, dusty rose, olive or navy) with flared A-line panels, long sleeves, and delicate contrast piping, plus a coordinated modest headscarf. Contemporary Gulf modest fashion.",
+  "w-thob-nashal": "Replace clothing with a traditional Khaleeji Thob Al-Nashal: a wide, floor-length sheer overgarment densely embroidered with gold Zari thread in floral motifs, worn over a modest long inner dress, with a matching head covering. Ceremonial Gulf heritage, fully modest.",
+  "w-daraa-emirati": "Replace clothing with an Emirati Jalabiya/Daraa: loose floor-length dress with wide sleeves and rich gold Talli embroidery along the neckline, cuffs and hem, in a vibrant fabric, worn with a matching Shayla headscarf. Comfortable, modest, traditional Gulf.",
+  "w-jalabiya-egyptian": "Replace clothing with an Egyptian countryside Jalabiya: loose ankle-length printed cotton dress with long sleeves, a modest round embroidered neckline and a coordinated head scarf tied traditionally. Fully modest folk style.",
+  "w-thob-palestinian": "Replace clothing with a Palestinian embroidered Thob: floor-length black or natural linen dress with vivid red Tatreez cross-stitch embroidery panels on the chest, sleeves and skirt, long sleeves, worn with a white embroidered head veil. Heritage, fully modest.",
+  // ===== WOMEN — Formal (modest Islamic business & evening wear) =====
+  "w-abaya-formal-plain": "Replace clothing with a sharply tailored plain formal Abaya in matte black or deep navy: straight floor-length silhouette, structured shoulders, long sleeves with minimal cuff detail, worn with a neatly wrapped matching hijab. Professional, refined and fully modest.",
+  "w-abaya-blazer": "Replace clothing with a modern Abaya-Blazer: a structured long blazer-style open abaya with notched lapels and belted waist over a modest long inner dress, in charcoal or camel wool-blend fabric, with a coordinated satin hijab. Executive modest fashion.",
+  "w-blazer-wideleg-set": "Replace clothing with a modest formal set: an oversized tailored blazer over a high-neck blouse and wide-leg palazzo trousers in a matching neutral tone (beige, grey or navy), full coverage with long sleeves and loose fit, plus a coordinated hijab.",
+  "w-suit-maxi-skirt": "Replace clothing with a women's formal suit adapted for modesty: a tailored single-breasted jacket with long sleeves over a floor-length straight maxi skirt in matching fabric, high-neck blouse underneath, and a neatly styled hijab. Corporate and fully covered.",
+  "w-navy-pleated-skirt-suit": "Replace clothing with a navy formal skirt suit: a fitted-but-loose long blazer over an ankle-length pleated midi-maxi skirt, a cream high-neck blouse, and a soft navy hijab. Polished professional modest look.",
+  "w-office-jilbab": "Replace clothing with a long office Jilbab: a one-piece floor-length coat-dress with a front button placket, tailored collar, long sleeves and a belted waist in a muted professional tone, with a matching plain hijab. Clean, modern, fully modest.",
+  "w-maxi-dress-modest": "Replace clothing with an elegant modest maxi dress: floor-length flowing A-line dress with long bishop sleeves, a closed high neckline and subtle tonal texture, in a refined solid color, paired with a matching hijab. Loose and completely opaque.",
+  "w-evening-embroidered": "Replace clothing with a luxurious modest Islamic evening gown: floor-length embroidered gown with long sleeves, closed neckline, hand-beaded bodice and a flowing skirt with a soft train, paired with an elegantly draped matching hijab. Formal, glamorous, fully covering.",
+  "w-modest-wedding-gown": "Replace clothing with a modest Islamic bridal gown: ivory floor-length A-line wedding dress with long lace sleeves, a high closed neckline, pearl and lace embellishment, and a long matching veil covering the hair. Elegant, fully modest.",
+  "w-kaftan-evening-belted": "Replace clothing with a premium evening Kaftan: floor-length loose kaftan gown in rich satin with gold embroidery along the neckline and sleeves, cinched by an ornate jeweled belt, plus a coordinated headscarf. Festive and modest.",
+  "w-chiffon-layered-gown": "Replace clothing with a layered chiffon modest gown: multiple soft flowing chiffon layers in gradient pastel tones, long sleeves, closed neckline, floor length, with a light matching hijab draped elegantly. Airy, feminine, fully covered.",
   // Casual
+
   "tshirt-jeans": "Replace clothing with a stylish fitted t-shirt and modern blue jeans.",
   "hoodie": "Replace clothing with a premium streetwear hoodie and joggers.",
   "polo": "Replace clothing with a clean polo shirt and casual shorts.",
@@ -176,12 +208,19 @@ const HEADWEAR_PROMPTS: Record<string, string> = {
   "cap": "Add a casual modern baseball cap on the head, fitted to the head shape with realistic shadow on the forehead.",
   "taqiya": "Add a traditional white Sudanese Taqiya (skull cap) on the head, fitted naturally.",
   "tarboush": "Add a classic red Tarboush (fez) on the head, fitted naturally with subtle shadow.",
+  // Women's modest head coverings
+  "hijab": "Add a neatly wrapped modest hijab covering all of the hair, ears and neck, in a color that coordinates with the outfit, draped naturally with realistic fabric folds and soft shadow on the face. No hair strands visible.",
+  "tarha": "Add a light flowing Tarha (long scarf) draped over the head and shoulders covering all the hair, soft translucent-looking but fully opaque fabric, elegant natural folds.",
+  "khimar": "Add a Khimar: a long cape-style head covering that drapes from the head over the shoulders down to the chest, fully covering the hair, neck and bust, in a matching solid color.",
+  "niqab": "Add a modest black Niqab: full head covering plus a face veil covering the nose and mouth, leaving only the eyes visible, with the original eyes and gaze preserved exactly.",
+  "tarha-sudani": "Add a traditional Sudanese Tarha/Toub-style head drape: light patterned fabric wrapped over the head and one shoulder, fully covering the hair in the Sudanese manner.",
+
 };
 
 const buildOutfitterPrompt = (p: {
   category?: string; variant?: string; eyewear?: string; headwear?: string;
   mixMatch?: boolean; mixTarget?: string; pose?: string;
-  framing?: string; includeShoes?: boolean; includeCane?: boolean;
+  framing?: string; includeShoes?: boolean; includeCane?: boolean; gender?: string;
 }) => {
   let variantPrompt = OUTFIT_VARIANTS[p.variant ?? ""] ?? OUTFIT_VARIANTS["galabiya-imma"];
   const eyewearPrompt = EYEWEAR_PROMPTS[p.eyewear ?? "none"];
@@ -229,6 +268,10 @@ const buildOutfitterPrompt = (p: {
     headwearPrompt,
     accessoryOverride,
     mixMatchPrompt,
+    p.gender === "female"
+      ? "MODESTY RULE (mandatory, Islamic modest dress): the garment must be loose, opaque and non-figure-hugging, with full-length sleeves down to the wrists, a closed high neckline (no cleavage, no bare shoulders, no bare arms, no bare legs), and a hem reaching the ankles. If a head covering is requested, cover ALL hair completely with no strands showing. Never sexualize, never slim or reshape the body, keep the subject's face and expression identical."
+      : "",
+
     "Match lighting direction, shadows, color temperature, and grain of the original photo perfectly so the new clothing looks naturally photographed on the subject. No deformation of body proportions. No extra limbs. No identity drift.",
   ].filter(Boolean).join(" ");
 };
