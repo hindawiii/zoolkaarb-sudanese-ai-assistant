@@ -208,6 +208,13 @@ const HEADWEAR_PROMPTS: Record<string, string> = {
   "cap": "Add a casual modern baseball cap on the head, fitted to the head shape with realistic shadow on the forehead.",
   "taqiya": "Add a traditional white Sudanese Taqiya (skull cap) on the head, fitted naturally.",
   "tarboush": "Add a classic red Tarboush (fez) on the head, fitted naturally with subtle shadow.",
+  // Women's modest head coverings
+  "hijab": "Add a neatly wrapped modest hijab covering all of the hair, ears and neck, in a color that coordinates with the outfit, draped naturally with realistic fabric folds and soft shadow on the face. No hair strands visible.",
+  "tarha": "Add a light flowing Tarha (long scarf) draped over the head and shoulders covering all the hair, soft translucent-looking but fully opaque fabric, elegant natural folds.",
+  "khimar": "Add a Khimar: a long cape-style head covering that drapes from the head over the shoulders down to the chest, fully covering the hair, neck and bust, in a matching solid color.",
+  "niqab": "Add a modest black Niqab: full head covering plus a face veil covering the nose and mouth, leaving only the eyes visible, with the original eyes and gaze preserved exactly.",
+  "tarha-sudani": "Add a traditional Sudanese Tarha/Toub-style head drape: light patterned fabric wrapped over the head and one shoulder, fully covering the hair in the Sudanese manner.",
+
 };
 
 const buildOutfitterPrompt = (p: {
