@@ -37,6 +37,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { useUser } from "@/store/userStore";
+import ZoomPanViewer from "@/components/studio/ZoomPanViewer";
+
 
 /* ============================================================
    Madar Tools Hub – fully client-side image processing
@@ -1087,8 +1089,11 @@ const ZoolProToolsHub = () => {
                 onPointerLeave={onPaintUp}
               />
             ) : (
-              <img src={currentImage} alt="Editing" className="w-full h-auto block" />
+              <ZoomPanViewer isRtl={isRtl}>
+                <img src={currentImage} alt="Editing" className="w-full h-auto block pointer-events-none" draggable={false} />
+              </ZoomPanViewer>
             )}
+
             {loading && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-md flex flex-col items-center justify-center gap-3">
                 <div className="w-12 h-12 rounded-2xl gradient-gold flex items-center justify-center animate-pulse-glow">
