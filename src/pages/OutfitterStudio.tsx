@@ -186,6 +186,8 @@ const OutfitterStudio = () => {
   const [aiCreditsExhausted, setAiCreditsExhausted] = useState(false);
 
   const [category, setCategory] = useState<CategoryId>("heritage");
+  const [gender, setGender] = useState<Gender>("male");
+
   const [variant, setVariant] = useState<string>("galabiya-imma");
   const [eyewear, setEyewear] = useState<string>("none");
   const [headwear, setHeadwear] = useState<string>("none");
