@@ -270,7 +270,7 @@ const OutfitterStudio = () => {
             imageBase64: image,
             action: "outfitter-studio",
             outfitter: {
-              category, variant: variantId, eyewear, headwear,
+              category, gender, variant: variantId, eyewear, headwear,
               pose, framing,
               includeShoes: framing === "full" && includeShoes,
               includeCane: framing === "full" && includeCane,
@@ -305,7 +305,7 @@ const OutfitterStudio = () => {
           imageBase64: image,
           action: "outfitter-studio",
           outfitter: {
-            category, variant, eyewear, headwear,
+            category, gender, variant, eyewear, headwear,
             mixMatch, mixTarget: mixMatch ? mixTarget : undefined,
             pose, framing,
             includeShoes: framing === "full" && includeShoes,
@@ -631,7 +631,7 @@ const OutfitterStudio = () => {
           <Crown className="w-3.5 h-3.5" /> {isRtl ? "غطاء الرأس" : "Headwear"}
         </p>
         <div className="grid grid-cols-4 gap-1.5">
-          {HEADWEAR.map((h) => (
+          {headwearOptions.map((h) => (
             <button
               key={h.id}
               onClick={() => setHeadwear(h.id)}
