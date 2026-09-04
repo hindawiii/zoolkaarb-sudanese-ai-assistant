@@ -97,6 +97,51 @@ const HEADWEAR = [
   { id: "tarboush", labelAr: "طربوش", labelEn: "Tarboush" },
 ] as const;
 
+const HEADWEAR_FEMALE = [
+  { id: "none", labelAr: "بدون", labelEn: "None" },
+  { id: "hijab", labelAr: "حجاب", labelEn: "Hijab" },
+  { id: "tarha", labelAr: "طرحة", labelEn: "Tarha" },
+  { id: "khimar", labelAr: "خمار", labelEn: "Khimar" },
+  { id: "niqab", labelAr: "نقاب", labelEn: "Niqab" },
+  { id: "tarha-sudani", labelAr: "طرحة سودانية", labelEn: "Sudanese Tarha" },
+] as const;
+
+const HERITAGE_OPTIONS_FEMALE = [
+  { id: "w-thob-sudani-garmasees", labelAr: "ثوب سوداني قرمصيص", labelEn: "Sudanese Garmasees Thob", emoji: "🌺" },
+  { id: "w-thob-chiffon-embroidered", labelAr: "ثوب شيفون مطرز", labelEn: "Embroidered chiffon Thob", emoji: "🪡" },
+  { id: "w-thob-zaffa-bridal", labelAr: "ثوب زفة العروس", labelEn: "Bridal Zaffa Thob", emoji: "💐" },
+  { id: "w-thob-white-classic", labelAr: "ثوب أبيض تقليدي", labelEn: "Classic white Thob", emoji: "🤍" },
+  { id: "w-kaftan-moroccan", labelAr: "قفطان مغربي بالسفيفة", labelEn: "Moroccan Kaftan", emoji: "🧵" },
+  { id: "w-takchita-belted", labelAr: "تكشيطة بحزام", labelEn: "Belted Takchita", emoji: "👑" },
+  { id: "w-djellaba-hooded", labelAr: "جلابة مغربية بقُب", labelEn: "Hooded Djellaba", emoji: "🧥" },
+  { id: "w-jabador-maghrebi", labelAr: "جبادور مغاربي", labelEn: "Maghrebi Jabador", emoji: "🌙" },
+  { id: "w-melhfa-mauritanian", labelAr: "ملحفة موريتانية", labelEn: "Mauritanian Melhfa", emoji: "🏜️" },
+  { id: "w-jebba-tunisian", labelAr: "جبة تونسية مطرزة", labelEn: "Tunisian Jebba", emoji: "✨" },
+  { id: "w-karakou-algerian", labelAr: "كراكو جزائري", labelEn: "Algerian Karakou", emoji: "🪞" },
+  { id: "w-abaya-black-embroidered", labelAr: "عباية سوداء مطرزة", labelEn: "Embroidered black Abaya", emoji: "🖤" },
+  { id: "w-abaya-butterfly", labelAr: "عباية كِمّ فراشة", labelEn: "Butterfly Abaya", emoji: "🦋" },
+  { id: "w-abaya-colored-cloche", labelAr: "عباية كلوش ملونة", labelEn: "Colored cloche Abaya", emoji: "🌸" },
+  { id: "w-thob-nashal", labelAr: "ثوب النشل الخليجي", labelEn: "Thob Al-Nashal", emoji: "🪙" },
+  { id: "w-daraa-emirati", labelAr: "درّاعة إماراتية", labelEn: "Emirati Daraa", emoji: "🌟" },
+  { id: "w-jalabiya-egyptian", labelAr: "جلابية مصرية", labelEn: "Egyptian Jalabiya", emoji: "🌾" },
+  { id: "w-thob-palestinian", labelAr: "ثوب فلسطيني مطرز", labelEn: "Palestinian Tatreez Thob", emoji: "🇵🇸" },
+] as const;
+
+const FORMAL_OPTIONS_FEMALE = [
+  { id: "w-abaya-formal-plain", labelAr: "عباية رسمية سادة", labelEn: "Plain formal Abaya", emoji: "🖤" },
+  { id: "w-abaya-blazer", labelAr: "عباية بليزر", labelEn: "Abaya blazer", emoji: "🧥" },
+  { id: "w-blazer-wideleg-set", labelAr: "بليزر وبنطلون واسع", labelEn: "Blazer + wide-leg set", emoji: "🩶" },
+  { id: "w-suit-maxi-skirt", labelAr: "بدلة بتنورة طويلة", labelEn: "Suit + maxi skirt", emoji: "👜" },
+  { id: "w-navy-pleated-skirt-suit", labelAr: "بدلة كحلي بتنورة بليسيه", labelEn: "Navy pleated skirt suit", emoji: "🔷" },
+  { id: "w-office-jilbab", labelAr: "جلباب مكتبي طويل", labelEn: "Office Jilbab", emoji: "🏢" },
+  { id: "w-maxi-dress-modest", labelAr: "فستان ماكسي محتشم", labelEn: "Modest maxi dress", emoji: "👗" },
+  { id: "w-evening-embroidered", labelAr: "فستان سهرة إسلامي مطرز", labelEn: "Embroidered evening gown", emoji: "💫" },
+  { id: "w-modest-wedding-gown", labelAr: "فستان زفاف محتشم", labelEn: "Modest wedding gown", emoji: "💍" },
+  { id: "w-kaftan-evening-belted", labelAr: "قفطان سهرة بحزام", labelEn: "Belted evening Kaftan", emoji: "👑" },
+  { id: "w-chiffon-layered-gown", labelAr: "فستان شيفون بطبقات", labelEn: "Layered chiffon gown", emoji: "🕊️" },
+] as const;
+
+
 const fileToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const r = new FileReader();
