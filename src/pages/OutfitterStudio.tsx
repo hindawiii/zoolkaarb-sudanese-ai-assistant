@@ -204,13 +204,20 @@ const OutfitterStudio = () => {
 
   useEffect(() => { setRemaining(getRemaining(TOOL_ID)); }, []);
 
-  // sync default variant per category
+  // sync default variant per category + gender
   useEffect(() => {
-    if (category === "heritage") setVariant("galabiya-imma");
-    if (category === "formal") setVariant("classic");
+    const female = gender === "female";
+    if (category === "heritage") setVariant(female ? "w-thob-sudani-garmasees" : "galabiya-imma");
+    if (category === "formal") setVariant(female ? "w-abaya-formal-plain" : "classic");
     if (category === "casual") setVariant("tshirt-jeans");
     if (category === "sport") setVariant("tracksuit-grey-black");
-  }, [category]);
+    if (female && category !== "casual" && category !== "sport") {
+      setHeadwear((h) => (["none", "hijab", "tarha", "khimar", "niqab", "tarha-sudani"].includes(h) ? h : "hijab"));
+    } else if (!female) {
+      setHeadwear((h) => (["none", "cap", "taqiya", "tarboush"].includes(h) ? h : "none"));
+    }
+  }, [category, gender]);
+
 
   const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
