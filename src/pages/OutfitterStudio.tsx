@@ -12,6 +12,8 @@ import QuotaBadge from "@/components/studio/QuotaBadge";
 const TOOL_ID = "clothes-changer" as const;
 
 type CategoryId = "casual" | "heritage" | "formal" | "sport";
+type Gender = "male" | "female";
+
 
 const CATEGORIES: { id: CategoryId; labelAr: string; labelEn: string; emoji: string; tone: string }[] = [
   { id: "casual", labelAr: "كاجوال", labelEn: "Casual", emoji: "👕", tone: "from-sky-500/20 to-indigo-500/10" },
