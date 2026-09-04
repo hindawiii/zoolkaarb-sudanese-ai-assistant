@@ -509,7 +509,38 @@ const OutfitterStudio = () => {
             </button>
           ))}
         </div>
+
+        {genderAware && (
+          <div className="mt-3">
+            <p className="text-[11px] font-bold font-cairo text-gold mb-2">{isRtl ? "الصنف" : "Section"}</p>
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                { id: "male" as Gender, labelAr: "رجالي", labelEn: "Men", emoji: "🧔🏽" },
+                { id: "female" as Gender, labelAr: "نسائي", labelEn: "Women", emoji: "🧕🏽" },
+              ]).map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => setGender(g.id)}
+                  className={`py-2.5 rounded-xl border text-[12px] font-cairo font-bold active:scale-95 flex items-center justify-center gap-1.5 ${
+                    gender === g.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+                  }`}
+                >
+                  <span className="text-base">{g.emoji}</span>
+                  {isRtl ? g.labelAr : g.labelEn}
+                </button>
+              ))}
+            </div>
+            {isFemale && (
+              <p className="text-[10px] text-muted-foreground font-cairo mt-2 leading-relaxed">
+                {isRtl
+                  ? "كل التصاميم النسائية محتشمة: أكمام طويلة، طول كامل، وقصّة فضفاضة."
+                  : "All women's designs are modest: long sleeves, full length, loose cut."}
+              </p>
+            )}
+          </div>
+        )}
       </div>
+
 
       {/* Framing & footwear guardrails */}
       <div className="px-4 mt-5">
