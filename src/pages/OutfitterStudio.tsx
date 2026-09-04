@@ -12,6 +12,8 @@ import QuotaBadge from "@/components/studio/QuotaBadge";
 const TOOL_ID = "clothes-changer" as const;
 
 type CategoryId = "casual" | "heritage" | "formal" | "sport";
+type Gender = "male" | "female";
+
 
 const CATEGORIES: { id: CategoryId; labelAr: string; labelEn: string; emoji: string; tone: string }[] = [
   { id: "casual", labelAr: "كاجوال", labelEn: "Casual", emoji: "👕", tone: "from-sky-500/20 to-indigo-500/10" },
@@ -95,6 +97,51 @@ const HEADWEAR = [
   { id: "tarboush", labelAr: "طربوش", labelEn: "Tarboush" },
 ] as const;
 
+const HEADWEAR_FEMALE = [
+  { id: "none", labelAr: "بدون", labelEn: "None" },
+  { id: "hijab", labelAr: "حجاب", labelEn: "Hijab" },
+  { id: "tarha", labelAr: "طرحة", labelEn: "Tarha" },
+  { id: "khimar", labelAr: "خمار", labelEn: "Khimar" },
+  { id: "niqab", labelAr: "نقاب", labelEn: "Niqab" },
+  { id: "tarha-sudani", labelAr: "طرحة سودانية", labelEn: "Sudanese Tarha" },
+] as const;
+
+const HERITAGE_OPTIONS_FEMALE = [
+  { id: "w-thob-sudani-garmasees", labelAr: "ثوب سوداني قرمصيص", labelEn: "Sudanese Garmasees Thob", emoji: "🌺" },
+  { id: "w-thob-chiffon-embroidered", labelAr: "ثوب شيفون مطرز", labelEn: "Embroidered chiffon Thob", emoji: "🪡" },
+  { id: "w-thob-zaffa-bridal", labelAr: "ثوب زفة العروس", labelEn: "Bridal Zaffa Thob", emoji: "💐" },
+  { id: "w-thob-white-classic", labelAr: "ثوب أبيض تقليدي", labelEn: "Classic white Thob", emoji: "🤍" },
+  { id: "w-kaftan-moroccan", labelAr: "قفطان مغربي بالسفيفة", labelEn: "Moroccan Kaftan", emoji: "🧵" },
+  { id: "w-takchita-belted", labelAr: "تكشيطة بحزام", labelEn: "Belted Takchita", emoji: "👑" },
+  { id: "w-djellaba-hooded", labelAr: "جلابة مغربية بقُب", labelEn: "Hooded Djellaba", emoji: "🧥" },
+  { id: "w-jabador-maghrebi", labelAr: "جبادور مغاربي", labelEn: "Maghrebi Jabador", emoji: "🌙" },
+  { id: "w-melhfa-mauritanian", labelAr: "ملحفة موريتانية", labelEn: "Mauritanian Melhfa", emoji: "🏜️" },
+  { id: "w-jebba-tunisian", labelAr: "جبة تونسية مطرزة", labelEn: "Tunisian Jebba", emoji: "✨" },
+  { id: "w-karakou-algerian", labelAr: "كراكو جزائري", labelEn: "Algerian Karakou", emoji: "🪞" },
+  { id: "w-abaya-black-embroidered", labelAr: "عباية سوداء مطرزة", labelEn: "Embroidered black Abaya", emoji: "🖤" },
+  { id: "w-abaya-butterfly", labelAr: "عباية كِمّ فراشة", labelEn: "Butterfly Abaya", emoji: "🦋" },
+  { id: "w-abaya-colored-cloche", labelAr: "عباية كلوش ملونة", labelEn: "Colored cloche Abaya", emoji: "🌸" },
+  { id: "w-thob-nashal", labelAr: "ثوب النشل الخليجي", labelEn: "Thob Al-Nashal", emoji: "🪙" },
+  { id: "w-daraa-emirati", labelAr: "درّاعة إماراتية", labelEn: "Emirati Daraa", emoji: "🌟" },
+  { id: "w-jalabiya-egyptian", labelAr: "جلابية مصرية", labelEn: "Egyptian Jalabiya", emoji: "🌾" },
+  { id: "w-thob-palestinian", labelAr: "ثوب فلسطيني مطرز", labelEn: "Palestinian Tatreez Thob", emoji: "🇵🇸" },
+] as const;
+
+const FORMAL_OPTIONS_FEMALE = [
+  { id: "w-abaya-formal-plain", labelAr: "عباية رسمية سادة", labelEn: "Plain formal Abaya", emoji: "🖤" },
+  { id: "w-abaya-blazer", labelAr: "عباية بليزر", labelEn: "Abaya blazer", emoji: "🧥" },
+  { id: "w-blazer-wideleg-set", labelAr: "بليزر وبنطلون واسع", labelEn: "Blazer + wide-leg set", emoji: "🩶" },
+  { id: "w-suit-maxi-skirt", labelAr: "بدلة بتنورة طويلة", labelEn: "Suit + maxi skirt", emoji: "👜" },
+  { id: "w-navy-pleated-skirt-suit", labelAr: "بدلة كحلي بتنورة بليسيه", labelEn: "Navy pleated skirt suit", emoji: "🔷" },
+  { id: "w-office-jilbab", labelAr: "جلباب مكتبي طويل", labelEn: "Office Jilbab", emoji: "🏢" },
+  { id: "w-maxi-dress-modest", labelAr: "فستان ماكسي محتشم", labelEn: "Modest maxi dress", emoji: "👗" },
+  { id: "w-evening-embroidered", labelAr: "فستان سهرة إسلامي مطرز", labelEn: "Embroidered evening gown", emoji: "💫" },
+  { id: "w-modest-wedding-gown", labelAr: "فستان زفاف محتشم", labelEn: "Modest wedding gown", emoji: "💍" },
+  { id: "w-kaftan-evening-belted", labelAr: "قفطان سهرة بحزام", labelEn: "Belted evening Kaftan", emoji: "👑" },
+  { id: "w-chiffon-layered-gown", labelAr: "فستان شيفون بطبقات", labelEn: "Layered chiffon gown", emoji: "🕊️" },
+] as const;
+
+
 const fileToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const r = new FileReader();
@@ -139,6 +186,8 @@ const OutfitterStudio = () => {
   const [aiCreditsExhausted, setAiCreditsExhausted] = useState(false);
 
   const [category, setCategory] = useState<CategoryId>("heritage");
+  const [gender, setGender] = useState<Gender>("male");
+
   const [variant, setVariant] = useState<string>("galabiya-imma");
   const [eyewear, setEyewear] = useState<string>("none");
   const [headwear, setHeadwear] = useState<string>("none");
@@ -157,13 +206,20 @@ const OutfitterStudio = () => {
 
   useEffect(() => { setRemaining(getRemaining(TOOL_ID)); }, []);
 
-  // sync default variant per category
+  // sync default variant per category + gender
   useEffect(() => {
-    if (category === "heritage") setVariant("galabiya-imma");
-    if (category === "formal") setVariant("classic");
+    const female = gender === "female";
+    if (category === "heritage") setVariant(female ? "w-thob-sudani-garmasees" : "galabiya-imma");
+    if (category === "formal") setVariant(female ? "w-abaya-formal-plain" : "classic");
     if (category === "casual") setVariant("tshirt-jeans");
     if (category === "sport") setVariant("tracksuit-grey-black");
-  }, [category]);
+    if (female && category !== "casual" && category !== "sport") {
+      setHeadwear((h) => (["none", "hijab", "tarha", "khimar", "niqab", "tarha-sudani"].includes(h) ? h : "hijab"));
+    } else if (!female) {
+      setHeadwear((h) => (["none", "cap", "taqiya", "tarboush"].includes(h) ? h : "none"));
+    }
+  }, [category, gender]);
+
 
   const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -190,7 +246,14 @@ const OutfitterStudio = () => {
     if (!meta.hasFace) toast({ title: isRtl ? "ما لقينا وجه واضح" : "No clear face" });
   };
 
-  const variants = category === "heritage" ? HERITAGE_OPTIONS : category === "formal" ? FORMAL_OPTIONS : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
+  const genderAware = category === "heritage" || category === "formal";
+  const isFemale = genderAware && gender === "female";
+  const variants: readonly { id: string; labelAr: string; labelEn: string; emoji: string }[] =
+    category === "heritage" ? (isFemale ? HERITAGE_OPTIONS_FEMALE : HERITAGE_OPTIONS)
+    : category === "formal" ? (isFemale ? FORMAL_OPTIONS_FEMALE : FORMAL_OPTIONS)
+    : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
+  const headwearOptions: readonly { id: string; labelAr: string; labelEn: string }[] = isFemale ? HEADWEAR_FEMALE : HEADWEAR;
+
 
   const loadPreview = async (variantId: string, tab: "garment" | "onme") => {
     if (tab === "garment" && swatchCache[variantId]) return;
@@ -207,7 +270,7 @@ const OutfitterStudio = () => {
             imageBase64: image,
             action: "outfitter-studio",
             outfitter: {
-              category, variant: variantId, eyewear, headwear,
+              category, gender, variant: variantId, eyewear, headwear,
               pose, framing,
               includeShoes: framing === "full" && includeShoes,
               includeCane: framing === "full" && includeCane,
@@ -242,7 +305,7 @@ const OutfitterStudio = () => {
           imageBase64: image,
           action: "outfitter-studio",
           outfitter: {
-            category, variant, eyewear, headwear,
+            category, gender, variant, eyewear, headwear,
             mixMatch, mixTarget: mixMatch ? mixTarget : undefined,
             pose, framing,
             includeShoes: framing === "full" && includeShoes,
@@ -446,7 +509,38 @@ const OutfitterStudio = () => {
             </button>
           ))}
         </div>
+
+        {genderAware && (
+          <div className="mt-3">
+            <p className="text-[11px] font-bold font-cairo text-gold mb-2">{isRtl ? "الصنف" : "Section"}</p>
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                { id: "male" as Gender, labelAr: "رجالي", labelEn: "Men", emoji: "🧔🏽" },
+                { id: "female" as Gender, labelAr: "نسائي", labelEn: "Women", emoji: "🧕🏽" },
+              ]).map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => setGender(g.id)}
+                  className={`py-2.5 rounded-xl border text-[12px] font-cairo font-bold active:scale-95 flex items-center justify-center gap-1.5 ${
+                    gender === g.id ? "gradient-gold text-primary-foreground border-transparent" : "bg-card border-border text-foreground"
+                  }`}
+                >
+                  <span className="text-base">{g.emoji}</span>
+                  {isRtl ? g.labelAr : g.labelEn}
+                </button>
+              ))}
+            </div>
+            {isFemale && (
+              <p className="text-[10px] text-muted-foreground font-cairo mt-2 leading-relaxed">
+                {isRtl
+                  ? "كل التصاميم النسائية محتشمة: أكمام طويلة، طول كامل، وقصّة فضفاضة."
+                  : "All women's designs are modest: long sleeves, full length, loose cut."}
+              </p>
+            )}
+          </div>
+        )}
       </div>
+
 
       {/* Framing & footwear guardrails */}
       <div className="px-4 mt-5">
@@ -568,7 +662,7 @@ const OutfitterStudio = () => {
           <Crown className="w-3.5 h-3.5" /> {isRtl ? "غطاء الرأس" : "Headwear"}
         </p>
         <div className="grid grid-cols-4 gap-1.5">
-          {HEADWEAR.map((h) => (
+          {headwearOptions.map((h) => (
             <button
               key={h.id}
               onClick={() => setHeadwear(h.id)}
