@@ -246,7 +246,14 @@ const OutfitterStudio = () => {
     if (!meta.hasFace) toast({ title: isRtl ? "ما لقينا وجه واضح" : "No clear face" });
   };
 
-  const variants = category === "heritage" ? HERITAGE_OPTIONS : category === "formal" ? FORMAL_OPTIONS : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
+  const genderAware = category === "heritage" || category === "formal";
+  const isFemale = genderAware && gender === "female";
+  const variants: readonly { id: string; labelAr: string; labelEn: string; emoji: string }[] =
+    category === "heritage" ? (isFemale ? HERITAGE_OPTIONS_FEMALE : HERITAGE_OPTIONS)
+    : category === "formal" ? (isFemale ? FORMAL_OPTIONS_FEMALE : FORMAL_OPTIONS)
+    : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
+  const headwearOptions: readonly { id: string; labelAr: string; labelEn: string }[] = isFemale ? HEADWEAR_FEMALE : HEADWEAR;
+
 
   const loadPreview = async (variantId: string, tab: "garment" | "onme") => {
     if (tab === "garment" && swatchCache[variantId]) return;
