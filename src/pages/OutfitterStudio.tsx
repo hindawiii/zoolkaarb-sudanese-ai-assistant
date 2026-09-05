@@ -55,6 +55,14 @@ const FORMAL_OPTIONS = [
 ] as const;
 
 const CASUAL_OPTIONS = [
+  // Shirt & Pant combo collection (from catalog reference)
+  { id: "combo-skyblue-black", labelAr: "قميص سماوي وبنطلون أسود", labelEn: "Sky Blue shirt + Black pant", emoji: "💙" },
+  { id: "combo-woodbrown-smokegray", labelAr: "قميص بني خشبي ورمادي دخاني", labelEn: "Wood Brown + Smoke Gray", emoji: "🟤" },
+  { id: "combo-seagreen-bottlegreen", labelAr: "قميص أخضر بحري وبنطلون زجاجي", labelEn: "Light Sea Green + Bottle Green", emoji: "🟩" },
+  { id: "combo-carbongray-khaki", labelAr: "قميص رمادي كربوني وكاكي فاتح", labelEn: "Carbon Gray + Light Khaki", emoji: "🩶" },
+  { id: "combo-white-chocolate", labelAr: "قميص أبيض وبنطلون شوكولاتة", labelEn: "White + Chocolate Brown", emoji: "🤍" },
+  { id: "combo-icegray-steelgray", labelAr: "قميص رمادي ثلجي وستيل", labelEn: "Ice Gray + Steel Gray", emoji: "🌫️" },
+  { id: "combo-mauve-cobalt", labelAr: "قميص موف وبنطلون كوبالت", labelEn: "Dusty Mauve + Cobalt Blue", emoji: "🪻" },
   { id: "tshirt-jeans", labelAr: "تي شيرت وجينز", labelEn: "T-shirt & jeans", emoji: "👖" },
   { id: "hoodie", labelAr: "هودي ستريت", labelEn: "Streetwear hoodie", emoji: "🧢" },
   { id: "polo", labelAr: "بولو وشورت", labelEn: "Polo & shorts", emoji: "🩳" },
@@ -66,6 +74,7 @@ const CASUAL_OPTIONS = [
   { id: "grey-bomber-black", labelAr: "بومبر رمادي وجينز أسود", labelEn: "Grey bomber + black", emoji: "🧥" },
   { id: "camel-jacket-turtleneck", labelAr: "جاكيت جملي وتيرتل", labelEn: "Camel jacket + turtleneck", emoji: "🐫" },
 ] as const;
+
 
 
 const SPORT_OPTIONS = [
@@ -160,6 +169,50 @@ const FORMAL_OPTIONS_FEMALE = [
   { id: "w-abaya-satin-floral-emerald", labelAr: "عباية ساتان زمردية", labelEn: "Emerald satin Abaya", emoji: "💚" },
   { id: "w-jilbab-2pc-khimar", labelAr: "طقم خمار وفستان", labelEn: "2-piece Khimar set", emoji: "🧕🏽" },
 ] as const;
+
+// ===== Collections: every category is organized into named professional collections =====
+type CollectionDef = { id: string; titleAr: string; titleEn: string; emoji: string; ids: string[] };
+
+const COLLECTIONS: Record<string, CollectionDef[]> = {
+  casual: [
+    { id: "c-combo", titleAr: "كومبو القميص والبنطلون", titleEn: "Shirt & Pant Combo", emoji: "👔", ids: ["combo-skyblue-black", "combo-woodbrown-smokegray", "combo-seagreen-bottlegreen", "combo-carbongray-khaki", "combo-white-chocolate", "combo-icegray-steelgray", "combo-mauve-cobalt"] },
+    { id: "c-overshirt", titleAr: "تشكيلة الأوفر شيرت", titleEn: "Overshirt Collection", emoji: "🧥", ids: ["black-overshirt-set", "brown-overshirt-beige", "navy-overshirt-cream", "charcoal-overshirt-black"] },
+    { id: "c-street", titleAr: "الستريت والهودي", titleEn: "Street & Hoodie", emoji: "🧢", ids: ["hoodie", "grey-bomber-black"] },
+    { id: "c-jackets", titleAr: "الجاكيتات", titleEn: "Jackets", emoji: "🧷", ids: ["denim-jacket", "camel-jacket-turtleneck"] },
+    { id: "c-basics", titleAr: "الأساسيات اليومية", titleEn: "Everyday Basics", emoji: "👕", ids: ["tshirt-jeans", "polo"] },
+  ],
+  sport: [
+    { id: "s-tracksuit", titleAr: "تشكيلة التراك سوت", titleEn: "Tracksuit Collection", emoji: "🎽", ids: ["tracksuit-grey-black", "tracksuit-dragon-navy", "tracksuit-dragon-brown", "tracksuit-adidas-white"] },
+    { id: "s-anime", titleAr: "هودي الأنمي", titleEn: "Anime Hoodies", emoji: "⚡", ids: ["hoodie-dragon-black", "hoodie-sakura-white", "hoodie-berserk-white", "hoodie-anime-black", "hoodie-jujutsu-navy"] },
+    { id: "s-pajama", titleAr: "البجامات", titleEn: "Pajamas", emoji: "🌙", ids: ["pajama-cotton-set", "pajama-silk-luxury"] },
+    { id: "s-gym", titleAr: "ملابس الجيم", titleEn: "Gym Wear", emoji: "💪", ids: ["shorts-tank-gym"] },
+  ],
+  "heritage-male": [
+    { id: "hm-sudani", titleAr: "الجلابية السودانية", titleEn: "Sudanese Jalabiya", emoji: "🤍", ids: ["galabiya", "galabiya-imma", "galabiya-imma-shawl-cane", "galabiya-imma-shawl-cane-markoub", "ansar"] },
+    { id: "hm-luxury", titleAr: "الجلاليب الفاخرة المطرزة", titleEn: "Luxury Embroidered", emoji: "👑", ids: ["sheikh-gold-embroidered", "sino-black-gold-shawl", "dark-embroidered-jalabiya", "arban-blue"] },
+    { id: "hm-gulf", titleAr: "الأثواب الخليجية والعمائم", titleEn: "Gulf Thobes & Turbans", emoji: "🕌", ids: ["emirati-white-cane", "purple-thobe-turban", "black-thobe-white-turban"] },
+  ],
+  "heritage-female": [
+    { id: "hf-sudani", titleAr: "الثوب السوداني", titleEn: "Sudanese Thob", emoji: "🌺", ids: ["w-thob-sudani-garmasees", "w-thob-chiffon-embroidered", "w-thob-zaffa-bridal", "w-thob-white-classic"] },
+    { id: "hf-maghreb", titleAr: "الأزياء المغاربية", titleEn: "Maghrebi Fashion", emoji: "🧵", ids: ["w-kaftan-moroccan", "w-takchita-belted", "w-djellaba-hooded", "w-jabador-maghrebi", "w-jebba-tunisian", "w-karakou-algerian"] },
+    { id: "hf-gulf", titleAr: "العبايات والأثواب الخليجية", titleEn: "Gulf Abayas & Thobes", emoji: "🖤", ids: ["w-abaya-black-embroidered", "w-abaya-butterfly", "w-abaya-colored-cloche", "w-thob-nashal", "w-daraa-emirati"] },
+    { id: "hf-arab", titleAr: "أزياء عربية أخرى", titleEn: "Other Arab Heritage", emoji: "🌾", ids: ["w-melhfa-mauritanian", "w-jalabiya-egyptian", "w-thob-palestinian"] },
+  ],
+  "formal-male": [
+    { id: "fm-classic", titleAr: "البدل الكلاسيك", titleEn: "Classic Suits", emoji: "🤵", ids: ["classic", "navy-slim-suit", "charcoal-modern-suit", "wedding"] },
+    { id: "fm-double", titleAr: "الدبل بريستد", titleEn: "Double-breasted", emoji: "🧭", ids: ["double-breasted-navy", "double-breasted-black"] },
+    { id: "fm-blazer", titleAr: "بليزر وتيرتل نك", titleEn: "Blazer & Turtleneck", emoji: "🧶", ids: ["blazer", "cream-blazer-turtleneck", "grey-suit-turtleneck", "overcoat-suit"] },
+    { id: "fm-color", titleAr: "البدل الملوّنة والموسمية", titleEn: "Colored & Seasonal", emoji: "🎨", ids: ["olive-green-suit", "ivory-summer-suit", "light-blue-suit"] },
+  ],
+  "formal-female": [
+    { id: "ff-daily", titleAr: "العبايات اليومية والرسمية", titleEn: "Daily & Formal Abayas", emoji: "🖤", ids: ["w-abaya-formal-plain", "w-abaya-blazer", "w-abaya-pastel-plain", "w-abaya-street-gulf"] },
+    { id: "ff-luxury", titleAr: "العبايات الفاخرة المطرزة", titleEn: "Luxury Embroidered Abayas", emoji: "✨", ids: ["w-abaya-pearl-sleeves", "w-abaya-palm-silver", "w-abaya-floral-beige-wing", "w-abaya-satin-bows", "w-abaya-satin-floral-emerald", "w-abaya-white-gold-band", "w-abaya-jacquard-cape-mint", "w-abaya-sheer-sky-cloche", "w-abaya-white-dotted"] },
+    { id: "ff-open", titleAr: "العبايات المفتوحة والكارديجان", titleEn: "Open Abayas & Cardigans", emoji: "🧥", ids: ["w-abaya-open-beige-white", "w-abaya-open-rose-belted", "w-abaya-buttoned-camel", "w-abaya-ivory-open-black", "w-abaya-floral-cardigan", "w-abaya-crepe-belted-pockets"] },
+    { id: "ff-jilbab", titleAr: "أطقم الجلباب والخمار", titleEn: "Jilbab & Khimar Sets", emoji: "🧕🏽", ids: ["w-jilbab-bat-sleeve", "w-abaya-2pc-ribbon-set", "w-jilbab-2pc-khimar", "w-office-jilbab"] },
+    { id: "ff-suits", titleAr: "البدل النسائية المحتشمة", titleEn: "Modest Women's Suits", emoji: "🏢", ids: ["w-blazer-wideleg-set", "w-suit-maxi-skirt", "w-navy-pleated-skirt-suit"] },
+    { id: "ff-dress", titleAr: "الفساتين والقفاطين", titleEn: "Dresses & Kaftans", emoji: "👗", ids: ["w-maxi-dress-modest", "w-evening-embroidered", "w-modest-wedding-gown", "w-kaftan-evening-belted", "w-chiffon-layered-gown"] },
+  ],
+};
 
 
 const fileToBase64 = (file: File): Promise<string> =>
