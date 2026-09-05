@@ -55,6 +55,14 @@ const FORMAL_OPTIONS = [
 ] as const;
 
 const CASUAL_OPTIONS = [
+  // Shirt & Pant combo collection (from catalog reference)
+  { id: "combo-skyblue-black", labelAr: "قميص سماوي وبنطلون أسود", labelEn: "Sky Blue shirt + Black pant", emoji: "💙" },
+  { id: "combo-woodbrown-smokegray", labelAr: "قميص بني خشبي ورمادي دخاني", labelEn: "Wood Brown + Smoke Gray", emoji: "🟤" },
+  { id: "combo-seagreen-bottlegreen", labelAr: "قميص أخضر بحري وبنطلون زجاجي", labelEn: "Light Sea Green + Bottle Green", emoji: "🟩" },
+  { id: "combo-carbongray-khaki", labelAr: "قميص رمادي كربوني وكاكي فاتح", labelEn: "Carbon Gray + Light Khaki", emoji: "🩶" },
+  { id: "combo-white-chocolate", labelAr: "قميص أبيض وبنطلون شوكولاتة", labelEn: "White + Chocolate Brown", emoji: "🤍" },
+  { id: "combo-icegray-steelgray", labelAr: "قميص رمادي ثلجي وستيل", labelEn: "Ice Gray + Steel Gray", emoji: "🌫️" },
+  { id: "combo-mauve-cobalt", labelAr: "قميص موف وبنطلون كوبالت", labelEn: "Dusty Mauve + Cobalt Blue", emoji: "🪻" },
   { id: "tshirt-jeans", labelAr: "تي شيرت وجينز", labelEn: "T-shirt & jeans", emoji: "👖" },
   { id: "hoodie", labelAr: "هودي ستريت", labelEn: "Streetwear hoodie", emoji: "🧢" },
   { id: "polo", labelAr: "بولو وشورت", labelEn: "Polo & shorts", emoji: "🩳" },
@@ -66,6 +74,7 @@ const CASUAL_OPTIONS = [
   { id: "grey-bomber-black", labelAr: "بومبر رمادي وجينز أسود", labelEn: "Grey bomber + black", emoji: "🧥" },
   { id: "camel-jacket-turtleneck", labelAr: "جاكيت جملي وتيرتل", labelEn: "Camel jacket + turtleneck", emoji: "🐫" },
 ] as const;
+
 
 
 const SPORT_OPTIONS = [
