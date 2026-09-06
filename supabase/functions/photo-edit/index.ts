@@ -193,7 +193,15 @@ const OUTFIT_VARIANTS: Record<string, string> = {
   "w-jilbab-2pc-khimar": "Replace clothing with a two-piece prayer set: a long loose Khimar covering the head, shoulders and chest, paired with a matching floor-length loose dress, in a single solid color (purple, grey, pink, burgundy, blue, brown, beige, green, red or black).",
   // Casual
 
+  "combo-skyblue-black": "Replace clothing with a smart-casual shirt-and-pant combo: a plain sky-blue cotton dress shirt with a classic collar, sleeves neatly rolled up to the forearm, tucked into straight-cut black chino trousers with a cuffed hem. Clean minimal styling, no tie, a slim wristwatch on the wrist. Catalog-quality fabric texture.",
+  "combo-woodbrown-smokegray": "Replace clothing with a smart-casual combo: a plain wood-brown (dark chocolate) cotton shirt with classic collar and sleeves rolled to the forearm, tucked into straight-cut smoke-grey chino trousers with a cuffed hem. Slim wristwatch, minimal styling.",
+  "combo-seagreen-bottlegreen": "Replace clothing with a smart-casual combo: a plain light sea-green cotton shirt with classic collar and sleeves rolled to the forearm, tucked into straight-cut bottle-green chino trousers with a cuffed hem. Tonal green styling, slim wristwatch.",
+  "combo-carbongray-khaki": "Replace clothing with a smart-casual combo: a plain carbon-grey cotton shirt with classic collar and sleeves rolled to the forearm, tucked into straight-cut light-khaki chino trousers with a cuffed hem. Slim wristwatch, minimal styling.",
+  "combo-white-chocolate": "Replace clothing with a smart-casual combo: a crisp plain white cotton shirt with classic collar and sleeves rolled to the forearm, tucked into straight-cut chocolate-brown chino trousers with a cuffed hem. Slim wristwatch, clean minimal styling.",
+  "combo-icegray-steelgray": "Replace clothing with a smart-casual combo: a plain ice-grey (very light grey) cotton shirt with classic collar and sleeves rolled to the forearm, tucked into straight-cut steel-grey chino trousers with a cuffed hem. Monochrome grey styling, slim wristwatch.",
+  "combo-mauve-cobalt": "Replace clothing with a smart-casual combo: a plain dusty-mauve (soft pink-purple) cotton shirt with classic collar and sleeves rolled to the forearm, tucked into straight-cut cobalt-blue chino trousers with a cuffed hem. Slim wristwatch, modern minimal styling.",
   "tshirt-jeans": "Replace clothing with a stylish fitted t-shirt and modern blue jeans.",
+
   "hoodie": "Replace clothing with a premium streetwear hoodie and joggers.",
   "polo": "Replace clothing with a clean polo shirt and casual shorts.",
   "denim-jacket": "Replace clothing with a denim jacket over a plain t-shirt with dark jeans.",
