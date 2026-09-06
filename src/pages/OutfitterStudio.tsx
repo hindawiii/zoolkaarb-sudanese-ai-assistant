@@ -327,6 +327,17 @@ const OutfitterStudio = () => {
     : category === "sport" ? SPORT_OPTIONS : CASUAL_OPTIONS;
   const headwearOptions: readonly { id: string; labelAr: string; labelEn: string }[] = isFemale ? HEADWEAR_FEMALE : HEADWEAR;
 
+  const collectionKey = genderAware ? `${category}-${gender}` : category;
+  const collections: { def: CollectionDef; items: { id: string; labelAr: string; labelEn: string; emoji: string }[] }[] =
+    (COLLECTIONS[collectionKey] ?? []).map((def) => ({
+      def,
+      items: def.ids
+        .map((id) => variants.find((v) => v.id === id))
+        .filter(Boolean) as { id: string; labelAr: string; labelEn: string; emoji: string }[],
+    })).filter((c) => c.items.length > 0);
+
+
+
 
   const loadPreview = async (variantId: string, tab: "garment" | "onme") => {
     if (tab === "garment" && swatchCache[variantId]) return;
