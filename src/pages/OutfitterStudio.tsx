@@ -696,33 +696,63 @@ const OutfitterStudio = () => {
         )}
       </div>
 
-      {/* Variants */}
+      {/* Collections */}
       <div className="px-4 mt-4">
-        <p className="text-[11px] font-bold font-cairo text-gold mb-2">{isRtl ? "التفاصيل" : "Details"}</p>
+        <p className="text-[11px] font-bold font-cairo text-gold mb-2">{isRtl ? "التشكيلات" : "Collections"}</p>
         <div className="flex flex-col gap-2">
-          {variants.map((v) => (
-            <div
-              key={v.id}
-              className={`flex items-center gap-2 p-2.5 rounded-xl border ${
-                variant === v.id ? "border-gold bg-gold/10" : "border-border bg-card"
-              }`}
-            >
-              <button onClick={() => setVariant(v.id)} className="flex-1 flex items-center gap-3 text-start active:scale-[0.98]">
-                <span className="text-xl">{v.emoji}</span>
-                <span className="flex-1 text-[12px] font-bold font-cairo text-foreground">{isRtl ? v.labelAr : v.labelEn}</span>
-                {variant === v.id && <Check className="w-4 h-4 text-gold" />}
-              </button>
-              <button
-                onClick={() => { setVariant(v.id); openPreview(v.id); }}
-                className="px-2 py-1.5 rounded-lg border border-gold/40 text-gold active:scale-95 flex items-center gap-1"
-                aria-label={isRtl ? "معاينة" : "Preview"}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span className="text-[9px] font-cairo font-bold">{isRtl ? "معاينة" : "View"}</span>
-              </button>
-            </div>
-          ))}
+          {collections.map(({ def, items }) => {
+            const open = openCollection === def.id;
+            const hasSelected = items.some((i) => i.id === variant);
+            return (
+              <div key={def.id} className={`rounded-2xl border overflow-hidden ${open || hasSelected ? "border-gold/60" : "border-border"} bg-card`}>
+                <button
+                  onClick={() => setOpenCollection(open ? null : def.id)}
+                  className="w-full flex items-center gap-3 p-3 text-start active:scale-[0.99]"
+                >
+                  <span className="text-xl">{def.emoji}</span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-[12.5px] font-bold font-cairo text-foreground truncate">
+                      {isRtl ? def.titleAr : def.titleEn}
+                    </span>
+                    <span className="block text-[10px] text-muted-foreground font-cairo">
+                      {isRtl ? `${items.length} استايل` : `${items.length} styles`}
+                      {hasSelected ? (isRtl ? " · مختار" : " · selected") : ""}
+                    </span>
+                  </span>
+                  <span className={`text-gold text-xs transition-transform ${open ? "rotate-180" : ""}`}>▼</span>
+                </button>
+
+                {open && (
+                  <div className="px-2.5 pb-2.5 flex flex-col gap-2">
+                    {items.map((v) => (
+                      <div
+                        key={v.id}
+                        className={`flex items-center gap-2 p-2.5 rounded-xl border ${
+                          variant === v.id ? "border-gold bg-gold/10" : "border-border bg-background/40"
+                        }`}
+                      >
+                        <button onClick={() => setVariant(v.id)} className="flex-1 flex items-center gap-3 text-start active:scale-[0.98]">
+                          <span className="text-xl">{v.emoji}</span>
+                          <span className="flex-1 text-[12px] font-bold font-cairo text-foreground">{isRtl ? v.labelAr : v.labelEn}</span>
+                          {variant === v.id && <Check className="w-4 h-4 text-gold" />}
+                        </button>
+                        <button
+                          onClick={() => { setVariant(v.id); openPreview(v.id); }}
+                          className="px-2 py-1.5 rounded-lg border border-gold/40 text-gold active:scale-95 flex items-center gap-1"
+                          aria-label={isRtl ? "معاينة" : "Preview"}
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span className="text-[9px] font-cairo font-bold">{isRtl ? "معاينة" : "View"}</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
+
       </div>
 
       {/* Accessories */}
