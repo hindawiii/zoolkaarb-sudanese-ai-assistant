@@ -276,6 +276,8 @@ const OutfitterStudio = () => {
   const [swatchCache, setSwatchCache] = useState<Record<string, string>>({});
   const [tryOnCache, setTryOnCache] = useState<Record<string, string>>({});
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [openCollection, setOpenCollection] = useState<string | null>(null);
+
 
   useEffect(() => { setRemaining(getRemaining(TOOL_ID)); }, []);
 
@@ -284,8 +286,10 @@ const OutfitterStudio = () => {
     const female = gender === "female";
     if (category === "heritage") setVariant(female ? "w-thob-sudani-garmasees" : "galabiya-imma");
     if (category === "formal") setVariant(female ? "w-abaya-formal-plain" : "classic");
-    if (category === "casual") setVariant("tshirt-jeans");
+    if (category === "casual") setVariant("combo-skyblue-black");
     if (category === "sport") setVariant("tracksuit-grey-black");
+    setOpenCollection(null);
+
     if (female && category !== "casual" && category !== "sport") {
       setHeadwear((h) => (["none", "hijab", "tarha", "khimar", "niqab", "tarha-sudani"].includes(h) ? h : "hijab"));
     } else if (!female) {
