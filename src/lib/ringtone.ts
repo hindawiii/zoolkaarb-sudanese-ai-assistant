@@ -9,30 +9,38 @@ let customAudio: HTMLAudioElement | null = null;
 const ensureCtx = () => {
   if (!ctx) ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
   if (ctx.state === "suspended") ctx.resume().catch(() => {});
-  return ctx!;
+  return ctx;
 };
 
 const playTwoToneBurst = () => {
   if (!ctx) return;
-  const now = ctx.currentTime;
+  const context = ctx;
+  const now = context.currentTime;
   const burst = (freq: number, start: number, dur: number) => {
-    const osc = ctx!.createOscillator();
-    const gain = ctx!.createGain();
+    const osc = context.createOscillator();
+    const gain = context.createGain();
     osc.type = "sine";
     osc.frequency.value = freq;
     gain.gain.setValueAtTime(0, now + start);
     gain.gain.linearRampToValueAtTime(0.25, now + start + 0.02);
     gain.gain.linearRampToValueAtTime(0, now + start + dur);
-    osc.connect(gain).connect(ctx!.destination);
+    osc.connect(gain).connect(context.destination);
     osc.start(now + start);
     osc.stop(now + start + dur + 0.05);
     activeNodes.push(osc, gain);
+    osc.onended = () => { osc.disconnect(); gain.disconnect(); activeNodes = activeNodes.filter(n => n !== osc && n !== gain); };
   };
   // Classic two-tone phone ring (UK-style: 400Hz + 450Hz, two short bursts)
   burst(440, 0, 0.4);
   burst(480, 0, 0.4);
   burst(440, 0.5, 0.4);
   burst(480, 0.5, 0.4);
+};
+
+const startSynthesized = () => {
+  ensureCtx();
+  playTwoToneBurst();
+  timerId = window.setInterval(playTwoToneBurst, 2000);
 };
 
 export const startRingtone = (customDataUrl?: string | null) => {
@@ -42,16 +50,19 @@ export const startRingtone = (customDataUrl?: string | null) => {
       customAudio = new Audio(customDataUrl);
       customAudio.loop = true;
       customAudio.volume = 0.9;
-      customAudio.play().catch(() => {});
+      const playing = customAudio;
+      customAudio.play().catch(() => {
+        if (customAudio !== playing) return;
+        customAudio = null;
+        startSynthesized();
+      });
     } catch {
       /* fall back below */
       customAudio = null;
     }
   }
   if (!customAudio) {
-    ensureCtx();
-    playTwoToneBurst();
-    timerId = window.setInterval(playTwoToneBurst, 2000);
+    startSynthesized();
   }
 
   if ("vibrate" in navigator) {
@@ -76,6 +87,9 @@ export const stopRingtone = () => {
       /* ignore */
     }
     customAudio = null;
+  }
+  for (const node of activeNodes) {
+    try { if (node instanceof OscillatorNode) node.stop(); node.disconnect(); } catch { /* Already stopped */ }
   }
   activeNodes = [];
   if ("vibrate" in navigator) {

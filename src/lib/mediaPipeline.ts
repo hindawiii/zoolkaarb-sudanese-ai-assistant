@@ -3,7 +3,9 @@
 // - renderImageWithAudio: builds an MP4 with the still image as background for
 //   the full duration of the supplied audio.
 
-import { getFFmpeg, fetchFile } from "@/lib/ffmpegClient";
+import { getFFmpeg, fetchFile, runMediaJob } from "@/lib/ffmpegClient";
+
+import { validateMedia } from "@/lib/fileValidation";
 
 const safeName = (name: string) => name.replace(/[^a-z0-9.]/gi, "_");
 
@@ -11,24 +13,24 @@ export const extractAudioFile = async (
   file: File,
   onProgress?: (ratio: number) => void,
 ): Promise<{ blob: Blob; ext: "m4a" | "mp3" }> => {
+  validateMedia(file, "video");
+  return runMediaJob(async () => {
   const ff = await getFFmpeg(onProgress);
-  const inputName = `in_${Date.now()}_${safeName(file.name)}`;
-  const outputName = `out_${Date.now()}.m4a`;
+  const jobId = crypto.randomUUID();
+  const inputName = `in_${jobId}_${safeName(file.name)}`;
+  const outputName = `out_${jobId}.m4a`;
 
-  await ff.writeFile(inputName, await fetchFile(file));
-  // -vn drops video, copy AAC if possible else encode AAC.
   try {
-    await ff.exec(["-i", inputName, "-vn", "-acodec", "aac", "-b:a", "192k", outputName]);
-  } catch (e) {
+    await ff.writeFile(inputName, await fetchFile(file));
+    const exitCode = await ff.exec(["-i", inputName, "-vn", "-acodec", "aac", "-b:a", "192k", outputName]);
+    if (exitCode !== 0) throw new Error("Audio extraction failed");
+    const data = (await ff.readFile(outputName)) as Uint8Array;
+    return { blob: new Blob([data.buffer as ArrayBuffer], { type: "audio/mp4" }), ext: "m4a" as const };
+  } finally {
     await ff.deleteFile(inputName).catch(() => {});
-    throw e;
+    await ff.deleteFile(outputName).catch(() => {});
   }
-  const data = (await ff.readFile(outputName)) as Uint8Array;
-  await ff.deleteFile(inputName).catch(() => {});
-  await ff.deleteFile(outputName).catch(() => {});
-
-  const blob = new Blob([data.buffer as ArrayBuffer], { type: "audio/mp4" });
-  return { blob, ext: "m4a" };
+  });
 };
 
 const detectImageExt = (file: File): string => {
@@ -54,8 +56,12 @@ export const renderImageWithAudio = async (
   audio: File,
   onProgress?: (ratio: number) => void,
 ): Promise<Blob> => {
+  validateMedia(image, "image");
+  validateMedia(audio, "audio");
+  return runMediaJob(async () => {
   const ff = await getFFmpeg(onProgress);
-  const ts = Date.now();
+  const ts = crypto.randomUUID();
+  try {
   const imgName = `img_${ts}.${detectImageExt(image)}`;
   const audName = `aud_${ts}.${detectAudioExt(audio)}`;
   const outName = `out_${ts}.mp4`;
@@ -65,7 +71,7 @@ export const renderImageWithAudio = async (
 
   // Loop the still image, end when audio ends, ensure even dimensions, yuv420p
   // for broad compatibility, AAC audio, fast encoding settings for wasm.
-  await ff.exec([
+  const exitCode = await ff.exec([
     "-loop", "1",
     "-framerate", "2",
     "-i", imgName,
@@ -82,10 +88,13 @@ export const renderImageWithAudio = async (
     outName,
   ]);
 
+  if (exitCode !== 0) throw new Error("Video export failed");
   const data = (await ff.readFile(outName)) as Uint8Array;
-  await ff.deleteFile(imgName).catch(() => {});
-  await ff.deleteFile(audName).catch(() => {});
-  await ff.deleteFile(outName).catch(() => {});
-
   return new Blob([data.buffer as ArrayBuffer], { type: "video/mp4" });
+  } finally {
+    await ff.deleteFile(imgName).catch(() => {});
+    await ff.deleteFile(audName).catch(() => {});
+    await ff.deleteFile(outName).catch(() => {});
+  }
+  });
 };

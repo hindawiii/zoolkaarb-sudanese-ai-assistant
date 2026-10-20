@@ -11,6 +11,8 @@ import {
 import { saveAs } from "file-saver";
 import { supabase } from "@/integrations/supabase/client";
 
+import { validateDocument } from "@/lib/fileValidation";
+
 const WATERMARK_TEXT = "Madar";
 
 const fileToDataUrl = (f: File): Promise<string> =>
@@ -62,21 +64,26 @@ export const imagesToPdf = async (
     const w = img.width * ratio;
     const h = img.height * ratio;
     if (i > 0) pdf.addPage();
-    pdf.addImage(url, "JPEG", (pageW - w) / 2, (pageH - h) / 2, w, h);
+    pdf.addImage(img, (pageW - w) / 2, (pageH - h) / 2, w, h);
     addWatermark(pdf);
   }
   pdf.save(fileName);
 };
 
-/** Render Arabic-friendly text into a PDF. Uses jsPDF default font (Latin) +
- *  draws each glyph as-is; for high-quality Arabic shaping, we render lines as
- *  centered text. Long paragraphs are wrapped by line. */
-export const textToPdf = (text: string, fileName = `zool-karb-${Date.now()}.pdf`) => {
+/** Embed a local Arabic font; jsPDF handles Arabic shaping before rendering. */
+export const textToPdf = async (text: string, fileName = `zool-karb-${Date.now()}.pdf`) => {
   const pdf = new jsPDF({ unit: "pt", format: "a4" });
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
   const margin = 40;
-  pdf.setFont("helvetica", "normal");
+  const fontResponse = await fetch("/fonts/Amiri-Regular.ttf");
+  if (!fontResponse.ok) throw new Error("تعذر تحميل خط المستند / Document font unavailable");
+  const bytes = new Uint8Array(await fontResponse.arrayBuffer());
+  let fontBinary = "";
+  for (let i = 0; i < bytes.length; i += 8192) fontBinary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+  pdf.addFileToVFS("Amiri-Regular.ttf", btoa(fontBinary));
+  pdf.addFont("Amiri-Regular.ttf", "Amiri", "normal");
+  pdf.setFont("Amiri", "normal");
   pdf.setFontSize(13);
 
   const lines = pdf.splitTextToSize(text, pageW - margin * 2);
@@ -88,7 +95,8 @@ export const textToPdf = (text: string, fileName = `zool-karb-${Date.now()}.pdf`
       y = margin + 10;
     }
     // RTL: align right
-    pdf.text(line, pageW - margin, y, { align: "right" });
+    const rtl = /[\u0600-\u06ff]/.test(line);
+    pdf.text(line, rtl ? pageW - margin : margin, y, { align: rtl ? "right" : "left" });
     y += 20;
   }
   addWatermark(pdf);
@@ -166,6 +174,7 @@ export const convertViaAi = async (
   file: File,
   mode: "pdf-to-word" | "word-to-pdf" | "ocr",
 ): Promise<string> => {
+  validateDocument(file, mode);
   const base64 = await fileToBase64(file);
   const { data, error } = await supabase.functions.invoke("pdf-convert", {
     body: { mode, file: base64, mimeType: file.type || "application/pdf" },

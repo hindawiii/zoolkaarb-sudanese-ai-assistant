@@ -27,7 +27,7 @@ const StudioToolPage = () => {
   const { slug } = useParams();
   const { language } = useUser();
   const isRtl = language === "ar";
-  const tool = useMemo(() => STUDIO_TOOLS.find((t) => t.slug === slug), [slug]);
+  const tool = useMemo(() => STUDIO_TOOLS.find((t) => t.slug === slug && t.id !== "anime-hero" && t.id !== "clothes-changer"), [slug]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<string[]>([]);

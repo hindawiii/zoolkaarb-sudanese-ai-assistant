@@ -47,9 +47,10 @@ const Converter = () => {
     }
     setBusy(true);
     setProgress(0.15);
+    let ticker: ReturnType<typeof setInterval> | undefined;
     try {
       // Animate up while we wait on the server.
-      const ticker = setInterval(() => {
+      ticker = setInterval(() => {
         setProgress((p) => (p < 0.85 ? p + 0.05 : p));
       }, 400);
       const md = await convertViaAi(file, mode);
@@ -59,7 +60,7 @@ const Converter = () => {
       if (mode === "pdf-to-word") {
         await markdownToDocx(md, `zool-karb-${Date.now()}.docx`);
       } else {
-        textToPdf(md, `zool-karb-${Date.now()}.pdf`);
+        await textToPdf(md, `zool-karb-${Date.now()}.pdf`);
       }
       setProgress(1);
       consume();
@@ -67,6 +68,7 @@ const Converter = () => {
     } catch (e: any) {
       toast({ title: "Error", description: e?.message ?? "Failed", variant: "destructive" });
     } finally {
+      clearInterval(ticker);
       setTimeout(() => {
         setBusy(false);
         setProgress(0);

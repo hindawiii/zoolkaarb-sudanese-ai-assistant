@@ -27,7 +27,8 @@ export const REMINDER_KINDS: { id: ReminderKind; ar: string; en: string; emoji: 
 export const loadTextNotes = (): TextNote[] => {
   try {
     const raw = localStorage.getItem(KEY);
-    const list = raw ? (JSON.parse(raw) as TextNote[]) : [];
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    const list = Array.isArray(parsed) ? parsed.filter((n): n is TextNote => !!n && typeof n.id === "string" && typeof n.title === "string" && Number.isFinite(n.updatedAt) && (n.dueAt === undefined || Number.isFinite(n.dueAt))) : [];
     return list.sort((a, b) => (a.dueAt ?? Infinity) - (b.dueAt ?? Infinity) || b.updatedAt - a.updatedAt);
   } catch {
     return [];
@@ -101,9 +102,12 @@ export const completeNote = (id: string) => {
 
 /** "2026-08-12T19:40" <-> epoch helpers for <input type="datetime-local"> */
 export const toLocalInput = (ms?: number) => {
-  if (!ms) return "";
+  if (!ms || !Number.isFinite(ms)) return "";
   const d = new Date(ms - new Date().getTimezoneOffset() * 60000);
   return d.toISOString().slice(0, 16);
 };
 
-export const fromLocalInput = (v: string) => (v ? new Date(v).getTime() : undefined);
+export const fromLocalInput = (v: string) => {
+  const ms = v ? new Date(v).getTime() : NaN;
+  return Number.isFinite(ms) ? ms : undefined;
+};

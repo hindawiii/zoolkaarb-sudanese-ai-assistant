@@ -40,6 +40,7 @@ import {
   getPremiumRemaining,
 } from "@/lib/premiumQuota";
 import RewardedAdModal from "@/components/studio/RewardedAdModal";
+import { loadEditorFonts } from "@/lib/editorFonts";
 import StudioProgress from "@/components/audio/StudioProgress";
 
 const TEMPLATE_META: Record<string, { titleAr: string; defaultText: string; gradient: string }> = {
@@ -54,7 +55,7 @@ const TEMPLATE_META: Record<string, { titleAr: string; defaultText: string; grad
 type FontDef = { id: string; labelAr: string; className: string; premium: boolean; preview: string };
 
 const FONTS: FontDef[] = [
-  { id: "tajawal", labelAr: "تجوّل", className: "font-cairo", premium: false, preview: "أبجد" },
+  { id: "tajawal", labelAr: "تجوّل", className: "font-tajawal", premium: false, preview: "أبجد" },
   { id: "cairo", labelAr: "Cairo", className: "font-cairo-display", premium: false, preview: "أبجد" },
   { id: "amiri", labelAr: "أميري", className: "font-amiri", premium: false, preview: "أبجد" },
   { id: "mohanad", labelAr: "المهند", className: "font-mohanad", premium: false, preview: "أبجد" },
@@ -222,6 +223,7 @@ const TemplateEditor = () => {
   } | null>(null);
 
   useEffect(() => {
+    loadEditorFonts();
     setPremiumRemaining(getPremiumRemaining());
     setSelectedId((s) => s || layers[0]?.id || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -410,6 +412,7 @@ const TemplateEditor = () => {
     setProgress(0.1);
     const tick = setInterval(() => setProgress((p) => Math.min(0.9, p + 0.1)), 180);
     try {
+      await document.fonts.ready;
       await new Promise((r) => setTimeout(r, 60));
       const dataUrl = await toJpeg(frameRef.current, { quality: 0.95, pixelRatio: 2, cacheBust: true });
       setProgress(1);

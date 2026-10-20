@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -102,14 +101,14 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    font-family: 'Tajawal', 'Inter', sans-serif;
+    font-family: 'Cairo', sans-serif;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   [dir="rtl"] {
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Cairo', sans-serif;
     line-height: 1.8;
   }
 
@@ -124,7 +123,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Tajawal', sans-serif;
+    font-family: 'Cairo', sans-serif;
     font-weight: 700;
     line-height: 1.4;
   }
@@ -132,7 +131,7 @@
 
 @layer utilities {
   .font-cairo {
-    font-family: 'Tajawal', 'Cairo', sans-serif;
+    font-family: 'Cairo', sans-serif;
     line-height: 1.8;
   }
 

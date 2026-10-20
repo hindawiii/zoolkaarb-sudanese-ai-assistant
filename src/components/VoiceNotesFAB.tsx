@@ -11,7 +11,6 @@ import {
   X,
   Play,
   Pause,
-  Cloud,
   Plus,
   Pencil,
   Clock,
@@ -137,8 +136,14 @@ const VoiceNotesFAB = () => {
   // Allow other components (e.g. BottomNav center button) to open the sheet
   useEffect(() => {
     const handler = () => setOpen(true);
+    const fromNotification = (event: MessageEvent) => { if (event.data?.type === "open-notes") setOpen(true); };
+    navigator.serviceWorker?.addEventListener("message", fromNotification);
+    if (new URLSearchParams(window.location.search).get("notes") === "1") setOpen(true);
     window.addEventListener("zoolkaarb:open-voice-notes", handler);
-    return () => window.removeEventListener("zoolkaarb:open-voice-notes", handler);
+    return () => {
+      window.removeEventListener("zoolkaarb:open-voice-notes", handler);
+      navigator.serviceWorker?.removeEventListener("message", fromNotification);
+    };
   }, []);
 
   useEffect(() => {
@@ -278,14 +283,10 @@ const VoiceNotesFAB = () => {
   };
 
   const addReminder = (when: string, text: string) => {
-    // Local notification scheduling: show toast guidance
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-    toast({
-      title: isAr ? "تنبيه محفوظ" : "Reminder set",
-      description: `${when} — ${text}`,
-    });
+    const parsed = fromLocalInput(when);
+    setEditing(createTextNote({ title: text, body: when, dueAt: parsed }));
+    setTab("text");
+    toast({ title: isAr ? "حدّد تاريخ ووقت التذكير ثم احفظ" : "Choose reminder date and time, then save" });
   };
 
   const togglePlay = (note: VoiceNote) => {
@@ -678,22 +679,7 @@ const VoiceNotesFAB = () => {
                           </Button>
                         </>
                       )}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() =>
-                          toast({
-                            title: isAr ? "قريباً" : "Coming soon",
-                            description: isAr
-                              ? "رفع الملاحظة للسحابة قريباً"
-                              : "Cloud upload coming soon",
-                          })
-                        }
-                        className="font-cairo"
-                      >
-                        <Cloud className="w-4 h-4" />
-                        {isAr ? "للسحابة" : "Cloud"}
-                      </Button>
+
                     </div>
                   </div>
                 );

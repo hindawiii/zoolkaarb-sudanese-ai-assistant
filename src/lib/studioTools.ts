@@ -51,11 +51,6 @@ export const STUDIO_TOOLS: StudioTool[] = [
     mode: "single-edit",
     accent: "nile",
     metered: true,
-    variants: [
-      { id: "formal", action: "clothes-formal", labelAr: "رسمي", labelEn: "Formal", icon: Shirt },
-      { id: "traditional", action: "clothes-traditional", labelAr: "تراثي", labelEn: "Traditional", icon: Shirt },
-      { id: "casual", action: "clothes-casual", labelAr: "كاجوال", labelEn: "Casual", icon: Shirt },
-    ],
   },
   {
     id: "anime-hero",
@@ -68,7 +63,6 @@ export const STUDIO_TOOLS: StudioTool[] = [
     workingMessageAr: "الخال شغال على رسمتك الأنمي..",
     workingMessageEn: "Drawing your anime version...",
     mode: "single-edit",
-    action: "anime-hero",
     accent: "gold",
     metered: true,
   },
