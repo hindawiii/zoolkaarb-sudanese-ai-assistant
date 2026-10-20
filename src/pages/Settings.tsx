@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useUser } from "@/store/userStore";
+import { showReminderNotification } from "@/lib/notifications";
 import { t } from "@/lib/i18n";
 
 const Settings = () => {
@@ -10,7 +11,7 @@ const Settings = () => {
   const { name, language, darkMode, notifications, setName, setLanguage, setDarkMode, setNotifications } = useUser();
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(name);
-  const [showOverlay, setShowOverlay] = useState(false);
+  const [showOverlay, setShowOverlay] = useState<"privacy" | "about" | null>(null);
 
   // Apply dark mode on mount + whenever toggled
   useEffect(() => {
@@ -41,9 +42,7 @@ const Settings = () => {
         setNotifications(true);
         toast.success(t("toast.notifEnabled", language), { duration: 4000 });
         try {
-          new Notification("Madar", {
-            body: language === "ar" ? "أبشر، التنبيهات الكاربة حتصلك أول بأول 🇸🇩" : "Notifications enabled!",
-          });
+          void showReminderNotification("Madar", language === "ar" ? "تم تفعيل التنبيهات" : "Notifications enabled!");
         } catch { /* notification may fail silently on some browsers */ }
       } else {
         toast.error(t("toast.notifDenied", language));
@@ -148,12 +147,12 @@ const Settings = () => {
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t("settings.general", language)}</p>
         <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
           {[
-            { label: t("settings.privacy", language), labelAr: "سياسة الخصوصية", icon: Shield },
-            { label: t("settings.about", language), labelAr: "عن مدار", icon: Info },
+            { id: "privacy" as const, label: t("settings.privacy", language), labelAr: "سياسة الخصوصية", icon: Shield },
+            { id: "about" as const, label: t("settings.about", language), labelAr: "عن مدار", icon: Info },
           ].map((item) => (
             <button
               key={item.labelAr}
-              onClick={() => setShowOverlay(true)}
+              onClick={() => setShowOverlay(item.id)}
               className="w-full flex items-center gap-3 px-4 py-3.5 text-start active:bg-muted/50 transition-colors"
             >
               <item.icon className="w-4 h-4 text-muted-foreground" />
@@ -170,11 +169,11 @@ const Settings = () => {
       <p className="text-center text-[10px] text-muted-foreground mt-8">Madar v1.0.0 — Made with ❤️ in Sudan</p>
 
       {showOverlay && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center" onClick={() => setShowOverlay(false)}>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center" onClick={() => setShowOverlay(null)}>
           <div className="bg-card border border-border rounded-2xl p-8 mx-6 text-center" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold font-cairo text-foreground">قريباً!</h3>
-            <p className="text-sm text-muted-foreground mt-2">Coming Soon — This page is under development.</p>
-            <button onClick={() => setShowOverlay(false)} className="mt-5 px-6 py-2.5 rounded-full gradient-gold text-primary-foreground text-sm font-semibold active:scale-95 transition-transform">
+            <h3 className="text-lg font-bold font-cairo text-foreground">{showOverlay === "privacy" ? "الخصوصية" : "عن مدار"}</h3>
+            <p className="text-sm text-muted-foreground mt-2 font-cairo" dir="rtl">{showOverlay === "privacy" ? "الملاحظات والتذكيرات محفوظة حالياً على جهازك. الصور والصوت والمستندات التي تختار معالجتها بالذكاء الاصطناعي تُرسل إلى خدمة المعالجة. مسح بيانات المتصفح يحذف البيانات المحلية. هذه خلاصة الاستخدام الحالي وليست بديلاً عن سياسة الخصوصية القانونية قبل النشر." : "مدار يجمع أدوات الصور والملابس والأنمي والصوت والمكتب الرقمي، مع مساعدك الخال. مكافآت الإعلانات حالياً تجريبية وليست إعلانات مدفوعة."}</p>
+            <button onClick={() => setShowOverlay(null)} className="mt-5 px-6 py-2.5 rounded-full gradient-gold text-primary-foreground text-sm font-semibold active:scale-95 transition-transform">
               Got it!
             </button>
           </div>

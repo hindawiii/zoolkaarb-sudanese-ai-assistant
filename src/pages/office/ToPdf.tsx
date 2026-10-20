@@ -42,7 +42,7 @@ const ToPdf = () => {
         await imagesToPdf(files);
       } else {
         if (!text.trim()) throw new Error(isRtl ? "اكتب أي نص" : "Type some text");
-        textToPdf(text);
+        await textToPdf(text);
       }
       consume();
       toast({ title: isRtl ? "تمام يا هندسة!" : "Done!", description: "PDF saved" });

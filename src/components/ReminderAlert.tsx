@@ -9,6 +9,7 @@ import {
   snoozeNote,
   type TextNote,
 } from "@/lib/remindersStore";
+import { showReminderNotification } from "@/lib/notifications";
 import { getReminderTone } from "@/lib/reminderTone";
 import { startRingtone, stopRingtone } from "@/lib/ringtone";
 
@@ -16,7 +17,7 @@ const SNOOZES = [5, 15, 60];
 
 /** Fullscreen premium Al-Khal reminder alert. Mounted once globally. */
 const ReminderAlert = () => {
-  const { language } = useUser();
+  const { language, notifications } = useUser();
   const isAr = language === "ar";
   const [active, setActive] = useState<TextNote | null>(null);
 
@@ -28,9 +29,7 @@ const ReminderAlert = () => {
         markFired(due[0].id);
         setActive(due[0]);
         try {
-          if ("Notification" in window && Notification.permission === "granted") {
-            new Notification(due[0].title, { body: due[0].body || "مدار — تذكير الخال" });
-          }
+          if (notifications) void showReminderNotification(due[0].title, due[0].body || "مدار — تذكير الخال", due[0].id);
           startRingtone(getReminderTone());
         } catch { /* ignore */ }
       }
@@ -38,11 +37,17 @@ const ReminderAlert = () => {
     check();
     const t = window.setInterval(check, 15000);
     window.addEventListener("madar:notes-changed", check);
+    window.addEventListener("focus", check);
+    document.addEventListener("visibilitychange", check);
     return () => {
       window.clearInterval(t);
       window.removeEventListener("madar:notes-changed", check);
+      window.removeEventListener("focus", check);
+      document.removeEventListener("visibilitychange", check);
     };
-  }, [active]);
+  }, [active, notifications]);
+
+  useEffect(() => () => stopRingtone(), []);
 
   const close = (action?: () => void) => {
     stopRingtone();

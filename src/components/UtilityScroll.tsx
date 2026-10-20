@@ -1,4 +1,4 @@
-import { MapPin, FileDown, Gift, Megaphone, ScanLine } from "lucide-react";
+import { MapPin, FileDown, FileText, Megaphone, ScanLine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useUser } from "@/store/userStore";
@@ -8,7 +8,6 @@ import ShareAppModal from "./ShareAppModal";
 const UtilityScroll = () => {
   const navigate = useNavigate();
   const { language } = useUser();
-  const [showOverlay, setShowOverlay] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const isRtl = language === "ar";
 
@@ -50,12 +49,12 @@ const UtilityScroll = () => {
       span: "square" as const,
     },
     {
-      title: t("util.rewards.title", language),
-      titleAr: "إعلانات مكافأة",
-      icon: Gift,
+      title: language === "ar" ? "المكتب الرقمي" : "Digital Office",
+      titleAr: "المكتب الرقمي",
+      icon: FileText,
       color: "text-earth-light",
       bg: "bg-sand",
-      action: () => setShowOverlay(true),
+      action: () => navigate("/office"),
       span: "square" as const,
     },
   ];
@@ -105,26 +104,6 @@ const UtilityScroll = () => {
 
       <ShareAppModal open={showShare} onClose={() => setShowShare(false)} />
 
-      {showOverlay && (
-        <div
-          className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center"
-          onClick={() => setShowOverlay(false)}
-        >
-          <div
-            className="bg-card border border-border rounded-2xl p-8 mx-6 text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-bold font-cairo text-foreground">قريباً!</h3>
-            <p className="text-sm text-muted-foreground mt-2">Coming Soon — This utility is under development.</p>
-            <button
-              onClick={() => setShowOverlay(false)}
-              className="mt-5 px-6 py-2.5 rounded-full gradient-gold text-primary-foreground text-sm font-semibold active:scale-95 transition-transform"
-            >
-              Got it!
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
