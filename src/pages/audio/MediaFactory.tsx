@@ -29,6 +29,7 @@ const MediaFactory = () => {
   const audioRef = useRef<HTMLInputElement>(null);
 
   const startExport = async () => {
+    if (busy) return;
     if (credits <= 0) {
       setAdOpen(true);
       return;
@@ -46,22 +47,24 @@ const MediaFactory = () => {
     setProgress(0.05);
     try {
       if (mode === "video2audio") {
-        if (!isVideoFile(videoFile!)) {
+        if (!videoFile) return;
+        if (!isVideoFile(videoFile)) {
           toast.error(isRtl ? "الملف لازم يكون فيديو" : "Must be a video file");
           setBusy(false);
           return;
         }
-        const { blob, ext } = await extractAudioFile(videoFile!, (r) =>
+        const { blob, ext } = await extractAudioFile(videoFile, (r) =>
           setProgress(0.1 + r * 0.85),
         );
+        downloadBlob(blob, `madar-audio-${Date.now()}.${ext}`);
         consume();
-        downloadBlob(blob, `zool-karb-audio-${Date.now()}.${ext}`);
       } else {
-        const blob = await renderImageWithAudio(imageFile!, audioFile!, (r) =>
+        if (!imageFile || !audioFile) return;
+        const blob = await renderImageWithAudio(imageFile, audioFile, (r) =>
           setProgress(0.1 + r * 0.85),
         );
+        downloadBlob(blob, `madar-video-${Date.now()}.mp4`);
         consume();
-        downloadBlob(blob, `zool-karb-video-${Date.now()}.mp4`);
       }
       toast.success(isRtl ? "تم الكرب! ✓" : "Exported!");
     } catch (e) {

@@ -1,38 +1,55 @@
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { toBlobURL } from "@ffmpeg/util";
+import type { FFmpeg } from "@ffmpeg/ffmpeg";
+import wasmAsset from "@/assets/ffmpeg-core.wasm.asset.json";
 
 let ffmpegInstance: FFmpeg | null = null;
 let loadingPromise: Promise<FFmpeg> | null = null;
-
-const CORE_BASE = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+let progressCallback: ((ratio: number) => void) | undefined;
+let logCallback: ((message: string) => void) | undefined;
 
 export const getFFmpeg = async (
   onProgress?: (ratio: number) => void,
   onLog?: (msg: string) => void,
 ): Promise<FFmpeg> => {
-  if (ffmpegInstance) {
-    if (onProgress) ffmpegInstance.on("progress", ({ progress }) => onProgress(progress));
-    if (onLog) ffmpegInstance.on("log", ({ message }) => onLog(message));
-    return ffmpegInstance;
-  }
+  progressCallback = onProgress;
+  logCallback = onLog;
+  if (ffmpegInstance) return ffmpegInstance;
   if (loadingPromise) return loadingPromise;
-
   loadingPromise = (async () => {
+    const { FFmpeg } = await import("@ffmpeg/ffmpeg");
+    const { toBlobURL } = await import("@ffmpeg/util");
     const ff = new FFmpeg();
-    if (onProgress) ff.on("progress", ({ progress }) => onProgress(progress));
-    if (onLog) ff.on("log", ({ message }) => onLog(message));
-    await ff.load({
-      coreURL: await toBlobURL(`${CORE_BASE}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(`${CORE_BASE}/ffmpeg-core.wasm`, "application/wasm"),
-    });
-    ffmpegInstance = ff;
-    return ff;
+    ff.on("progress", ({ progress }) => progressCallback?.(Math.max(0, Math.min(1, progress))));
+    ff.on("log", ({ message }) => logCallback?.(message));
+    let coreURL: string | undefined;
+    let wasmURL: string | undefined;
+    try {
+      coreURL = await toBlobURL("/ffmpeg/ffmpeg-core.js", "text/javascript");
+      wasmURL = await toBlobURL(wasmAsset.url, "application/wasm");
+      await ff.load({ coreURL, wasmURL });
+      ffmpegInstance = ff;
+      return ff;
+    } catch (error) {
+      ff.terminate();
+      throw error;
+    } finally {
+      if (coreURL) URL.revokeObjectURL(coreURL);
+      if (wasmURL) URL.revokeObjectURL(wasmURL);
+    }
   })();
-
-  return loadingPromise;
+  try {
+    return await loadingPromise;
+  } finally {
+    loadingPromise = null;
+  }
 };
 
-export const fetchFile = async (file: File): Promise<Uint8Array> => {
-  const buf = await file.arrayBuffer();
-  return new Uint8Array(buf);
-};
+/** Serialize local jobs; one WASM filesystem cannot run two encodes together. */
+let jobQueue: Promise<unknown> = Promise.resolve();
+export function runMediaJob<T>(job: () => Promise<T>): Promise<T> {
+  const next = jobQueue.then(job, job);
+  jobQueue = next.catch(() => {});
+  return next;
+}
+
+export const fetchFile = async (file: File): Promise<Uint8Array> =>
+  new Uint8Array(await file.arrayBuffer());
