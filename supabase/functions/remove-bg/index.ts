@@ -1,8 +1,5 @@
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeaders, gatewayError, readBody } from "../_shared/request.ts";
+import { z } from "npm:zod@3.25.76";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -10,7 +7,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { imageBase64 } = await req.json();
+    const { imageBase64 } = await readBody(req, z.object({ imageBase64: z.string().min(1).max(12000000) }));
     if (!imageBase64 || typeof imageBase64 !== "string") {
       return new Response(JSON.stringify({ error: "imageBase64 is required" }), {
         status: 400,
@@ -50,26 +47,7 @@ Deno.serve(async (req) => {
       }),
     });
 
-    if (!response.ok) {
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit reached. Please try again in a moment." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "AI credits exhausted. Please add credits in Lovable workspace settings." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
-      return new Response(JSON.stringify({ error: "Background removal failed" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!response.ok) return await gatewayError(response);
 
     const data = await response.json();
     const imageUrl: string | undefined =
@@ -88,9 +66,10 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    if (e instanceof Response) return e;
     console.error("remove-bg error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: "تعذرت المعالجة / Processing failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }

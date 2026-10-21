@@ -74,7 +74,7 @@ const HANDS = [
   { id: "none", labelAr: "غير واضح", labelEn: "None visible" },
 ] as const;
 
-type LogEntry = { id: number; kind: "info" | "warn" | "error" | "ok"; text: string; suggestion?: string };
+type LogEntry = { id: number; kind: "info" | "warn" | "error" | "ok"; text: string; suggestion?: string; suggestedProp?: string };
 
 const fileToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -87,19 +87,18 @@ const fileToBase64 = (file: File): Promise<string> =>
 const isAiCreditsExhausted = (data: unknown) =>
   typeof data === "object" && data !== null && "code" in data && (data as { code?: string }).code === "AI_CREDITS_EXHAUSTED";
 
-const preprocess = async (dataUrl: string): Promise<{ face: boolean; pose: string }> => {
+const preprocess = async (dataUrl: string): Promise<{ face: boolean | null; pose: string }> => {
   try {
     const FD = (window as unknown as { FaceDetector?: new () => { detect: (img: HTMLImageElement) => Promise<unknown[]> } }).FaceDetector;
     if (FD) {
       const img = new Image();
-      img.src = dataUrl;
-      await new Promise((res) => (img.onload = res));
+      await new Promise<void>((resolve, reject) => { img.onload = () => resolve(); img.onerror = () => reject(new Error("Image failed")); img.src = dataUrl; });
       const det = new FD();
       const faces = await det.detect(img);
       return { face: faces.length > 0, pose: "frontal" };
     }
   } catch { /* ignore */ }
-  return { face: true, pose: "frontal" };
+  return { face: null, pose: "unknown" };
 };
 
 const AnimeStudio = () => {
@@ -147,9 +146,9 @@ const AnimeStudio = () => {
 
   const [log, setLog] = useState<LogEntry[]>([]);
   const logId = useRef(0);
-  const pushLog = (kind: LogEntry["kind"], text: string, suggestion?: string) => {
+  const pushLog = (kind: LogEntry["kind"], text: string, suggestion?: string, suggestedProp?: string) => {
     logId.current += 1;
-    setLog((l) => [{ id: logId.current, kind, text, suggestion }, ...l].slice(0, 8));
+    setLog((l) => [{ id: logId.current, kind, text, suggestion, suggestedProp }, ...l].slice(0, 8));
   };
 
   useEffect(() => { setRemaining(getRemaining(TOOL_ID)); }, []);
@@ -165,7 +164,7 @@ const AnimeStudio = () => {
     setAnalyzing(true);
     const meta = await preprocess(b64);
     setAnalyzing(false);
-    if (!meta.face) pushLog("warn", isRtl ? "ما لقينا وجه واضح — جرب صورة أوضح." : "No clear face detected — try a clearer photo.");
+    if (meta.face === false) pushLog("warn", isRtl ? "ما لقينا وجه واضح — جرب صورة أوضح." : "No clear face detected — try a clearer photo.");
   };
 
   const generate = async () => {
@@ -202,18 +201,21 @@ const AnimeStudio = () => {
 
       // Safety check
       setVerifying(true);
-      const { data: v } = await supabase.functions.invoke("photo-edit", {
+      const { data: v, error: verificationError } = await supabase.functions.invoke("photo-edit", {
         body: { imageBase64: data.imageUrl, action: "verify-anime-anatomy" },
       });
       setVerifying(false);
 
       const watermarked = await addZoolWatermark(data.imageUrl);
-      if (v && v.ok === false) {
+      if (verificationError || !v || v.unavailable) {
+        pushLog("warn", isRtl ? "فحص السلامة غير متاح — راجع الصورة يدوياً قبل القبول." : "Safety check unavailable — review manually before accepting.");
+        setPendingOutput(watermarked);
+      } else if (v.ok === false) {
         const issues: string[] = Array.isArray(v.issues) ? v.issues : [];
         const suggest = v.suggestedProp && v.suggestedProp !== prop
           ? (isRtl ? `جرّب المهارة "${PROPS.find(x => x.id === v.suggestedProp)?.labelAr ?? v.suggestedProp}" أو فعّل الوضع البديل` : `Try prop "${v.suggestedProp}" or enable Safe Mode`)
           : (isRtl ? "فعّل الوضع البديل (طاقة معلّقة) أو حدّد اليد الظاهرة يدويًا" : "Enable Safe Mode or set the visible hand manually");
-        pushLog("error", isRtl ? `فحص السلامة رصد مشكلة: ${issues.join(" • ") || "تشوّه تشريحي"}` : `Safety check found: ${issues.join(" • ") || "anatomy issue"}`, suggest);
+        pushLog("error", isRtl ? `فحص السلامة رصد مشكلة: ${issues.join(" • ") || "تشوّه تشريحي"}` : `Safety check found: ${issues.join(" • ") || "anatomy issue"}`, suggest, v.suggestedProp);
         setPendingOutput(watermarked); // still show it, but require review
         toast({ title: isRtl ? "لازم مراجعة" : "Review needed", description: isRtl ? "الفحص الآلي رصد ملاحظات — راجع المعاينة" : "Auto-check flagged issues — review preview", variant: "destructive" });
       } else {
@@ -225,6 +227,7 @@ const AnimeStudio = () => {
       pushLog("error", msg);
       toast({ title: isRtl ? "ما زبط" : "Failed", description: msg, variant: "destructive" });
     } finally {
+      setVerifying(false);
       setLoading(false);
     }
   };
@@ -268,6 +271,7 @@ const AnimeStudio = () => {
       pushLog("error", msg);
       toast({ title: isRtl ? "ما زبط" : "Failed", description: msg, variant: "destructive" });
     } finally {
+      setVerifying(false);
       setLoading(false);
     }
   };
@@ -306,7 +310,7 @@ const AnimeStudio = () => {
   };
 
   const applySuggestion = (suggestedProp?: string) => {
-    if (suggestedProp) setProp(suggestedProp);
+    if (suggestedProp && PROPS.some(p => p.id === suggestedProp)) setProp(suggestedProp);
     setSafeMode(true);
     setPendingOutput(null);
     pushLog("info", isRtl ? "طبّقنا الاقتراح — اضغط توليد من جديد" : "Suggestion applied — regenerate now");
@@ -445,7 +449,7 @@ const AnimeStudio = () => {
                     {e.suggestion && (
                       <div className="mt-1.5 flex items-center gap-2">
                         <p className="text-[10px] font-cairo text-muted-foreground flex-1">{e.suggestion}</p>
-                        <button onClick={() => applySuggestion(undefined)} className="text-[10px] font-cairo font-bold text-gold underline whitespace-nowrap">
+                        <button onClick={() => applySuggestion(e.suggestedProp)} className="text-[10px] font-cairo font-bold text-gold underline whitespace-nowrap">
                           {isRtl ? "طبّق البديل" : "Apply"}
                         </button>
                       </div>

@@ -1,10 +1,7 @@
 // Voice Notes edge function: transcribe Sudanese audio + summarize
 // Uses Lovable AI Gateway (Gemini multimodal)
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders, gatewayError, readBody } from "../_shared/request.ts";
+import { z } from "npm:zod@3.25.76";
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
@@ -17,13 +14,8 @@ async function callGateway(body: unknown) {
     },
     body: JSON.stringify(body),
   });
-  if (!resp.ok) {
-    const text = await resp.text();
-    throw new Response(
-      JSON.stringify({ error: text }),
-      { status: resp.status, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
+  if (!resp.ok) throw await gatewayError(resp);
+
   return await resp.json();
 }
 
@@ -31,7 +23,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
-    const { mode, audioBase64, mimeType, text } = await req.json();
+    const { mode, audioBase64, mimeType, text } = await readBody(req, z.discriminatedUnion("mode", [z.object({ mode: z.literal("transcribe"), audioBase64: z.string().min(1).max(16000000), mimeType: z.string().max(150).optional() }), z.object({ mode: z.literal("summarize"), text: z.string().min(1).max(30000) })]));
 
     if (mode === "transcribe") {
       const data = await callGateway({
@@ -117,7 +109,7 @@ Deno.serve(async (req) => {
     if (e instanceof Response) return e;
     console.error("voice-notes error", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
+      JSON.stringify({ error: "تعذرت المعالجة / Processing failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }

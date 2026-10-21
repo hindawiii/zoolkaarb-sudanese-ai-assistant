@@ -5,7 +5,7 @@ import imageCompression from "browser-image-compression";
 import { pickSudaneseMessage } from "@/lib/sudaneseLoading";
 import { toast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
-import { getFFmpeg, fetchFile } from "@/lib/ffmpegClient";
+import { getFFmpeg, fetchFile, runMediaJob } from "@/lib/ffmpegClient";
 
 type MediaKind = "image" | "video" | "audio";
 type VideoProfile = "whatsapp" | "balanced";
@@ -46,11 +46,13 @@ const DataSaver = () => {
       if (compressedUrl) URL.revokeObjectURL(compressedUrl);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [originalUrl, compressedUrl]);
 
   const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
-    if (!f) return;
+    e.target.value = "";
+    if (!f || loading) return;
+    if (f.size > 100 * 1024 * 1024) { toast({ title: "الحد الأقصى 100 ميجابايت", variant: "destructive" }); return; }
     const k = detectKind(f);
     if (!k) {
       toast({ title: "صيغة غير مدعومة", description: "ارفع صورة، فيديو أو صوت", variant: "destructive" });
@@ -91,21 +93,24 @@ const DataSaver = () => {
   };
 
   const compressVideo = async () => {
-    if (!original) return;
+    if (!original || loading) return;
     setLoading(true);
     setProgress(0);
     setMsg("الخال شغال بضغط في الفيديو.. ثواني وبجهز ليك 🎬");
     try {
+      await runMediaJob(async () => {
       const ff = await getFFmpeg((ratio) => setProgress(Math.max(0, Math.min(1, ratio))));
-      const inputName = "input" + (original.name.match(/\.[a-z0-9]+$/i)?.[0] ?? ".mp4");
-      const outputName = "output.mp4";
+      const jobId = crypto.randomUUID();
+      const inputName = `input-${jobId}` + (original.name.match(/\.[a-z0-9]+$/i)?.[0] ?? ".mp4");
+      const outputName = `output-${jobId}.mp4`;
+      try {
       await ff.writeFile(inputName, await fetchFile(original));
 
       const args = videoProfile === "whatsapp"
         ? ["-i", inputName, "-vf", "scale='min(640,iw)':-2", "-c:v", "libx264", "-preset", "veryfast", "-crf", "30", "-c:a", "aac", "-b:a", "64k", "-movflags", "+faststart", outputName]
         : ["-i", inputName, "-vf", "scale='min(960,iw)':-2", "-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart", outputName];
 
-      await ff.exec(args);
+      if (await ff.exec(args) !== 0) throw new Error("Compression failed");
       const data = await ff.readFile(outputName);
       const bytes = new Uint8Array(data as Uint8Array);
       const blob = new Blob([bytes.buffer], { type: "video/mp4" });
@@ -113,7 +118,11 @@ const DataSaver = () => {
       setCompressed(file);
       setCompressedUrl(URL.createObjectURL(file));
       setProgress(1);
-      try { await ff.deleteFile(inputName); await ff.deleteFile(outputName); } catch { /* ignore */ }
+      } finally {
+        await ff.deleteFile(inputName).catch(() => {});
+        await ff.deleteFile(outputName).catch(() => {});
+      }
+      });
     } catch (err) {
       toast({
         title: "ما قدرنا نضغط الفيديو",
@@ -126,16 +135,19 @@ const DataSaver = () => {
   };
 
   const compressAudio = async () => {
-    if (!original) return;
+    if (!original || loading) return;
     setLoading(true);
     setProgress(0);
     setMsg("الخال بضغط الصوت.. لحظات 🎵");
     try {
+      await runMediaJob(async () => {
       const ff = await getFFmpeg((ratio) => setProgress(Math.max(0, Math.min(1, ratio))));
-      const inputName = "input" + (original.name.match(/\.[a-z0-9]+$/i)?.[0] ?? ".mp3");
-      const outputName = "output.mp3";
+      const jobId = crypto.randomUUID();
+      const inputName = `input-${jobId}` + (original.name.match(/\.[a-z0-9]+$/i)?.[0] ?? ".mp3");
+      const outputName = `output-${jobId}.mp3`;
+      try {
       await ff.writeFile(inputName, await fetchFile(original));
-      await ff.exec(["-i", inputName, "-vn", "-c:a", "libmp3lame", "-b:a", "128k", outputName]);
+      if (await ff.exec(["-i", inputName, "-vn", "-c:a", "libmp3lame", "-b:a", "128k", outputName]) !== 0) throw new Error("Compression failed");
       const data = await ff.readFile(outputName);
       const bytes = new Uint8Array(data as Uint8Array);
       const blob = new Blob([bytes.buffer], { type: "audio/mpeg" });
@@ -143,7 +155,11 @@ const DataSaver = () => {
       setCompressed(file);
       setCompressedUrl(URL.createObjectURL(file));
       setProgress(1);
-      try { await ff.deleteFile(inputName); await ff.deleteFile(outputName); } catch { /* ignore */ }
+      } finally {
+        await ff.deleteFile(inputName).catch(() => {});
+        await ff.deleteFile(outputName).catch(() => {});
+      }
+      });
     } catch (err) {
       toast({
         title: "ما قدرنا نضغط الصوت",

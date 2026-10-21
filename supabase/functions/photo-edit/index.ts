@@ -1,8 +1,5 @@
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeaders, gatewayError, readBody } from "../_shared/request.ts";
+import { z } from "npm:zod@3.25.76";
 
 const PROMPTS: Record<string, string> = {
   "remove-bg":
@@ -251,7 +248,7 @@ const buildOutfitterPrompt = (p: {
   mixMatch?: boolean; mixTarget?: string; pose?: string;
   framing?: string; includeShoes?: boolean; includeCane?: boolean; gender?: string;
 }) => {
-  let variantPrompt = OUTFIT_VARIANTS[p.variant ?? ""] ?? OUTFIT_VARIANTS["galabiya-imma"];
+  let variantPrompt = OUTFIT_VARIANTS[p.variant ?? ""];
   const eyewearPrompt = EYEWEAR_PROMPTS[p.eyewear ?? "none"];
   const headwearPrompt = HEADWEAR_PROMPTS[p.headwear ?? "none"];
 
@@ -310,7 +307,8 @@ const buildAnimePrompt = (p: {
   bodyPose?: string; visibleHand?: string; safeMode?: boolean; guardian?: string;
   heroText?: string; formLabel?: string; auraText?: string; hairText?: string;
 }) => {
-  const hasProp = p.prop && p.prop !== "none" && PROP_PROMPTS[p.prop];
+  const propPrompt = p.prop && p.prop !== "none" ? PROP_PROMPTS[p.prop] : undefined;
+  const hasProp = !!propPrompt;
   const forceFloating = !!p.safeMode || p.visibleHand === "none";
   const bodyPoseHint =
     p.bodyPose === "standing" ? "The subject is standing upright — preserve the full standing posture with feet planted." :
@@ -325,8 +323,8 @@ const buildAnimePrompt = (p: {
     "";
   const propBlock = hasProp
     ? (forceFloating
-        ? `${PROP_PROMPTS[p.prop!]} SAFE FALLBACK MODE: render the prop STRICTLY as a floating energy manifestation hovering beside the subject in the direction the body is facing — do NOT render any held-object grip, do NOT reposition any arm, do NOT add a new limb.`
-        : PROP_PROMPTS[p.prop!])
+        ? `${propPrompt} SAFE FALLBACK MODE: render the prop STRICTLY as a floating energy manifestation hovering beside the subject in the direction the body is facing — do NOT render any held-object grip, do NOT reposition any arm, do NOT add a new limb.`
+        : propPrompt)
     : "";
   const parts = [
     "Transform the person in this photo into a high-fidelity Japanese Shonen anime illustration.",
@@ -352,7 +350,7 @@ const buildAnimePrompt = (p: {
 
 // Post-generation anatomy safety check (text-only LLM verdict).
 const verifyAnatomy = async (imageDataUrl: string, apiKey: string): Promise<{
-  ok: boolean; issues: string[]; suggestedProp?: string;
+  ok: boolean; issues: string[]; suggestedProp?: string; unavailable?: boolean;
 }> => {
   try {
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -369,11 +367,11 @@ const verifyAnatomy = async (imageDataUrl: string, apiKey: string): Promise<{
         }],
       }),
     });
-    if (!res.ok) return { ok: true, issues: [] };
+    if (!res.ok) throw await gatewayError(res);
     const data = await res.json();
     const raw: string = data?.choices?.[0]?.message?.content ?? "";
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return { ok: true, issues: [] };
+    if (!jsonMatch) return { ok: false, issues: [], unavailable: true };
     const parsed = JSON.parse(jsonMatch[0]);
     return {
       ok: !!parsed.ok,
@@ -381,8 +379,9 @@ const verifyAnatomy = async (imageDataUrl: string, apiKey: string): Promise<{
       suggestedProp: typeof parsed.suggestedProp === "string" ? parsed.suggestedProp : undefined,
     };
   } catch (e) {
+    if (e instanceof Response) return e;
     console.error("verifyAnatomy failed", e);
-    return { ok: true, issues: [] };
+    return { ok: false, issues: [], unavailable: true };
   }
 };
 
@@ -390,7 +389,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { imageBase64, images, action, anime, outfitter, sceneSwap } = await req.json();
+    const { imageBase64, images, action, anime, outfitter, sceneSwap } = await readBody(req, z.object({ imageBase64: z.string().max(12000000).optional(), images: z.array(z.string().min(1).max(12000000)).max(4).optional(), action: z.string().min(1).max(100), anime: z.record(z.union([z.string().max(5000), z.boolean()])).optional(), outfitter: z.record(z.union([z.string().max(100), z.boolean()])).optional(), sceneSwap: z.object({ targetHint: z.string().max(1000).optional(), characterName: z.string().max(200).optional() }).optional() }));
     const imageList: string[] = Array.isArray(images) && images.length > 0
       ? images
       : imageBase64
@@ -407,6 +406,12 @@ Deno.serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    if ((action === "outfitter-studio" || action === "outfit-swatch") && !OUTFIT_VARIANTS[outfitter?.variant ?? ""]) {
+      return new Response(JSON.stringify({ error: "تصميم الملابس غير معروف / Unknown outfit" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (action === "anime-studio" && !STYLE_PROMPTS[anime?.style ?? ""]) {
+      return new Response(JSON.stringify({ error: "استايل الأنمي غير معروف / Unknown anime style" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     // Standalone anatomy verification action (called after generation).
     if (action === "verify-anime-anatomy") {
       const toDataUrl2 = (s: string) => s.startsWith("data:") ? s : `data:image/png;base64,${s}`;
@@ -421,7 +426,7 @@ Deno.serve(async (req) => {
     if (action === "outfit-swatch") {
       const desc = OUTFIT_VARIANTS[outfitter?.variant ?? ""] ?? "";
       prompt = [
-        "Studio product photo of a men's outfit displayed on an invisible mannequin (ghost mannequin effect), full outfit visible head-to-toe, centered, on a clean neutral light-beige seamless background with soft professional studio lighting and a subtle shadow.",
+        "Studio product photo of the selected outfit displayed on an invisible mannequin (ghost mannequin effect), full outfit visible head-to-toe, centered, on a clean neutral light-beige seamless background with soft professional studio lighting and a subtle shadow.",
         "No human face, no person, no text, no watermark. E-commerce lookbook quality, ultra sharp fabric texture.",
         `Outfit to display: ${desc.replace(/^Replace clothing with /i, "")}`,
       ].join(" ");
@@ -473,30 +478,7 @@ Deno.serve(async (req) => {
       }),
     });
 
-    if (!response.ok) {
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit reached. Please try again in a moment." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({
-          error: "AI credits exhausted. Please add credits in Lovable workspace settings.",
-          code: "AI_CREDITS_EXHAUSTED",
-          recoverable: true,
-        }), {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      return new Response(JSON.stringify({ error: "Photo edit failed" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!response.ok) return await gatewayError(response);
 
     const data = await response.json();
     const imageUrl: string | undefined =
@@ -515,9 +497,10 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    if (e instanceof Response) return e;
     console.error("photo-edit error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: "تعذرت المعالجة / Processing failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }

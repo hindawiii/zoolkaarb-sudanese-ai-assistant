@@ -8,11 +8,8 @@
 // a downloadable .docx via the `docx` lib OR a .pdf via jsPDF. Keeping the
 // heavy file generation on the client avoids streaming large binaries back.
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders, gatewayError, readBody } from "../_shared/request.ts";
+import { z } from "npm:zod@3.25.76";
 
 const SYSTEM_PROMPT = `You are an OCR + document-conversion engine specialised in Arabic.
 - Preserve Arabic characters exactly (do NOT romanise, do NOT reverse letter order).
@@ -26,7 +23,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { mode, file, mimeType } = await req.json();
+    const { mode, file, mimeType } = await readBody(req, z.object({ mode: z.enum(["pdf-to-word", "word-to-pdf", "ocr"]), file: z.string().min(1).max(14000000), mimeType: z.string().min(1).max(150) }));
     if (!file || !mode) {
       return new Response(JSON.stringify({ error: "Missing file or mode" }), {
         status: 400,
@@ -71,26 +68,7 @@ Deno.serve(async (req) => {
       },
     );
 
-    if (!aiResp.ok) {
-      if (aiResp.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "كثرة طلبات، جرب بعد شوية يا هندسة" }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
-      if (aiResp.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "الرصيد خلص في خدمة الذكاء، حمل رصيد لتواصل" }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
-      const t = await aiResp.text();
-      console.error("AI error", aiResp.status, t);
-      return new Response(JSON.stringify({ error: "AI gateway error" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!aiResp.ok) return await gatewayError(aiResp);
 
     const data = await aiResp.json();
     const content = data.choices?.[0]?.message?.content ?? "";
@@ -100,9 +78,10 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof Response) return e;
     console.error("pdf-convert error", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }),
+      JSON.stringify({ error: "تعذرت المعالجة / Processing failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
