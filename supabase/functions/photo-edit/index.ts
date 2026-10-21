@@ -379,7 +379,7 @@ const verifyAnatomy = async (imageDataUrl: string, apiKey: string): Promise<{
       suggestedProp: typeof parsed.suggestedProp === "string" ? parsed.suggestedProp : undefined,
     };
   } catch (e) {
-    if (e instanceof Response) return e;
+    if (e instanceof Response) throw e;
     console.error("verifyAnatomy failed", e);
     return { ok: false, issues: [], unavailable: true };
   }
