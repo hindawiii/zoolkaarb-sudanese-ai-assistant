@@ -1,10 +1,7 @@
 // Generate a contextual Sudanese-dialect call line via Lovable AI.
 // Returns { line: string }.
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders, gatewayError, readBody } from "../_shared/request.ts";
+import { z } from "npm:zod@3.25.76";
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
@@ -20,7 +17,7 @@ const FALLBACK_KHALA = [
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const { voice = "khal", callerName = "الخال", topic = "" } = await req.json();
+    const { voice, callerName, topic } = await readBody(req, z.object({ voice: z.string().max(40).default("khal"), callerName: z.string().max(100).default("الخال"), topic: z.string().max(2000).default("") }));
     const isKhala = voice === "khala";
 
     if (!LOVABLE_API_KEY) {
@@ -60,12 +57,7 @@ Deno.serve(async (req) => {
       }),
     });
 
-    if (!resp.ok) {
-      const arr = isKhala ? FALLBACK_KHALA : FALLBACK_KHAL;
-      return new Response(JSON.stringify({ line: arr[0] }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!resp.ok) return await gatewayError(resp);
 
     const data = await resp.json();
     let line: string =
@@ -77,6 +69,7 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    if (e instanceof Response) return e;
     console.error("fake-call-line error", e);
     return new Response(
       JSON.stringify({ line: FALLBACK_KHAL[0] }),

@@ -61,10 +61,10 @@ export const renderImageWithAudio = async (
   return runMediaJob(async () => {
   const ff = await getFFmpeg(onProgress);
   const ts = crypto.randomUUID();
-  try {
   const imgName = `img_${ts}.${detectImageExt(image)}`;
   const audName = `aud_${ts}.${detectAudioExt(audio)}`;
   const outName = `out_${ts}.mp4`;
+  try {
 
   await ff.writeFile(imgName, await fetchFile(image));
   await ff.writeFile(audName, await fetchFile(audio));
