@@ -1,6 +1,6 @@
 export async function showReminderNotification(title: string, body: string, id?: string) {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
-  const options = { body, tag: id, icon: "/favicon.ico" };
+  const options = { body, tag: id, icon: "/favicon.png" };
   try {
     if ("serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.register("/reminder-worker.js");

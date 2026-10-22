@@ -3,7 +3,8 @@ import { Settings as SettingsIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/store/userStore";
 import { t } from "@/lib/i18n";
-import madarLogo from "@/assets/madar-logo.png.asset.json";
+import madarLogoSrc from "@/assets/madar-logo-v2.png";
+const madarLogo = { url: madarLogoSrc };
 
 const SudaneseHeader = () => {
   const { name, language } = useUser();
@@ -38,7 +39,7 @@ const SudaneseHeader = () => {
         <img
           src={madarLogo.url}
           alt="Madar"
-          className="h-14 w-auto object-contain drop-shadow-[0_2px_10px_rgba(212,175,55,0.35)]"
+          width={56} height={56} className="h-14 w-14 object-contain drop-shadow-md"
         />
         <h1 className="text-2xl font-bold text-foreground tracking-tight font-cairo leading-none">
           {isRtl ? "مدار" : "Madar"}
