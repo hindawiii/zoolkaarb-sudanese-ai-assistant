@@ -1,5 +1,6 @@
 import type { FFmpeg } from "@ffmpeg/ffmpeg";
 import wasmAsset from "@/assets/ffmpeg-core.wasm.asset.json";
+import classWorkerURL from "../../node_modules/@ffmpeg/ffmpeg/dist/esm/worker.js?worker&url";
 
 let ffmpegInstance: FFmpeg | null = null;
 let loadingPromise: Promise<FFmpeg> | null = null;
@@ -25,7 +26,7 @@ export const getFFmpeg = async (
     try {
       coreURL = await toBlobURL("/ffmpeg/ffmpeg-core.js", "text/javascript");
       wasmURL = await toBlobURL(wasmAsset.url, "application/wasm");
-      await ff.load({ coreURL, wasmURL });
+      await ff.load({ coreURL, wasmURL, classWorkerURL });
       ffmpegInstance = ff;
       return ff;
     } catch (error) {
