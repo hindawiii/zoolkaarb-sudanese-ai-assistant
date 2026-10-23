@@ -2,39 +2,40 @@ import { Mic } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import avatarImg from "@/assets/wad-al-halal-avatar.png";
 import { useUser } from "@/store/userStore";
-import { t } from "@/lib/i18n";
+
+const bars = [0.6, 1, 0.75, 0.9, 0.5, 0.85, 0.65];
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const { name, language } = useUser();
+  const { language } = useUser();
+  const isRtl = language === "ar";
+
   return (
-    <section className="mx-5 rounded-2xl gradient-sand border border-border p-5 relative overflow-hidden">
-      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gold/10 blur-2xl" />
-
-      <div className="flex items-center gap-4">
-        <div className="relative animate-float">
-          <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gold glow-gold">
-            <img src={avatarImg} alt="Al-Khal AI Assistant" width={80} height={80} className="w-full h-full object-cover" />
-          </div>
-          <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-nile border-2 border-background" />
+    <section className="mx-4 mt-3">
+      <button
+        onClick={() => navigate("/chat")}
+        aria-label={isRtl ? "تكلم مع الخال" : "Talk to Al-Khal"}
+        className="w-full h-[58px] rounded-full surface-obsidian flex items-center gap-3 ps-1.5 pe-1.5 active:scale-[0.98] transition-transform"
+      >
+        <div className="relative shrink-0">
+          <img src={avatarImg} alt="" width={46} height={46} className="w-[46px] h-[46px] rounded-full object-cover border-2 border-gold" />
+          <span className="absolute bottom-0 end-0 w-3 h-3 rounded-full bg-nile border-2 border-background" />
         </div>
-
-        <div className="flex-1">
-          <h2 className="text-lg font-bold font-cairo text-foreground">الخال</h2>
-          <p className="text-xs text-muted-foreground">{t("hero.subtitle", language)}</p>
-          <p className="text-xs text-earth-light mt-1 font-cairo" dir="rtl">
-            {t("hero.welcome", "ar")}، {name}!
+        <div className="flex-1 min-w-0 text-start">
+          <p className="text-[13px] font-bold font-cairo text-foreground leading-tight">الخال</p>
+          <p className="text-[11px] text-muted-foreground font-cairo truncate">
+            {isRtl ? "حبابك يا هندسة.. جاهزين نرسم؟" : "Ready to create?"}
           </p>
         </div>
-
-        <button
-          onClick={() => navigate("/chat")}
-          aria-label="Open chat"
-          className="w-14 h-14 rounded-full gradient-gold flex items-center justify-center animate-pulse-glow active:scale-95 transition-transform"
-        >
-          <Mic className="w-6 h-6 text-primary-foreground" />
-        </button>
-      </div>
+        <div className="flex items-center gap-[3px] h-5" aria-hidden>
+          {bars.map((h, i) => (
+            <span key={i} className="wave-bar w-[3px] rounded-full bg-gold/70" style={{ height: `${h * 20}px`, animationDelay: `${i * 0.12}s` }} />
+          ))}
+        </div>
+        <span className="w-[46px] h-[46px] shrink-0 rounded-full gradient-gold flex items-center justify-center">
+          <Mic className="w-5 h-5 text-primary-foreground" />
+        </span>
+      </button>
     </section>
   );
 };
