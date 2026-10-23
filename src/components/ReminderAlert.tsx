@@ -29,7 +29,7 @@ const ReminderAlert = () => {
         markFired(due[0].id);
         setActive(due[0]);
         try {
-          if (notifications) void showReminderNotification(due[0].title, due[0].body || "مدار — تذكير الخال", due[0].id);
+          if (notifications) void showReminderNotification(due[0].title, due[0].body || "رسمة — تذكير الخال", due[0].id);
           startRingtone(getReminderTone());
         } catch { /* ignore */ }
       }

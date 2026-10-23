@@ -272,7 +272,7 @@ const VoiceNotesFAB = () => {
   };
 
   const shareText = async (text: string) => {
-    const data = { text, title: "Madar" };
+    const data = { text, title: "Rasma" };
     if (navigator.share) {
       try {
         await navigator.share(data);

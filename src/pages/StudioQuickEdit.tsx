@@ -41,7 +41,7 @@ import ZoomPanViewer from "@/components/studio/ZoomPanViewer";
 
 
 /* ============================================================
-   Madar Tools Hub – fully client-side image processing
+   Rasma Tools Hub – fully client-side image processing
    ============================================================ */
 
 type ToolId =
@@ -1024,7 +1024,7 @@ const ZoolProToolsHub = () => {
         </button>
         <div className="flex-1">
           <h1 className="text-lg font-bold font-cairo bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">
-            {isRtl ? "أدوات مدار" : "Madar Tools"}
+            {isRtl ? "أدوات رسمة" : "Rasma Tools"}
           </h1>
           <p className="text-xs text-muted-foreground font-cairo">
             {isRtl ? "محرر احترافي بالكامل في المتصفح" : "Pro client-side editor"}
@@ -1100,7 +1100,7 @@ const ZoolProToolsHub = () => {
                   <Sparkles className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <p className="text-xs text-foreground font-cairo text-center px-4">
-                  {isRtl ? "الخال شغال في المدار.. بظبط في أبعاد الصورة" : "Al-Khal is tuning your image..."}
+                  {isRtl ? "الخال شغال في الرسمة.. بظبط في أبعاد الصورة" : "Al-Khal is tuning your image..."}
                 </p>
               </div>
             )}
@@ -1118,7 +1118,7 @@ const ZoolProToolsHub = () => {
             </button>
             <a
               href={currentImage}
-              download="madar.png"
+              download="rasma.png"
               className="flex-1 py-2.5 rounded-xl gradient-gold text-primary-foreground text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-95 font-cairo"
             >
               <Download className="w-3.5 h-3.5" />

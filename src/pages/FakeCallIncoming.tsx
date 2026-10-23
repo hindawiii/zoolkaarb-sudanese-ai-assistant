@@ -408,7 +408,7 @@ const FakeCallIncoming = () => {
         {/* Brand strip */}
         <div className="flex items-center justify-between px-6 mt-2">
           <span className="text-[10px] font-cairo text-white/40 tracking-wide">
-            ✦ Madar
+            ✦ Rasma
           </span>
           <span className="text-[10px] font-cairo text-white/40">
             {isIos ? "iPhone" : "Android"}
