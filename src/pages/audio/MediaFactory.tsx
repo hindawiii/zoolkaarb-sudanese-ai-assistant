@@ -56,14 +56,14 @@ const MediaFactory = () => {
         const { blob, ext } = await extractAudioFile(videoFile, (r) =>
           setProgress(0.1 + r * 0.85),
         );
-        downloadBlob(blob, `madar-audio-${Date.now()}.${ext}`);
+        downloadBlob(blob, `rasma-audio-${Date.now()}.${ext}`);
         consume();
       } else {
         if (!imageFile || !audioFile) return;
         const blob = await renderImageWithAudio(imageFile, audioFile, (r) =>
           setProgress(0.1 + r * 0.85),
         );
-        downloadBlob(blob, `madar-video-${Date.now()}.mp4`);
+        downloadBlob(blob, `rasma-video-${Date.now()}.mp4`);
         consume();
       }
       toast.success(isRtl ? "تم الكرب! ✓" : "Exported!");

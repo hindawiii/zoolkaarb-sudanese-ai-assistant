@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { validateDocument } from "@/lib/fileValidation";
 
-const WATERMARK_TEXT = "Madar";
+const WATERMARK_TEXT = "Rasma";
 
 const fileToDataUrl = (f: File): Promise<string> =>
   new Promise((res, rej) => {

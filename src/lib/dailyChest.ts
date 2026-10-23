@@ -1,4 +1,4 @@
-// Daily Al-Khal Chest — once-per-day reward popup. Uses unified Madar Credits.
+// Daily Al-Khal Chest — once-per-day reward popup. Uses unified Rasma Credits.
 import { grantReward } from "@/lib/zoolCredits";
 
 const KEY = "zoolkaarb-daily-chest-v1";

@@ -1,4 +1,4 @@
-// Madar — Anime Studio data: characters (hero / villain / powerhouse) with their
+// Rasma — Anime Studio data: characters (hero / villain / powerhouse) with their
 // transformation forms, plus per-universe combat auras and hair transformations.
 
 export type CharRole = "hero" | "villain" | "power";

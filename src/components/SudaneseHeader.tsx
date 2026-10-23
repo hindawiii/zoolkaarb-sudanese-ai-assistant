@@ -34,15 +34,15 @@ const SudaneseHeader = () => {
         <SettingsIcon className="w-5 h-5 text-foreground" />
       </button>
 
-      {/* Centered Madar logo + brand */}
+      {/* Centered Rasma logo + brand */}
       <div className="flex flex-col items-center justify-center text-center gap-2">
         <img
           src={madarLogo.url}
-          alt="Madar"
+          alt="Rasma"
           width={56} height={56} className="h-14 w-14 object-contain drop-shadow-md"
         />
         <h1 className="text-2xl font-bold text-foreground tracking-tight font-cairo leading-none">
-          {isRtl ? "مدار" : "Madar"}
+          {isRtl ? "رسمة" : "Rasma"}
         </h1>
         <p className="text-sm text-muted-foreground font-cairo">
           {greeting}

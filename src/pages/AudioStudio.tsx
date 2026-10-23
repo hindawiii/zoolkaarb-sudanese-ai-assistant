@@ -74,7 +74,7 @@ const AudioStudio = () => {
         </button>
         <div className="flex-1">
           <h1 className="text-base font-bold font-cairo text-foreground">
-            {isRtl ? "استوديو مدار" : "Madar Audio Studio"}
+            {isRtl ? "استوديو رسمة" : "Rasma Audio Studio"}
           </h1>
           <p className="text-[10px] text-muted-foreground">Audio Production Suite</p>
         </div>

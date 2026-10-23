@@ -40,8 +40,8 @@ const ServiceGrid = () => {
       accent: "gradient-gold",
       tiles: [
         {
-          titleAr: "ستوديو مدار",
-          titleEn: "Madar Studio",
+          titleAr: "ستوديو رسمة",
+          titleEn: "Rasma Studio",
           desc: isRtl ? "Face Swap · Anime · Blender" : "Face Swap · Anime · Blender",
           icon: ImagePlus,
           iconBg: "bg-gold/20",
@@ -66,7 +66,7 @@ const ServiceGrid = () => {
         {
           titleAr: "مصنع الميديا",
           titleEn: "Media Factory",
-          desc: isRtl ? "استوديو مدار" : "Media · Voice-over · Mix",
+          desc: isRtl ? "استوديو رسمة" : "Media · Voice-over · Mix",
           icon: Music2,
           iconBg: "bg-gold/20",
           route: "/audio-studio",
@@ -80,8 +80,8 @@ const ServiceGrid = () => {
           route: "/fake-call",
         },
         {
-          titleAr: "مدار شير",
-          titleEn: "Madar Share",
+          titleAr: "رسمة شير",
+          titleEn: "Rasma Share",
           desc: isRtl ? "مشاركة بدون نت" : "Offline file share",
           icon: Share2,
           iconBg: "bg-earth/20",

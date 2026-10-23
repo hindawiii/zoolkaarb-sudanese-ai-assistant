@@ -1,4 +1,4 @@
-// Apply the official Madar logo watermark to a base64/dataURL image.
+// Apply the official Rasma logo watermark to a base64/dataURL image.
 // Returns a new PNG dataURL. Falls back to original on failure.
 import madarLogoSrc from "@/assets/madar-logo-v2.png";
 const madarLogo = { url: madarLogoSrc };
