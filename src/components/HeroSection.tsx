@@ -11,7 +11,7 @@ const HeroSection = () => {
   const isRtl = language === "ar";
 
   return (
-    <section className="mx-4 mt-3">
+    <section className="shrink-0">
       <button
         onClick={() => navigate("/chat")}
         aria-label={isRtl ? "تكلم مع الخال" : "Talk to Al-Khal"}
