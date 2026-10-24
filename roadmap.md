@@ -1,5 +1,9 @@
 # Approved release development
 
+- [ ] Adapt home content to viewport height with bounded sizing and short-screen scrolling
+- [ ] Group scanner access under the digital office, preserving existing scanner links
+- [ ] Replace home share modal with a separate inline expanding share control and verify its flow
+
 - [ ] Account sign-in, name/photo profile, reset password — blocked: Lovable Cloud paused
 - [ ] Server credit ledger (3 initial uses per tool) — blocked: Lovable Cloud paused; local ledger preserved
 - [ ] Sync notes, reminders and saved statuses — blocked: Lovable Cloud paused; local data preserved
