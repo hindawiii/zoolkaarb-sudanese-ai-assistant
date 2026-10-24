@@ -60,7 +60,7 @@ const ServiceGrid = () => {
             onClick={() => navigate(tile.route)}
             className="h-full min-h-[86px] items-start rounded-2xl surface-obsidian p-3 flex flex-col justify-between text-start whitespace-normal active:scale-[0.97] transition-transform"
           >
-            <span className={`w-9 h-9 rounded-xl flex items-center justify-center ${tile.tint}`}>
+            <span className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center ${tile.tint}`}>
               <tile.icon className="w-[18px] h-[18px]" />
             </span>
             <div className="min-w-0">
