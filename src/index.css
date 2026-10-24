@@ -236,6 +236,7 @@
 
 /* Rasma signature surfaces */
 .home-shell {
+  min-height: 100vh;
   min-height: 100svh;
   padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px));
   display: flex;
@@ -249,11 +250,11 @@
   padding: clamp(10px, 1.6svh, 18px) 16px 0;
 }
 .home-services {
-  flex: 1;
+  flex: 1 0 372px;
   display: grid;
-  grid-template-rows: minmax(132px, 1.25fr) minmax(194px, 2fr) minmax(52px, .45fr);
+  grid-template-rows: minmax(118px, 1.25fr) minmax(182px, 2fr) minmax(52px, .45fr);
   gap: 10px;
-  min-height: 398px;
+  min-height: 372px;
   max-height: 640px;
 }
 .share-expansion {
@@ -278,7 +279,7 @@
 .share-x { background: hsl(var(--foreground)); color: hsl(var(--background)); }
 @media (max-height: 700px) {
   .home-content { gap: 8px; padding-top: 8px; }
-  .home-services { min-height: 378px; }
+  .home-services { min-height: 372px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .share-expansion { transition: none; }

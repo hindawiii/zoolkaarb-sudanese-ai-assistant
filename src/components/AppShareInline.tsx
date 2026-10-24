@@ -40,18 +40,18 @@ const AppShareInline = () => {
         <span className="flex items-center gap-2"><Share2 className="text-gold" />{isAr ? "شارك رسمة مع أصحابك" : "Share Rasma with friends"}</span>
         <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </Button>
-      <div id={panelId} className="share-expansion" data-open={open} inert={open ? undefined : ""} aria-hidden={!open}>
+      <div id={panelId} className="share-expansion" data-open={open} aria-hidden={!open}>
         <div className="overflow-hidden">
           <div className="grid grid-cols-4 gap-1 py-3">
             {channels.map((channel) => (
               <Button key={channel.name} asChild variant="ghost" className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg">
-                <a href={channel.href} target="_blank" rel="noopener noreferrer" aria-label={`${isAr ? "المشاركة عبر" : "Share via"} ${channel.name}`}>
+                <a href={channel.href} tabIndex={open ? 0 : -1} target="_blank" rel="noopener noreferrer" aria-label={`${isAr ? "المشاركة عبر" : "Share via"} ${channel.name}`}>
                   <span className={`share-channel ${channel.className}`}><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-5 w-5"><path d={channel.path} /></svg></span>
                   {channel.name}
                 </a>
               </Button>
             ))}
-            <Button variant="ghost" onClick={copyLink} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "نسخ رابط التطبيق" : "Copy app link"}>
+            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={copyLink} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "نسخ رابط التطبيق" : "Copy app link"}>
               <span className="share-channel bg-muted text-foreground">{copied ? <Check /> : <Copy />}</span>
               {copied ? (isAr ? "تم النسخ" : "Copied") : (isAr ? "نسخ الرابط" : "Copy link")}
             </Button>
