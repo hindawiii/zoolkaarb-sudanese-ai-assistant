@@ -235,6 +235,54 @@
 }
 
 /* Rasma signature surfaces */
+.home-shell {
+  min-height: 100svh;
+  padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+}
+.home-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6svh, 18px);
+  padding: clamp(10px, 1.6svh, 18px) 16px 0;
+}
+.home-services {
+  flex: 1;
+  display: grid;
+  grid-template-rows: minmax(132px, 1.25fr) minmax(194px, 2fr) minmax(52px, .45fr);
+  gap: 10px;
+  min-height: 398px;
+  max-height: 640px;
+}
+.share-expansion {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 220ms ease, opacity 220ms ease;
+}
+.share-expansion[data-open="true"] { grid-template-rows: 1fr; opacity: 1; }
+.share-channel {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+:root { --share-whatsapp: 142 65% 34%; --share-facebook: 221 75% 48%; --share-on-brand: 0 0% 100%; }
+.dark { --share-whatsapp: 142 60% 36%; --share-facebook: 221 75% 54%; }
+.share-whatsapp { background: hsl(var(--share-whatsapp)); color: hsl(var(--share-on-brand)); }
+.share-facebook { background: hsl(var(--share-facebook)); color: hsl(var(--share-on-brand)); }
+.share-x { background: hsl(var(--foreground)); color: hsl(var(--background)); }
+@media (max-height: 700px) {
+  .home-content { gap: 8px; padding-top: 8px; }
+  .home-services { min-height: 378px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .share-expansion { transition: none; }
+}
 .surface-obsidian {
   background:
     radial-gradient(120% 140% at 100% 0%, hsl(var(--gold) / 0.14), transparent 55%),

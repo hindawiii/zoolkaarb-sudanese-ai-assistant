@@ -92,7 +92,7 @@ const Scanner = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-8">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/")} className="p-1.5 rounded-xl hover:bg-muted transition-colors">
+        <button onClick={() => navigate("/office")} aria-label="العودة إلى المكتب" className="p-1.5 rounded-xl hover:bg-muted transition-colors">
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
         <div>

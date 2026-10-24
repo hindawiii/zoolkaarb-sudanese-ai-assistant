@@ -1,6 +1,7 @@
 import { ImagePlus, Heart, Wand2, Share2, PhoneCall, Music2, ArrowLeft, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/store/userStore";
+import { Button } from "@/components/ui/button";
 
 type Tile = {
   titleAr: string;
@@ -25,13 +26,12 @@ const ServiceGrid = () => {
   const isRtl = language === "ar";
 
   return (
-    <section className="px-4 mt-4 space-y-2.5">
+    <section className="home-services">
       {/* Spotlight */}
-      <button
+      <Button variant="ghost"
         onClick={() => navigate("/studio")}
-        className="relative w-full h-[132px] rounded-3xl surface-hero p-4 text-start overflow-hidden active:scale-[0.98] transition-transform"
+        className="relative block w-full h-full min-h-[132px] rounded-3xl surface-hero p-4 text-start whitespace-normal overflow-hidden active:scale-[0.98] transition-transform"
       >
-        <div className="absolute -bottom-8 -end-6 w-36 h-36 rounded-full bg-gold/15 blur-2xl" />
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold font-cairo text-gold">
           <Star className="w-3 h-3 fill-current" />
           {isRtl ? "الأداة الأقوى" : "Flagship"}
@@ -50,15 +50,15 @@ const ServiceGrid = () => {
           </span>
         </div>
         <ImagePlus className="absolute top-3 end-4 w-9 h-9 text-gold/40" aria-hidden />
-      </button>
+      </Button>
 
       {/* Creative grid */}
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 grid-rows-2 gap-2.5">
         {tiles.map((tile) => (
-          <button
+          <Button variant="ghost"
             key={tile.route}
             onClick={() => navigate(tile.route)}
-            className="h-[92px] rounded-2xl surface-obsidian p-3 flex flex-col justify-between text-start active:scale-[0.97] transition-transform"
+            className="h-full min-h-[92px] items-start rounded-2xl surface-obsidian p-3 flex flex-col justify-between text-start whitespace-normal active:scale-[0.97] transition-transform"
           >
             <span className={`w-9 h-9 rounded-xl flex items-center justify-center ${tile.tint}`}>
               <tile.icon className="w-[18px] h-[18px]" />
@@ -67,14 +67,14 @@ const ServiceGrid = () => {
               <p className="text-[13px] font-bold font-cairo text-foreground leading-tight truncate">{isRtl ? tile.titleAr : tile.titleEn}</p>
               <p className="text-[10.5px] text-muted-foreground font-cairo truncate">{isRtl ? tile.descAr : tile.descEn}</p>
             </div>
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Share strip */}
-      <button
+      <Button variant="ghost"
         onClick={() => navigate("/zool-share")}
-        className="w-full h-[52px] rounded-2xl surface-obsidian px-3 flex items-center gap-3 text-start active:scale-[0.98] transition-transform"
+        className="w-full h-full min-h-[52px] rounded-2xl surface-obsidian px-3 flex items-center gap-3 text-start whitespace-normal active:scale-[0.98] transition-transform"
       >
         <span className="w-9 h-9 rounded-xl bg-earth/25 text-earth-light flex items-center justify-center">
           <Share2 className="w-[18px] h-[18px]" />
@@ -84,7 +84,7 @@ const ServiceGrid = () => {
           <p className="text-[10.5px] text-muted-foreground font-cairo">{isRtl ? "انقل ملفاتك بدون نت" : "Share files offline"}</p>
         </div>
         <ArrowLeft className={`w-4 h-4 text-muted-foreground ${isRtl ? "" : "rotate-180"}`} />
-      </button>
+      </Button>
     </section>
   );
 };
