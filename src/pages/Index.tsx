@@ -6,7 +6,7 @@ import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background max-w-md mx-auto relative pb-24">
+    <div className="min-h-screen bg-background max-w-md mx-auto relative pb-20">
       <SudaneseHeader />
       <HeroSection />
       <ServiceGrid />
