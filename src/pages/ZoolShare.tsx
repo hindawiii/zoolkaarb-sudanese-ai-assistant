@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
 import {
   Upload,
@@ -24,6 +25,15 @@ type Role = "sender" | "receiver" | null;
 type Mode = "code" | "qr" | null; // sender: generate code | scan qr ; receiver: enter code | show qr
 
 const QR_PREFIX = "zoolshare:";
+
+const resolveQrColor = (token: string) => {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("تعذر تجهيز الباركود");
+  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  context.fillStyle = `hsl(${value})`;
+  return context.fillStyle;
+};
 
 const ZoolShare = () => {
   const navigate = useNavigate();
@@ -59,7 +69,10 @@ const ZoolShare = () => {
       const url = await QRCode.toDataURL(`${QR_PREFIX}${code}`, {
         width: 320,
         margin: 1,
-        color: { dark: "#0a0a0a", light: "#D4AF37" },
+        color: {
+          dark: resolveQrColor("--qr-ink"),
+          light: resolveQrColor("--qr-paper"),
+        },
       });
       setQrDataUrl(url);
     } catch (e) {
@@ -93,13 +106,14 @@ const ZoolShare = () => {
 
   useEffect(() => {
     if (role === "sender" && mode === "qr" && videoRef.current && p2p.status === "idle") {
+      const video = videoRef.current;
       const reader = new BrowserQRCodeReader();
       let stopped = false;
       (async () => {
         try {
           const controls = await reader.decodeFromVideoDevice(
             undefined,
-            videoRef.current!,
+            video,
             (result) => {
               if (!result || stopped) return;
               const text = result.getText();
@@ -182,47 +196,35 @@ const ZoolShare = () => {
 
   return (
     <div
-      className="min-h-screen max-w-md mx-auto pb-10 font-cairo relative overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(120% 80% at 50% -10%, hsl(45 60% 18% / 0.45), transparent 60%), linear-gradient(180deg, hsl(0 0% 5%), hsl(0 0% 8%))",
-      }}
+      className="min-h-screen bg-background text-foreground max-w-md mx-auto pb-10 font-cairo relative"
       dir="rtl"
     >
-      {/* Ambient glow */}
-      <div className="pointer-events-none absolute -top-24 -left-16 w-72 h-72 rounded-full blur-3xl opacity-30"
-        style={{ background: "radial-gradient(circle, #D4AF37, transparent 70%)" }} />
-      <div className="pointer-events-none absolute -bottom-32 -right-20 w-96 h-96 rounded-full blur-3xl opacity-20"
-        style={{ background: "radial-gradient(circle, #D4AF37, transparent 70%)" }} />
-
       {/* Header */}
-      <header className="relative flex items-center gap-3 px-4 py-3 border-b border-[#D4AF37]/20 bg-black/40 backdrop-blur-2xl sticky top-0 z-20">
+      <header className="relative flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-2xl sticky top-0 z-20">
         <BackButton
           onClick={() => (role ? resetAll() : navigate("/"))} />
         <div className="flex-1">
-          <h1 className="text-base font-bold text-white">رسمة شير</h1>
-          <p className="text-[10px] text-[#D4AF37]/70">Local P2P · بدون رصيد</p>
+          <h1 className="text-base font-bold text-foreground">رسمة شير</h1>
+          <p className="text-[10px] text-muted-foreground">Local P2P · بدون رصيد</p>
         </div>
-        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30">
-          <Wifi className="w-3 h-3 text-[#D4AF37]" />
-          <span className="text-[10px] font-bold text-[#D4AF37]">LAN</span>
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 border border-border">
+          <Wifi className="w-3 h-3 text-primary" />
+          <span className="text-[10px] font-bold text-primary">LAN</span>
         </div>
       </header>
 
       {/* Loading bar */}
       {showProgressBar && (
         <div className="relative px-5 mt-3">
-          <div className="rounded-2xl border border-[#D4AF37]/30 bg-black/50 backdrop-blur-xl p-3">
-            <p className="text-[11px] text-[#D4AF37] mb-2 font-bold">
+          <div className="rounded-lg border border-border bg-card/80 backdrop-blur-xl p-3">
+            <p className="text-[11px] text-primary mb-2 font-bold">
               الخال شغال.. بربط في الأجهزة
             </p>
-            <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full transition-all duration-500"
+                className="h-full gradient-gold transition-all duration-500"
                 style={{
-                  width: `${barPct}%`,
-                  background: "linear-gradient(90deg, #D4AF37, #FFD700, #D4AF37)",
-                  boxShadow: "0 0 12px #D4AF37",
+                  width: `${barPct}%`
                 }}
               />
             </div>
@@ -234,38 +236,37 @@ const ZoolShare = () => {
       {!role && (
         <div className="relative px-5 mt-6 space-y-4">
           <div className="text-center mb-2">
-            <p className="text-xs text-white/60">اختر دورك</p>
-            <h2 className="text-xl font-bold text-white mt-1">مرسل ولا مستلم؟</h2>
+            <p className="text-xs text-muted-foreground">اختر دورك</p>
+            <h2 className="text-xl font-bold text-foreground mt-1">مرسل ولا مستلم؟</h2>
           </div>
 
-          <button
+          <Button variant="ghost"
             onClick={() => setRole("sender")}
-            className="w-full rounded-3xl p-5 border border-[#D4AF37]/30 bg-gradient-to-br from-[#D4AF37]/15 to-transparent backdrop-blur-xl active:scale-[0.98] transition-transform flex items-center gap-4"
+            className="h-auto whitespace-normal w-full rounded-lg p-5 border border-border bg-gradient-to-br from-primary/10 to-transparent backdrop-blur-xl active:scale-[0.98] transition-transform flex items-center gap-4"
           >
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #D4AF37, #B8860B)", boxShadow: "0 0 24px #D4AF37aa" }}>
-              <Send className="w-7 h-7 text-black" />
+            <div className="shrink-0 w-14 h-14 rounded-lg gradient-gold flex items-center justify-center">
+              <Send className="w-7 h-7 text-primary-foreground" />
             </div>
             <div className="text-right flex-1">
-              <p className="text-base font-bold text-white">مرسل</p>
-              <p className="text-[11px] text-white/60">عندك ملف وعايز تبعتو</p>
+              <p className="text-base font-bold text-foreground">مرسل</p>
+              <p className="text-[11px] text-muted-foreground">عندك ملف وعايز تبعتو</p>
             </div>
-          </button>
+          </Button>
 
-          <button
+          <Button variant="ghost"
             onClick={() => setRole("receiver")}
-            className="w-full rounded-3xl p-5 border border-[#D4AF37]/30 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-xl active:scale-[0.98] transition-transform flex items-center gap-4"
+            className="h-auto whitespace-normal w-full rounded-lg p-5 border border-border bg-gradient-to-br from-muted to-transparent backdrop-blur-xl active:scale-[0.98] transition-transform flex items-center gap-4"
           >
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 border border-[#D4AF37]/40">
-              <Inbox className="w-7 h-7 text-[#D4AF37]" />
+            <div className="shrink-0 w-14 h-14 rounded-lg flex items-center justify-center bg-muted border border-primary/30">
+              <Inbox className="w-7 h-7 text-primary" />
             </div>
             <div className="text-right flex-1">
-              <p className="text-base font-bold text-white">مستلم</p>
-              <p className="text-[11px] text-white/60">عايز تستقبل ملف من زول</p>
+              <p className="text-base font-bold text-foreground">مستلم</p>
+              <p className="text-[11px] text-muted-foreground">عايز تستقبل ملف من زول</p>
             </div>
-          </button>
+          </Button>
 
-          <p className="text-[10px] text-white/40 text-center pt-3">
+          <p className="text-[10px] text-muted-foreground text-center pt-3">
             الملف بيتنقل مباشرة بين الأجهزة عبر WebRTC. على نفس الواي فاي = سرعة فائقة بدون إنترنت.
           </p>
         </div>
@@ -307,35 +308,36 @@ const ZoolShare = () => {
       {role === "sender" && mode === "code" && (
         <div className="relative px-5 mt-5 space-y-4">
           <GlassCard>
-            <p className="text-[11px] text-white/60 text-center">شارك الكود ده مع المستلم</p>
+            <p className="text-[11px] text-muted-foreground text-center">شارك الكود ده مع المستلم</p>
             <div className="mt-3 flex items-center justify-center gap-2">
               <p
-                className="text-4xl font-bold tracking-[0.4em] font-mono"
-                style={{ color: "#D4AF37", textShadow: "0 0 20px #D4AF3766" }}
+                className="text-3xl font-bold tracking-normal font-mono text-primary"
+                
               >
                 {p2p.code || "------"}
               </p>
               {p2p.code && (
-                <button
+                <Button variant="ghost"
                   onClick={copyCode}
-                  className="p-2 rounded-xl bg-white/5 border border-[#D4AF37]/30 hover:bg-white/10"
+                  aria-label="نسخ الكود"
+                  className="h-auto whitespace-normal p-2 rounded-xl bg-muted border border-border hover:bg-muted"
                 >
-                  {copied ? <Check className="w-4 h-4 text-[#D4AF37]" /> : <Copy className="w-4 h-4 text-[#D4AF37]" />}
-                </button>
+                  {copied ? <Check className="h-auto whitespace-normal w-4 h-4 text-primary" /> : <Copy className="w-4 h-4 text-primary" />}
+                </Button>
               )}
             </div>
             <StatusPill status={p2p.status} role="sender" />
           </GlassCard>
 
           {!pendingFile ? (
-            <button
+            <Button variant="ghost"
               onClick={() => fileRef.current?.click()}
-              className="w-full rounded-3xl border-2 border-dashed border-[#D4AF37]/40 bg-black/30 backdrop-blur-xl p-8 flex flex-col items-center gap-2 active:scale-[0.98] transition-transform"
+              className="h-auto whitespace-normal w-full rounded-lg border-2 border-dashed border-primary/30 bg-card/60 backdrop-blur-xl p-8 flex flex-col items-center gap-2 active:scale-[0.98] transition-transform"
             >
-              <Upload className="w-7 h-7 text-[#D4AF37]" />
-              <p className="text-sm font-bold text-white">اختار الملف</p>
-              <p className="text-[11px] text-white/50">يبدأ الإرسال تلقائياً لما يتصل المستلم</p>
-            </button>
+              <Upload className="w-7 h-7 text-primary" />
+              <p className="text-sm font-bold text-foreground">اختار الملف</p>
+              <p className="text-[11px] text-muted-foreground">يبدأ الإرسال تلقائياً لما يتصل المستلم</p>
+            </Button>
           ) : (
             <FilePreview file={pendingFile} progress={p2p.progress} status={p2p.status} />
           )}
@@ -348,24 +350,23 @@ const ZoolShare = () => {
       {role === "sender" && mode === "qr" && (
         <div className="relative px-5 mt-5 space-y-4">
           <GlassCard>
-            <p className="text-[11px] text-white/60 text-center mb-3">صوّب على باركود المستلم</p>
-            <div className="relative rounded-2xl overflow-hidden bg-black aspect-square border border-[#D4AF37]/40">
+            <p className="text-[11px] text-muted-foreground text-center mb-3">صوّب على باركود المستلم</p>
+            <div className="relative rounded-lg overflow-hidden bg-muted aspect-square border border-primary/30">
               <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
               {/* viewfinder */}
-              <div className="absolute inset-6 border-2 rounded-2xl pointer-events-none"
-                style={{ borderColor: "#D4AF37", boxShadow: "inset 0 0 30px #D4AF3744" }} />
+              <div className="absolute inset-6 border-2 border-primary rounded-lg pointer-events-none" />
             </div>
             <StatusPill status={p2p.status} role="sender" />
           </GlassCard>
 
           {p2p.status === "connected" && !pendingFile && (
-            <button
+            <Button variant="ghost"
               onClick={() => fileRef.current?.click()}
-              className="w-full rounded-3xl border-2 border-dashed border-[#D4AF37]/40 bg-black/30 backdrop-blur-xl p-6 flex flex-col items-center gap-2 active:scale-[0.98] transition-transform"
+              className="h-auto whitespace-normal w-full rounded-lg border-2 border-dashed border-primary/30 bg-card/60 backdrop-blur-xl p-6 flex flex-col items-center gap-2 active:scale-[0.98] transition-transform"
             >
-              <Upload className="w-7 h-7 text-[#D4AF37]" />
-              <p className="text-sm font-bold text-white">اختار الملف للإرسال</p>
-            </button>
+              <Upload className="w-7 h-7 text-primary" />
+              <p className="text-sm font-bold text-foreground">اختار الملف للإرسال</p>
+            </Button>
           )}
           {pendingFile && <FilePreview file={pendingFile} progress={p2p.progress} status={p2p.status} />}
 
@@ -378,24 +379,24 @@ const ZoolShare = () => {
         <div className="relative px-5 mt-5 space-y-4">
           {p2p.status === "idle" && (
             <GlassCard>
-              <p className="text-sm font-bold text-white text-center">أدخل الكود من المرسل</p>
+              <p className="text-sm font-bold text-foreground text-center">أدخل الكود من المرسل</p>
               <input
                 inputMode="numeric"
                 maxLength={6}
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                className="mt-4 w-full text-center text-3xl font-mono tracking-[0.4em] py-3 rounded-xl bg-black/40 border border-[#D4AF37]/40 text-[#D4AF37] focus:outline-none focus:border-[#D4AF37]"
+                aria-label="كود الاتصال"
+                className="mt-4 w-full text-center text-3xl font-mono tracking-normal py-3 rounded-xl bg-card/80 border border-primary/30 text-primary focus:outline-none focus:border-ring"
                 placeholder="------"
                 dir="ltr"
-                style={{ textShadow: "0 0 12px #D4AF3766" }}
+                
               />
-              <button
+              <Button variant="ghost"
                 onClick={submitJoinCode}
-                className="mt-4 w-full rounded-full py-3 font-bold text-black active:scale-95 transition-transform"
-                style={{ background: "linear-gradient(135deg, #D4AF37, #FFD700)", boxShadow: "0 6px 20px #D4AF3755" }}
+                className="h-auto whitespace-normal mt-4 w-full rounded-full py-3 gradient-gold font-bold text-primary-foreground active:scale-95 transition-transform"
               >
                 اتصل
-              </button>
+              </Button>
             </GlassCard>
           )}
 
@@ -406,26 +407,25 @@ const ZoolShare = () => {
 
       {/* === RECEIVER · QR show flow === */}
       {role === "receiver" && mode === "qr" && (
-        <div className="relative px-5 mt-5 space-y-4">
+        <div className="h-auto whitespace-normal relative px-5 mt-5 space-y-4">
           <GlassCard>
-            <p className="text-[11px] text-white/60 text-center">ورّي المرسل الباركود ده</p>
-            <div className="mt-3 mx-auto w-64 h-64 rounded-2xl bg-[#D4AF37] flex items-center justify-center overflow-hidden"
-              style={{ boxShadow: "0 0 30px #D4AF3766" }}>
+            <p className="text-[11px] text-muted-foreground text-center">ورّي المرسل الباركود ده</p>
+            <div className="mt-3 mx-auto w-full max-w-64 aspect-square rounded-lg qr-surface flex items-center justify-center overflow-hidden">
               {qrDataUrl ? (
                 <img src={qrDataUrl} alt="QR" className="w-full h-full" />
               ) : (
-                <div className="text-black text-xs">جارٍ التوليد...</div>
+                <div className="text-xs">جارٍ التوليد...</div>
               )}
             </div>
-            <p className="mt-3 text-center text-xs text-white/60">أو الكود يدوياً</p>
-            <p className="text-center text-2xl font-mono tracking-[0.4em] mt-1" style={{ color: "#D4AF37" }}>
+            <p className="mt-3 text-center text-xs text-muted-foreground">أو الكود يدوياً</p>
+            <p className="text-center text-2xl font-mono tracking-normal mt-1 text-primary">
               {p2p.code || "------"}
             </p>
             <StatusPill status={p2p.status} role="receiver" />
           </GlassCard>
 
           {p2p.status === "connected" && !pendingFile && (
-            <p className="text-center text-xs text-[#D4AF37]">في انتظار الملف من المرسل...</p>
+            <p className="text-center text-xs text-primary">في انتظار الملف من المرسل...</p>
           )}
           {(p2p.incoming || p2p.status === "transferring" || p2p.status === "done") && (
             <ReceiverPanel p2p={p2p} onDownload={downloadReceived} onPickFile={() => fileRef.current?.click()} pendingFile={pendingFile} />
@@ -442,8 +442,7 @@ const ZoolShare = () => {
 // ===== Sub-components =====
 
 const GlassCard = ({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-3xl border border-[#D4AF37]/30 bg-black/50 backdrop-blur-2xl p-5"
-    style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(212,175,55,0.15)" }}>
+  <div className="rounded-lg border border-border bg-card/80 backdrop-blur-2xl p-5">
     {children}
   </div>
 );
@@ -458,24 +457,24 @@ const ModeChoices = ({
 }) => (
   <div className="relative px-5 mt-6 space-y-3">
     <div className="text-center">
-      <p className="text-xs text-white/50">{title}</p>
+      <p className="text-xs text-muted-foreground">{title}</p>
     </div>
     {options.map((o) => (
-      <button
+      <Button variant="ghost"
         key={o.id}
         onClick={() => onPick(o.id)}
-        className="w-full rounded-3xl p-4 border border-[#D4AF37]/30 bg-black/40 backdrop-blur-xl active:scale-[0.98] transition-transform flex items-center gap-4"
+        className="h-auto whitespace-normal w-full rounded-lg p-4 border border-border bg-card/80 backdrop-blur-xl active:scale-[0.98] transition-transform flex items-center gap-4"
       >
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
+        <div className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center bg-primary/10 text-primary border border-border">
           {o.icon}
         </div>
         <div className="text-right flex-1">
-          <p className="text-sm font-bold text-white">{o.label}</p>
-          <p className="text-[11px] text-white/50">{o.sub}</p>
+          <p className="text-sm font-bold text-foreground">{o.label}</p>
+          <p className="text-[11px] text-muted-foreground">{o.sub}</p>
         </div>
-      </button>
+      </Button>
     ))}
-    <button onClick={onBack} className="w-full text-xs text-white/50 py-2">رجوع</button>
+    <Button variant="ghost" onClick={onBack} className="h-auto whitespace-normal w-full text-xs text-muted-foreground py-2">رجوع</Button>
   </div>
 );
 
@@ -492,9 +491,9 @@ const StatusPill = ({ status, role }: { status: string; role: "sender" | "receiv
   };
   const ok = status === "connected" || status === "transferring" || status === "done";
   return (
-    <div className="mt-3 flex items-center justify-center">
+    <div className="h-auto whitespace-normal mt-3 flex items-center justify-center">
       <span className={`text-[10px] px-3 py-1 rounded-full border ${
-        ok ? "bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/40" : "bg-white/5 text-white/60 border-white/10"
+        ok ? "bg-primary/10 text-primary border-primary/30" : "bg-muted text-muted-foreground border-border"
       }`}>
         {map[status] ?? status}
       </span>
@@ -504,12 +503,12 @@ const StatusPill = ({ status, role }: { status: string; role: "sender" | "receiv
 
 const FilePreview = ({ file, progress, status }: { file: File; progress: number; status: string }) => (
   <GlassCard>
-    <p className="text-sm font-bold text-white truncate">{file.name}</p>
-    <p className="text-xs text-white/50">{(file.size / 1024).toFixed(1)} KB</p>
+    <p className="text-sm font-bold text-foreground truncate">{file.name}</p>
+    <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p>
     {(status === "transferring" || status === "done") && (
-      <div className="mt-3 h-2 rounded-full bg-white/5 overflow-hidden">
-        <div className="h-full transition-all"
-          style={{ width: `${progress}%`, background: "linear-gradient(90deg, #D4AF37, #FFD700)" }} />
+      <div className="mt-3 h-2 rounded-full bg-muted overflow-hidden">
+        <div className="h-full gradient-gold transition-all"
+          style={{ width: `${progress}%` }} />
       </div>
     )}
   </GlassCard>
@@ -526,40 +525,39 @@ const ReceiverPanel = ({
   <GlassCard>
     {p2p.incoming ? (
       <>
-        <p className="text-sm font-bold text-white truncate">{p2p.incoming.name}</p>
-        <p className="text-xs text-white/50">{(p2p.incoming.size / 1024).toFixed(1)} KB</p>
-        <div className="mt-3 h-2 rounded-full bg-white/5 overflow-hidden">
-          <div className="h-full transition-all"
-            style={{ width: `${p2p.progress}%`, background: "linear-gradient(90deg, #D4AF37, #FFD700)" }} />
+        <p className="text-sm font-bold text-foreground truncate">{p2p.incoming.name}</p>
+        <p className="text-xs text-muted-foreground">{(p2p.incoming.size / 1024).toFixed(1)} KB</p>
+        <div className="mt-3 h-2 rounded-full bg-muted overflow-hidden">
+          <div className="h-full gradient-gold transition-all"
+            style={{ width: `${p2p.progress}%` }} />
         </div>
       </>
     ) : (
-      <p className="text-sm text-white/60 text-center">{p2p.status === "connected" ? "متصل — في انتظار الملف" : "..."}</p>
+      <p className="text-sm text-muted-foreground text-center">{p2p.status === "connected" ? "متصل — في انتظار الملف" : "..."}</p>
     )}
     {p2p.status === "done" && p2p.receivedUrl && (
-      <button
+      <Button variant="ghost"
         onClick={onDownload}
-        className="mt-4 w-full rounded-full py-3 font-bold text-black flex items-center justify-center gap-2 active:scale-95"
-        style={{ background: "linear-gradient(135deg, #D4AF37, #FFD700)" }}
+        className="h-auto whitespace-normal mt-4 w-full rounded-full py-3 gradient-gold font-bold text-primary-foreground flex items-center justify-center gap-2 active:scale-95"
       >
-        <Download className="w-4 h-4" /> حفظ الملف
-      </button>
+        <Download className="h-auto whitespace-normal w-4 h-4" /> حفظ الملف
+      </Button>
     )}
     {p2p.status === "connected" && !pendingFile && (
-      <button onClick={onPickFile} className="mt-3 w-full text-[11px] text-white/50 py-2 underline">
+      <Button variant="ghost" onClick={onPickFile} className="h-auto whitespace-normal mt-3 w-full text-[11px] text-muted-foreground py-2 underline">
         تبعت ملف عكسي؟
-      </button>
+      </Button>
     )}
   </GlassCard>
 );
 
 const ResetButton = ({ onClick }: { onClick: () => void }) => (
-  <button
+  <Button variant="ghost"
     onClick={onClick}
-    className="w-full rounded-full border border-[#D4AF37]/30 bg-black/30 py-3 text-sm font-bold text-[#D4AF37] flex items-center justify-center gap-2 active:scale-95"
+    className="h-auto whitespace-normal w-full rounded-full border border-border bg-card/60 py-3 text-sm font-bold text-primary flex items-center justify-center gap-2 active:scale-95"
   >
-    <RefreshCw className="w-4 h-4" /> إعادة
-  </button>
+    <RefreshCw className="h-auto whitespace-normal w-4 h-4" /> إعادة
+  </Button>
 );
 
 export default ZoolShare;
