@@ -1,5 +1,8 @@
 # Approved release development
 
+- [ ] Phase 1: unify page/step back controls and Arabic/English arrow directions; verify navigation actions unchanged
+- [ ] Later visual/content improvement phases — waiting for phase-specific permission; no changes in Phase 1
+
 - [x] Adapt home content to viewport height with bounded sizing and short-screen scrolling; verified 320–686px mobile widths
 - [x] Group scanner access under the digital office, preserving existing scanner links; office → scanner → office verified
 - [x] Replace home share modal with a separate inline expanding share control; expansion, copy and keyboard collapse verified
