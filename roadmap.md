@@ -1,6 +1,7 @@
 # Approved release development
 
 - [x] Phase 1: unified 21 page/step back controls; browser verified right arrows in Arabic, left arrows in English, original destinations and live language switching; two direction tests passed
+- [ ] Phase 2: theme-aware Rasma Share visuals; verify role/mode screens and light/dark appearance without changing transfer logic
 - [ ] Later visual/content improvement phases — waiting for phase-specific permission; no changes in Phase 1
 
 - [x] Adapt home content to viewport height with bounded sizing and short-screen scrolling; verified 320–686px mobile widths
