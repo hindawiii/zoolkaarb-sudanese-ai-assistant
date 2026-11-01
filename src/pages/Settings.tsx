@@ -1,4 +1,5 @@
-import { ArrowLeft, User, Globe, Moon, Bell, Shield, Info, ChevronRight, Check } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { User, Globe, Moon, Bell, Shield, Info, ChevronRight, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -56,9 +57,7 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-8">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/")} className="p-1.5 rounded-xl hover:bg-muted transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/")} />
         <div>
           <h1 className="text-base font-bold font-cairo text-foreground">{t("settings.title", "ar")}</h1>
           <p className="text-[10px] text-muted-foreground">{t("settings.title", "en")}</p>
@@ -160,7 +159,7 @@ const Settings = () => {
                 <p className="text-sm text-foreground">{item.label}</p>
                 <p className="text-[10px] font-cairo text-earth-light" dir="rtl">{item.labelAr}</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <ChevronRight className={`w-4 h-4 text-muted-foreground ${language === "ar" ? "rotate-180" : ""}`} />
             </button>
           ))}
         </div>

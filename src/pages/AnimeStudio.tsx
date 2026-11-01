@@ -1,4 +1,5 @@
-import { ArrowLeft, Upload, Download, Loader2, RotateCcw, Share2, Sparkles, Zap, Wind, Flame, Swords, Drama, Check, AlertTriangle, Eye, ShieldCheck, X } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Upload, Download, Loader2, RotateCcw, Share2, Sparkles, Zap, Wind, Flame, Swords, Drama, Check, AlertTriangle, Eye, ShieldCheck, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -341,9 +342,7 @@ const AnimeStudio = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-32" dir={isRtl ? "rtl" : "ltr"}>
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/studio")} className="p-1.5 rounded-xl hover:bg-muted">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/studio")} />
         <div className="w-9 h-9 rounded-xl gradient-gold flex items-center justify-center">
           <Drama className="w-4.5 h-4.5 text-primary-foreground" />
         </div>

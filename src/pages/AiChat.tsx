@@ -1,5 +1,6 @@
+import BackButton from "@/components/BackButton";
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, Loader2, MapPin } from "lucide-react";
+import { Send, Loader2, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import avatarImg from "@/assets/wad-al-halal-avatar.png";
@@ -131,9 +132,7 @@ const AiChat = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto flex flex-col">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/")} className="p-1.5 rounded-xl hover:bg-muted transition-colors" aria-label="Back">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/")} />
         <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-gold">
           <img src={avatarImg} alt="Al-Khal" className="w-full h-full object-cover" />
         </div>

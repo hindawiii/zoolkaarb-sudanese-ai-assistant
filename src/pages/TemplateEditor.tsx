@@ -1,5 +1,5 @@
+import BackButton from "@/components/BackButton";
 import {
-  ArrowLeft,
   Download,
   Image as ImageIcon,
   Sparkles,
@@ -575,9 +575,7 @@ const TemplateEditor = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-8" dir="rtl">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate(-1)} className="p-1.5 rounded-xl hover:bg-muted transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate(-1)} />
         <div className="flex-1">
           <h1 className="text-base font-bold font-cairo text-foreground">{meta.titleAr}</h1>
           <p className="text-[10px] text-muted-foreground" dir="ltr">Status Maker Pro</p>

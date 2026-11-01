@@ -1,5 +1,5 @@
+import BackButton from "@/components/BackButton";
 import {
-  ArrowLeft,
   Upload,
   Download,
   RefreshCw,
@@ -197,12 +197,8 @@ const ZoolShare = () => {
 
       {/* Header */}
       <header className="relative flex items-center gap-3 px-4 py-3 border-b border-[#D4AF37]/20 bg-black/40 backdrop-blur-2xl sticky top-0 z-20">
-        <button
-          onClick={() => (role ? resetAll() : navigate("/"))}
-          className="p-1.5 rounded-xl hover:bg-white/5 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-[#D4AF37]" />
-        </button>
+        <BackButton
+          onClick={() => (role ? resetAll() : navigate("/"))} />
         <div className="flex-1">
           <h1 className="text-base font-bold text-white">رسمة شير</h1>
           <p className="text-[10px] text-[#D4AF37]/70">Local P2P · بدون رصيد</p>

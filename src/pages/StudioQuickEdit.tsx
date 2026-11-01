@@ -1,5 +1,5 @@
+import BackButton from "@/components/BackButton";
 import {
-  ArrowLeft,
   Upload,
   Download,
   RotateCcw,
@@ -1019,9 +1019,7 @@ const ZoolProToolsHub = () => {
       }}
     >
       <header className="flex items-center gap-3 px-4 py-4 border-b border-gold/20 bg-card/60 backdrop-blur-2xl sticky top-0 z-30">
-        <button onClick={() => navigate("/studio")} className="p-2 rounded-xl hover:bg-muted" aria-label="Back">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/studio")} />
         <div className="flex-1">
           <h1 className="text-lg font-bold font-cairo bg-gradient-to-r from-gold to-amber-400 bg-clip-text text-transparent">
             {isRtl ? "أدوات رسمة" : "Rasma Tools"}
