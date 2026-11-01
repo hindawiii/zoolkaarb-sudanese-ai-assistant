@@ -1,4 +1,5 @@
-import { ArrowLeft, Heart, Star, Sun, Moon, MessageCircle, Sparkles, Play, Crown, Lock, Flame } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Heart, Star, Sun, Moon, MessageCircle, Sparkles, Play, Crown, Lock, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 
@@ -66,9 +67,7 @@ const AlWajib = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-8">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-20">
-        <button onClick={() => navigate("/")} className="p-1.5 rounded-xl hover:bg-muted transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground rtl:rotate-180" />
-        </button>
+        <BackButton onClick={() => navigate("/")} />
         <div className="flex-1 text-start">
           <h1 className="text-base font-bold font-cairo text-foreground">مصمم الحالات</h1>
           <p className="text-[10px] text-muted-foreground font-cairo">قوالب احترافية وتهاني</p>

@@ -1,4 +1,5 @@
-import { ArrowLeft, Download, Loader2, RotateCcw, Plus, X, Share2 } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Download, Loader2, RotateCcw, Plus, X, Share2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -181,9 +182,7 @@ const StudioToolPage = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-28" dir={isRtl ? "rtl" : "ltr"}>
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/studio")} className="p-1.5 rounded-xl hover:bg-muted" aria-label="Back">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/studio")} />
         <div className="w-9 h-9 rounded-xl gradient-gold flex items-center justify-center">
           <Icon className="w-4.5 h-4.5 text-primary-foreground" />
         </div>

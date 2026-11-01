@@ -1,6 +1,7 @@
+import BackButton from "@/components/BackButton";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Mic, Square, Play, Pause, Share2, Loader2, Wand2, Coins } from "lucide-react";
+import { Mic, Square, Play, Pause, Share2, Loader2, Wand2, Coins } from "lucide-react";
 import { toast } from "sonner";
 import { useZoolCredits } from "@/lib/zoolCredits";
 import ZoolAdModal from "@/components/ZoolAdModal";
@@ -233,11 +234,7 @@ const VoiceChanger = () => {
     <div dir="rtl" className="min-h-screen bg-background max-w-md mx-auto pb-28 font-cairo">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-card/70 backdrop-blur-2xl border-b border-gold/20 px-5 py-4 flex items-center gap-3">
-        <button onClick={() => navigate("/")}
-          className="w-9 h-9 rounded-full bg-card/80 border border-border flex items-center justify-center active:scale-95 transition-transform"
-          aria-label="رجوع">
-          <ArrowRight className="w-4 h-4 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/")} />
         <div className="flex-1 text-start">
           <h1 className="text-base font-bold text-foreground">غيّر صوتك — استوديو</h1>
           <p className="text-[11px] text-muted-foreground">حفظ النبرة الطبيعية بدون تشويه</p>

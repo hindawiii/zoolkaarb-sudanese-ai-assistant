@@ -1,7 +1,7 @@
+import BackButton from "@/components/BackButton";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   PhoneCall,
   Smartphone,
   Repeat,
@@ -174,9 +174,7 @@ const FakeCall = () => {
     <div className="min-h-screen bg-background max-w-md mx-auto pb-32 relative" dir={isRtl ? "rtl" : "ltr"}>
       {/* Header */}
       <div className="sticky top-0 z-20 bg-background/85 backdrop-blur-xl border-b border-gold/15 px-4 py-3 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-xl hover:bg-muted">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate(-1)} />
         <div className="text-center">
           <h1 className="text-base font-bold font-cairo text-foreground">
             {isRtl ? "فزعة الخال — Pro" : "Fake Call Pro"}

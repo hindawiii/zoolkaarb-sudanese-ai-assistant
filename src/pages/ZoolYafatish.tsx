@@ -1,4 +1,5 @@
-import { ArrowLeft, MapPin, Loader2, Pill, Hospital, UtensilsCrossed, Wrench, Navigation, Phone } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { MapPin, Loader2, Pill, Hospital, UtensilsCrossed, Wrench, Navigation, Phone } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@/store/userStore";
@@ -97,9 +98,7 @@ const ZoolYafatish = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-8">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => (category ? setCategory(null) : navigate("/"))} className="p-1.5 rounded-xl hover:bg-muted transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => (category ? setCategory(null) : navigate("/"))} />
         <div className="flex-1">
           <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">الزول يفتش</h1>
           <p className="text-[10px] text-muted-foreground">Smart Directory</p>

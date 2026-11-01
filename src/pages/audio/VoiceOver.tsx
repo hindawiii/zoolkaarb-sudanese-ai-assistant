@@ -1,4 +1,5 @@
-import { ArrowLeft, Download, Mic, Music2, Square, Upload } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Download, Mic, Music2, Square, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useUser } from "@/store/userStore";
@@ -104,9 +105,7 @@ const VoiceOver = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-24" dir={isRtl ? "rtl" : "ltr"}>
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/audio-studio")} className="p-1.5 rounded-xl hover:bg-muted" aria-label="Back">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/audio-studio")} />
         <div className="flex-1">
           <h1 className="text-base font-bold font-cairo text-foreground">{isRtl ? "بصمتي الخاصة" : "Voice-over"}</h1>
           <p className="text-[10px] text-muted-foreground">{isRtl ? `متبقي ${credits} فزعات` : `${credits} uses left`}</p>

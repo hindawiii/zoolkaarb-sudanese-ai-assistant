@@ -1,4 +1,5 @@
-import { ArrowLeft, ChevronLeft, ChevronRight, Film, Mic2 } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { ChevronLeft, ChevronRight, Film, Mic2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useUser } from "@/store/userStore";
@@ -65,13 +66,8 @@ const AudioStudio = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-24" dir={isRtl ? "rtl" : "ltr"}>
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button
-          onClick={() => navigate("/")}
-          className="p-1.5 rounded-xl hover:bg-muted transition-colors"
-          aria-label="Back"
-        >
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton
+          onClick={() => navigate("/")} />
         <div className="flex-1">
           <h1 className="text-base font-bold font-cairo text-foreground">
             {isRtl ? "استوديو رسمة" : "Rasma Audio Studio"}

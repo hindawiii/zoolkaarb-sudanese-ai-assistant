@@ -1,4 +1,5 @@
-import { ArrowLeft, FileImage, FileType, Loader2, Plus, Trash2, X, Sparkles } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { FileImage, FileType, Loader2, Plus, Trash2, X, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useUser } from "@/store/userStore";
@@ -57,9 +58,7 @@ const ToPdf = () => {
     <div className="min-h-screen bg-background max-w-md mx-auto pb-12">
       <header className="flex items-center justify-between gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate("/office")} className="p-1.5 rounded-xl hover:bg-muted">
-            <ArrowLeft className="w-5 h-5 text-foreground" />
-          </button>
+          <BackButton onClick={() => navigate("/office")} />
           <div>
             <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">
               صور / نص → PDF

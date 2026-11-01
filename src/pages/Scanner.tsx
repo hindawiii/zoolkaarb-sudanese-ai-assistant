@@ -1,4 +1,5 @@
-import { ArrowLeft, Camera, Download, Loader2, Sparkles } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Camera, Download, Loader2, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import jsPDF from "jspdf";
@@ -92,9 +93,7 @@ const Scanner = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-8">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/office")} aria-label="العودة إلى المكتب" className="p-1.5 rounded-xl hover:bg-muted transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/office")} />
         <div>
           <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">ماسح المستندات</h1>
           <p className="text-[10px] text-muted-foreground">Document Scanner</p>

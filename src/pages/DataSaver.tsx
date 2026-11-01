@@ -1,4 +1,5 @@
-import { ArrowLeft, Upload, Download, Loader2, Share2, Facebook, Sparkles, Image as ImageIcon, Video, Music } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Upload, Download, Loader2, Share2, Facebook, Sparkles, Image as ImageIcon, Video, Music } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import imageCompression from "browser-image-compression";
@@ -234,9 +235,7 @@ const DataSaver = () => {
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto pb-8">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <button onClick={() => navigate("/")} className="p-1.5 rounded-xl hover:bg-muted transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
+        <BackButton onClick={() => navigate("/")} />
         <div>
           <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">موفر البيانات</h1>
           <p className="text-[10px] text-muted-foreground">Image · Video · Audio Compression</p>
