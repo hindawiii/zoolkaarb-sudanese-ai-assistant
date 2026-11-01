@@ -1,6 +1,6 @@
 # Approved release development
 
-- [ ] Phase 1: unify page/step back controls and Arabic/English arrow directions; verify navigation actions unchanged
+- [x] Phase 1: unified 21 page/step back controls; browser verified right arrows in Arabic, left arrows in English, original destinations and live language switching; two direction tests passed
 - [ ] Later visual/content improvement phases — waiting for phase-specific permission; no changes in Phase 1
 
 - [x] Adapt home content to viewport height with bounded sizing and short-screen scrolling; verified 320–686px mobile widths
