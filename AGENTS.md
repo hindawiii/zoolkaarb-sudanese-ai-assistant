@@ -9,3 +9,4 @@
 - Size the home studio with bounded intrinsic flex/grid tracks and safe-area clearance; short viewports scroll rather than hide controls.
 - Keep app-link sharing inline below home utilities and scanner discovery inside the office; preserve direct scanner routes for compatibility.
 - Use the shared BackButton for page and step-back controls, deriving its icon direction and accessible name from the selected language; preserve each screen's existing navigation action and keep dismiss/media icons separate.
+- Theme file-sharing screens with semantic UI tokens; keep QR ink/paper as fixed high-contrast document tokens so changing the app theme cannot reduce scan contrast.
