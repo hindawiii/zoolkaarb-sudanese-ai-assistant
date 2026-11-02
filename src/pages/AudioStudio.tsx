@@ -1,5 +1,6 @@
+import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
-import { ChevronLeft, ChevronRight, Film, Mic2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Film, Mic2, Music2, Image, AudioLines } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useUser } from "@/store/userStore";
@@ -39,12 +40,6 @@ const TOOLS: Tool[] = [
   },
 ];
 
-const accentClasses: Record<Tool["accent"], string> = {
-  gold: "from-gold/25 via-gold-glow/10 to-transparent border-gold/40 text-gold",
-  nile: "from-nile/25 via-nile-light/20 to-transparent border-nile/40 text-nile",
-  earth: "from-earth/30 via-earth-light/15 to-transparent border-earth/40 text-earth-light",
-};
-
 const AudioStudio = () => {
   const navigate = useNavigate();
   const { language } = useUser();
@@ -76,59 +71,40 @@ const AudioStudio = () => {
         </div>
       </header>
 
-      {/* Hero */}
-      <div className="px-4 pt-4">
-        <div className="relative rounded-3xl p-5 overflow-hidden border border-gold/30 bg-gradient-to-br from-earth/40 via-card/80 to-nile/20 backdrop-blur-xl">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,hsl(var(--gold-glow)/0.35),transparent_55%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_90%,hsl(var(--nile-green)/0.25),transparent_50%)]" />
-          <div className="relative">
-            <p className="text-[11px] font-bold text-gold font-cairo">
-              {isRtl ? "✦ معمل الصوت السوداني" : "✦ Sudanese Sound Lab"}
-            </p>
-            <h2 className="mt-1 text-xl font-extrabold text-foreground font-cairo leading-tight">
-              {isRtl ? "اخلط، سجل، صدّر.. بكبسة زر" : "Mix, record, export — one tap"}
-            </h2>
-            <p className="mt-1.5 text-xs text-foreground/70 font-cairo">
-              {isRtl
-                ? "3 تجارب مجانية لكل أداة.. وبعدين إعلان قصير ونواصل الكرب"
-                : "3 free uses per tool. Watch a quick ad to keep going."}
-            </p>
-          </div>
+      <main className="px-4 pt-5 pb-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-foreground">{isRtl ? "أدوات الإنتاج" : "Production tools"}</h2>
+          <AudioLines className="w-5 h-5 text-primary" aria-hidden="true" />
         </div>
-      </div>
-
-      {/* Tools */}
-      <div className="px-4 mt-5 space-y-3">
         {TOOLS.map((tool) => {
           const remaining = getCredits(tool.id);
           const Icon = tool.icon;
           return (
-            <button
-              key={tool.id}
-              onClick={() => navigate(`/audio-studio/${tool.slug}`)}
-              className={`w-full text-${isRtl ? "right" : "left"} rounded-2xl border bg-gradient-to-br ${accentClasses[tool.accent]} bg-card/40 backdrop-blur-xl p-4 active:scale-[0.98] transition-transform flex items-center gap-3 relative overflow-hidden`}
-            >
-              <div className="w-12 h-12 rounded-2xl bg-background/60 backdrop-blur flex items-center justify-center shrink-0">
-                <Icon className="w-6 h-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold font-cairo text-foreground">
-                    {isRtl ? tool.labelAr : tool.labelEn}
-                  </h3>
-                  <span className="text-[10px] font-bold font-cairo px-1.5 py-0.5 rounded-full bg-gold/20 text-gold">
-                    {isRtl ? `${remaining} فزعات` : `${remaining} left`}
-                  </span>
-                </div>
-                <p className="text-[11px] text-foreground/70 font-cairo mt-0.5 leading-snug">
-                  {isRtl ? tool.taglineAr : tool.taglineEn}
-                </p>
-              </div>
-              <Chevron className="w-5 h-5 text-foreground/50 shrink-0" />
-            </button>
+            <Button variant="ghost" key={tool.id} onClick={() => navigate(`/audio-studio/${tool.slug}`)}
+              className="w-full h-auto min-h-[190px] rounded-lg p-5 surface-obsidian whitespace-normal flex-col items-stretch justify-between gap-5 text-start active:scale-[0.98] transition-transform">
+              <span className="flex items-start gap-3">
+                <span className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${tool.accent === "gold" ? "bg-primary/15 text-primary" : "bg-secondary/15 text-secondary"}`}><Icon className="!w-6 !h-6" /></span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-base font-bold text-foreground">{isRtl ? tool.labelAr : tool.labelEn}</span>
+                  <span className="block mt-1 text-xs text-muted-foreground leading-relaxed">{isRtl ? tool.taglineAr : tool.taglineEn}</span>
+                </span>
+                <Chevron className="text-muted-foreground" />
+              </span>
+              <span className="flex items-center justify-between gap-3 border-t border-border pt-4">
+                <span className="flex items-center gap-2 text-muted-foreground" aria-hidden="true">
+                  {tool.id === "media-factory" ? <><Film /><span>+</span><Image /><span>+</span><Music2 /></> : <><Mic2 /><span>+</span><Music2 /></>}
+                </span>
+                <span className="text-xs text-foreground">{isRtl ? `${remaining} متبقية` : `${remaining} remaining`}</span>
+              </span>
+            </Button>
           );
         })}
-      </div>
+        <div className="border-t border-border pt-4 flex items-center gap-3">
+          <AudioLines className="text-secondary w-5 h-5 shrink-0" />
+          <span className="flex-1 text-sm font-semibold text-foreground">{isRtl ? "غيّر صوتك" : "Voice changer"}</span>
+          <Button variant="outline" onClick={() => navigate("/voice-changer")} className="gap-2">{isRtl ? "فتح" : "Open"}<Chevron /></Button>
+        </div>
+      </main>
     </div>
   );
 };
