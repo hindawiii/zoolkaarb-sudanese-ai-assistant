@@ -271,6 +271,9 @@
 .share-whatsapp { background: hsl(var(--share-whatsapp)); color: hsl(var(--share-on-brand)); }
 .share-facebook { background: hsl(var(--share-facebook)); color: hsl(var(--share-on-brand)); }
 .share-x { background: hsl(var(--foreground)); color: hsl(var(--background)); }
+:root { --share-telegram: 200 80% 45%; --share-ig-a: 37 97% 55%; --share-ig-b: 330 80% 52%; --share-ig-c: 270 70% 50%; }
+.share-telegram { background: hsl(var(--share-telegram)); color: hsl(var(--share-on-brand)); }
+.share-instagram { background: linear-gradient(45deg, hsl(var(--share-ig-a)), hsl(var(--share-ig-b)), hsl(var(--share-ig-c))); color: hsl(var(--share-on-brand)); }
 @media (max-height: 700px) {
   .home-content { gap: 8px; padding-top: 8px; }
   .home-services { min-height: 372px; }
