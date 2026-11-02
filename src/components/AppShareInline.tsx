@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from "react";
-import { Check, ChevronDown, Copy, Share2 } from "lucide-react";
+import { Check, ChevronDown, Copy, Instagram, MoreHorizontal, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/store/userStore";
 
@@ -69,12 +69,22 @@ const AppShareInline = () => {
                 </a>
               </Button>
             ))}
-            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={copyLink} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "نسخ رابط التطبيق" : "Copy app link"}>
+            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={shareInstagram} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "المشاركة عبر Instagram" : "Share via Instagram"}>
+              <span className="share-channel share-instagram"><Instagram className="h-5 w-5" /></span>
+              Instagram
+            </Button>
+            {canNativeShare && (
+              <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={shareNative} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "المشاركة عبر تطبيقات أخرى" : "Share via other apps"}>
+                <span className="share-channel bg-muted text-foreground"><MoreHorizontal /></span>
+                {isAr ? "تطبيقات أخرى" : "More apps"}
+              </Button>
+            )}
+            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={() => { setNotice(""); void copyLink(); }} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "نسخ رابط التطبيق" : "Copy app link"}>
               <span className="share-channel bg-muted text-foreground">{copied ? <Check /> : <Copy />}</span>
               {copied ? (isAr ? "تم النسخ" : "Copied") : (isAr ? "نسخ الرابط" : "Copy link")}
             </Button>
           </div>
-          <p role="status" className="text-center text-xs text-muted-foreground">{copyError ? (isAr ? "تعذر النسخ؛ اختر إحدى وسائل المشاركة." : "Copy unavailable; choose a sharing channel.") : copied ? (isAr ? "تم نسخ رابط التطبيق" : "App link copied") : ""}</p>
+          <p role="status" className="text-center text-xs text-muted-foreground">{notice || (copyError ? (isAr ? "تعذر النسخ؛ اختر إحدى وسائل المشاركة." : "Copy unavailable; choose a sharing channel.") : copied ? (isAr ? "تم نسخ رابط التطبيق" : "App link copied") : "")}</p>
         </div>
       </div>
     </section>
