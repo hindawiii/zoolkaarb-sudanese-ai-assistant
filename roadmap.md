@@ -5,7 +5,8 @@
 - [x] Phase 3: reorganized Audio Studio and Voice Changer; presets/settings visible before recording; browser verified real MediaRecorder input → decoded buffer → playable WAV, accurate preview name and layouts at 320/390/686px; credit regression tests passed
 - [x] Phase 4: share bar adds Telegram, Instagram, phone share sheet (when supported); Al-Khal chat prompt updated to Rasma sections — prompt deployment blocked: Lovable Cloud paused
 - [x] Phase 5: home cards have layered depth, gentle staggered float and hover lift; reduced-motion respected; verified at 390px with no overflow
-- [ ] Section upgrades (AlWajib, Fake Call, AiChat, notes) — waiting for permission
+- [x] Section upgrades: Al-Khal chat quick-question pills; Status Maker cards have depth
+- [ ] Section upgrades: Fake Call and Al-Khal notes visual polish — waiting for permission
 
 - [x] Adapt home content to viewport height with bounded sizing and short-screen scrolling; verified 320–686px mobile widths
 - [x] Group scanner access under the digital office, preserving existing scanner links; office → scanner → office verified

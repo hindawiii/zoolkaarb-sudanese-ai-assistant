@@ -111,7 +111,7 @@ const AlWajib = () => {
               <button
                 key={`trend-${t.id}`}
                 onClick={() => handleClick(t)}
-                className={`shrink-0 w-32 aspect-[3/4] rounded-2xl bg-gradient-to-br ${t.gradient} border border-border p-3 flex flex-col justify-between text-start active:scale-95 transition-transform shadow-sm relative overflow-hidden`}
+                className={`shrink-0 w-32 aspect-[3/4] rounded-2xl depth-card bg-gradient-to-br ${t.gradient} border border-border p-3 flex flex-col justify-between text-start active:scale-95 transition-transform shadow-sm relative overflow-hidden`}
               >
                 <div className={`w-9 h-9 rounded-xl bg-card/70 backdrop-blur flex items-center justify-center`}>
                   <t.icon className={`w-4 h-4 ${t.iconColor}`} />
@@ -139,7 +139,7 @@ const AlWajib = () => {
             <button
               key={t.id}
               onClick={() => handleClick(t)}
-              className={`relative aspect-[3/4] rounded-2xl bg-gradient-to-br ${t.gradient} border border-border p-3 flex flex-col justify-between text-start active:scale-[0.97] transition-transform overflow-hidden shadow-sm`}
+              className={`relative aspect-[3/4] rounded-2xl depth-card bg-gradient-to-br ${t.gradient} border border-border p-3 flex flex-col justify-between text-start active:scale-[0.97] transition-transform overflow-hidden shadow-sm`}
             >
               {t.isPremium && (
                 <div className="absolute top-2 end-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full bg-card/80 backdrop-blur border border-gold/40">

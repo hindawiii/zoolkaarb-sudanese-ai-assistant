@@ -10,4 +10,5 @@
 - Keep app-link sharing inline below home utilities and scanner discovery inside the office; preserve direct scanner routes for compatibility.
 - Use the shared BackButton for page and step-back controls, deriving its icon direction and accessible name from the selected language; preserve each screen's existing navigation action and keep dismiss/media icons separate.
 - Theme file-sharing screens with semantic UI tokens; keep QR ink/paper as fixed high-contrast document tokens so changing the app theme cannot reduce scan contrast.
-- Show voice presets independently of recording state; draw recording previews from actual audio buffers and label converted playback with the preset used for that render, not the current selection.- Apply card depth through the shared depth-card class, animating the independent `translate` property so press-scale feedback still works and reduced-motion disables it.
+- Show voice presets independently of recording state; draw recording previews from actual audio buffers and label converted playback with the preset used for that render, not the current selection.
+- Apply card depth through the shared depth-card class, animating the independent `translate` property so press-scale feedback still works and reduced-motion disables it.

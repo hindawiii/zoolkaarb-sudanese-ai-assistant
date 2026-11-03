@@ -46,8 +46,8 @@ const AiChat = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSend = async () => {
-    const text = input.trim();
+  const handleSend = async (preset?: string) => {
+    const text = (preset ?? input).trim();
     if (!text || isLoading) return;
 
     const userMsg: Message = { id: Date.now(), role: "user", content: text };
@@ -165,6 +165,22 @@ const AiChat = () => {
             )}
           </div>
         ))}
+        {messages.length === 1 && !isLoading && (
+          <div className="pt-2">
+            <p className="text-xs text-muted-foreground font-cairo mb-2">{language === "ar" ? "جرّب تسأل الخال:" : "Try asking Al-Khal:"}</p>
+            <div className="flex flex-wrap gap-2">
+              {(language === "ar"
+                ? ["كيف أغيّر ملابسي في صورة؟", "أعمل حالة جمعة مباركة", "كيف أغيّر صوتي؟", "أقرب صيدلية فاتحة وين؟", "أحوّل صورة لملف PDF", "أرسل ملف لصاحبي بدون نت"]
+                : ["How do I change my outfit in a photo?", "Make a Friday status", "How do I change my voice?", "Nearest open pharmacy?", "Turn a photo into a PDF", "Send a file offline"]
+              ).map((q) => (
+                <button key={q} onClick={() => handleSend(q)}
+                  className="px-3 py-2 rounded-full surface-obsidian text-xs font-cairo text-foreground active:scale-95 transition-transform">
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
 
@@ -179,7 +195,7 @@ const AiChat = () => {
             className="flex-1 h-11 rounded-full bg-muted border-0 px-4 text-sm font-cairo text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
           />
           <button
-            onClick={handleSend}
+            onClick={() => handleSend()}
             disabled={isLoading || !input.trim()}
             className="w-11 h-11 rounded-full gradient-gold flex items-center justify-center shrink-0 active:scale-95 transition-transform disabled:opacity-50"
             aria-label="Send"
