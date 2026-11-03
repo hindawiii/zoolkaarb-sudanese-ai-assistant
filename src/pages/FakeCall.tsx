@@ -188,7 +188,7 @@ const FakeCall = () => {
 
       <div className="px-5 py-5 space-y-5">
         {/* Live preview card */}
-        <div className="relative overflow-hidden rounded-3xl border border-gold/30 p-5 flex flex-col items-center text-center shadow-2xl bg-gradient-to-br from-card/90 via-card/60 to-background/80 backdrop-blur-xl">
+        <div className="relative overflow-hidden rounded-3xl depth-card border border-gold/30 p-5 flex flex-col items-center text-center shadow-2xl bg-gradient-to-br from-card/90 via-card/60 to-background/80 backdrop-blur-xl">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gold/30 blur-3xl" />
             <div className="absolute -bottom-12 -left-12 w-40 h-40 rounded-full bg-primary/30 blur-3xl" />
@@ -226,14 +226,14 @@ const FakeCall = () => {
             type="text"
             value={callerName}
             onChange={(e) => setCallerName(e.target.value)}
-            className="px-3 py-2.5 rounded-xl bg-card/80 backdrop-blur border border-border text-sm font-cairo text-foreground focus:outline-none focus:border-gold"
+            className="px-3 py-2.5 rounded-xl surface-obsidian text-sm font-cairo text-foreground focus:outline-none focus:border-gold"
             placeholder={isRtl ? "الاسم" : "Name"}
           />
           <input
             type="text"
             value={callerLabel}
             onChange={(e) => setCallerLabel(e.target.value)}
-            className="px-3 py-2.5 rounded-xl bg-card/80 backdrop-blur border border-border text-sm font-cairo text-foreground focus:outline-none focus:border-gold"
+            className="px-3 py-2.5 rounded-xl surface-obsidian text-sm font-cairo text-foreground focus:outline-none focus:border-gold"
             placeholder={isRtl ? "الرقم/الوصف" : "Number"}
           />
         </div>
@@ -288,7 +288,7 @@ const FakeCall = () => {
         </div>
 
         {/* AI line generator */}
-        <div className="rounded-2xl border border-gold/30 bg-card/70 backdrop-blur p-3 space-y-2">
+        <div className="rounded-2xl surface-obsidian p-3 space-y-2">
           <div className="flex items-center justify-between">
             <p className="text-xs font-bold font-cairo text-foreground flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-gold" />
@@ -370,7 +370,7 @@ const FakeCall = () => {
         </div>
 
         {/* Auto-redial */}
-        <div className="rounded-2xl bg-card/70 backdrop-blur border border-border p-3">
+        <div className="rounded-2xl surface-obsidian p-3">
           <label className="flex items-center justify-between cursor-pointer">
             <div className="flex items-center gap-2">
               <Repeat className="w-4 h-4 text-gold" />
