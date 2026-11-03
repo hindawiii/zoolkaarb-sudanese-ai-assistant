@@ -347,7 +347,7 @@ const VoiceNotesFAB = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="bottom"
-          className="rounded-t-3xl max-h-[85vh] p-0 flex flex-col"
+          className="rounded-t-3xl max-h-[85vh] p-0 flex flex-col surface-obsidian border-t border-gold/30"
         >
           <SheetHeader className="p-5 pb-3 border-b border-border">
             <SheetTitle className="text-start font-cairo flex items-center gap-2">
@@ -391,7 +391,7 @@ const VoiceNotesFAB = () => {
                 )}
 
                 {editing && (
-                  <div className="rounded-2xl border border-gold/40 bg-card p-3 space-y-2.5">
+                  <div className="rounded-2xl surface-obsidian p-3 space-y-2.5">
                     <input
                       value={editing.title}
                       onChange={(e) => setEditing({ ...editing, title: e.target.value })}
@@ -554,9 +554,11 @@ const VoiceNotesFAB = () => {
                 {isAr ? "الملاحظات الأخيرة" : "Recent Notes"}
               </h3>
               {notes.length === 0 && (
-                <p className="text-xs text-muted-foreground text-start font-cairo py-6">
-                  {isAr ? "ما في ملاحظات لسه. ابدأ التسجيل!" : "No notes yet. Start recording!"}
-                </p>
+                <div className="flex flex-col items-center gap-2 py-8 text-center">
+                  <span className="w-12 h-12 rounded-2xl gradient-gold flex items-center justify-center"><Sparkles className="w-5 h-5 text-primary-foreground" /></span>
+                  <p className="text-sm font-bold font-cairo text-foreground">{isAr ? "ما في ملاحظات لسه" : "No notes yet"}</p>
+                  <p className="text-xs text-muted-foreground font-cairo">{isAr ? "اضغط سجّل وخلي الخال يفرتق ويلخص كلامك" : "Record and Al-Khal will transcribe and summarize it"}</p>
+                </div>
               )}
               {notes.map((note) => {
                 const timePhrase = note.transcript ? detectTimePhrase(note.transcript) : null;
@@ -564,7 +566,7 @@ const VoiceNotesFAB = () => {
                 return (
                   <div
                     key={note.id}
-                    className="rounded-2xl bg-card border border-border p-3 space-y-2"
+                    className="rounded-2xl surface-obsidian p-3 space-y-2"
                   >
                     <div className="flex items-center gap-2">
                       <button
