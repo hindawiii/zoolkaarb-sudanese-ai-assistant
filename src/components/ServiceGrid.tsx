@@ -1,3 +1,4 @@
+import type React from "react";
 import { ImagePlus, Heart, Wand2, Share2, PhoneCall, Music2, ArrowLeft, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/store/userStore";
@@ -30,7 +31,7 @@ const ServiceGrid = () => {
       {/* Spotlight */}
       <Button variant="ghost"
         onClick={() => navigate("/studio")}
-        className="relative block w-full h-full min-h-[118px] rounded-3xl surface-hero p-4 text-start whitespace-normal overflow-hidden active:scale-[0.98] transition-transform"
+        className="relative block w-full h-full min-h-[118px] rounded-3xl surface-hero depth-card p-4 text-start whitespace-normal overflow-hidden active:scale-[0.98] transition-transform"
       >
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold font-cairo text-gold">
           <Star className="w-3 h-3 fill-current" />
@@ -45,7 +46,7 @@ const ServiceGrid = () => {
               {isRtl ? "أنمي · أزياء تراثية · تبديل وجوه · دمج ذكي" : "Anime · Heritage outfits · Face swap · Blend"}
             </p>
           </div>
-          <span className="w-11 h-11 shrink-0 rounded-2xl gradient-gold flex items-center justify-center shadow-md">
+          <span className="w-11 h-11 shrink-0 rounded-2xl gradient-gold depth-icon flex items-center justify-center">
             <ArrowLeft className={`w-5 h-5 text-primary-foreground ${isRtl ? "" : "rotate-180"}`} />
           </span>
         </div>
@@ -54,13 +55,14 @@ const ServiceGrid = () => {
 
       {/* Creative grid */}
       <div className="grid grid-cols-2 grid-rows-2 gap-2.5">
-        {tiles.map((tile) => (
+        {tiles.map((tile, i) => (
           <Button variant="ghost"
             key={tile.route}
+            style={{ "--i": i + 1 } as React.CSSProperties}
             onClick={() => navigate(tile.route)}
-            className="h-full min-h-[86px] items-start rounded-2xl surface-obsidian p-3 flex flex-col justify-between text-start whitespace-normal active:scale-[0.97] transition-transform"
+            className="h-full min-h-[86px] items-start rounded-2xl surface-obsidian depth-card p-3 flex flex-col justify-between text-start whitespace-normal active:scale-[0.97] transition-transform"
           >
-            <span className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center ${tile.tint}`}>
+            <span className={`w-9 h-9 shrink-0 rounded-xl depth-icon flex items-center justify-center ${tile.tint}`}>
               <tile.icon className="w-[18px] h-[18px]" />
             </span>
             <div className="min-w-0">
@@ -74,7 +76,7 @@ const ServiceGrid = () => {
       {/* Share strip */}
       <Button variant="ghost"
         onClick={() => navigate("/zool-share")}
-        className="w-full h-full min-h-[52px] rounded-2xl surface-obsidian px-3 flex items-center gap-3 text-start whitespace-normal active:scale-[0.98] transition-transform"
+        className="w-full h-full min-h-[52px] rounded-2xl surface-obsidian depth-card px-3 flex items-center gap-3 text-start whitespace-normal active:scale-[0.98] transition-transform"
       >
         <span className="w-9 h-9 rounded-xl bg-earth/25 text-earth-light flex items-center justify-center">
           <Share2 className="w-[18px] h-[18px]" />
