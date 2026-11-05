@@ -497,7 +497,7 @@ const TemplateEditor = () => {
 
     const inner = (
       <p
-        dir="rtl"
+        dir="auto"
         className={`${font.className} ${color.className} whitespace-pre-line m-0`}
         style={{
           fontSize: `${l.size}cqw`,
@@ -573,7 +573,7 @@ const TemplateEditor = () => {
   const frontLayers = layers.filter((l) => !l.behind);
 
   return (
-    <div className="min-h-screen bg-background max-w-md mx-auto pb-8" dir="rtl">
+    <div className="min-h-screen bg-background max-w-md mx-auto pb-8">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => navigate(-1)} />
         <div className="flex-1">
