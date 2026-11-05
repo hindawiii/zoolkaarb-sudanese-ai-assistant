@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { Settings as SettingsIcon, Sparkles } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 import { useUser } from "@/store/userStore";
 import { t } from "@/lib/i18n";
 import { FREE_TRIAL } from "@/lib/zoolCredits";
@@ -8,7 +7,6 @@ import rasmaLogo from "@/assets/madar-logo-v2.png";
 
 const SudaneseHeader = () => {
   const { name, language } = useUser();
-  const navigate = useNavigate();
   const isRtl = language === "ar";
 
   const greetingKey = useMemo(() => {
@@ -40,13 +38,6 @@ const SudaneseHeader = () => {
           <Sparkles className="w-3.5 h-3.5 text-gold" />
           {isRtl ? `${FREE_TRIAL} مجاناً لكل أداة` : `${FREE_TRIAL} free / tool`}
         </span>
-        <button
-          onClick={() => navigate("/settings")}
-          aria-label={isRtl ? "الإعدادات" : "Settings"}
-          className="w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center active:scale-95 transition-transform"
-        >
-          <SettingsIcon className="w-[18px] h-[18px] text-foreground" />
-        </button>
       </div>
     </header>
   );
