@@ -134,7 +134,7 @@ const AlWajib = () => {
         <h2 className="text-sm font-bold font-cairo text-foreground mb-3 text-start">
           {activeCat === "all" ? "كل القوالب" : CATEGORIES.find((c) => c.id === activeCat)?.label}
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {filtered.map((t) => (
             <button
               key={t.id}
