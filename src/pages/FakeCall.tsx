@@ -313,7 +313,7 @@ const FakeCall = () => {
                     ? "bg-gold/15 border border-gold text-foreground"
                     : "bg-background/40 border border-border text-muted-foreground"
                 }`}
-                dir="rtl"
+                dir="auto"
               >
                 {i === 0 && aiLine && (
                   <span className="inline-block text-[9px] mb-1 px-1.5 py-0.5 rounded-full bg-gold/30 text-gold">

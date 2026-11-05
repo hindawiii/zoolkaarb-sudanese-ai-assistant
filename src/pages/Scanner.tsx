@@ -95,7 +95,7 @@ const Scanner = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => navigate("/office")} />
         <div>
-          <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">ماسح المستندات</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">ماسح المستندات</h1>
           <p className="text-[10px] text-muted-foreground">Document Scanner</p>
         </div>
       </header>
@@ -110,7 +110,7 @@ const Scanner = () => {
               <Camera className="w-6 h-6 text-nile" />
             </div>
             <p className="text-sm font-semibold text-foreground">Capture a document</p>
-            <p className="text-xs text-muted-foreground font-cairo" dir="rtl">صور المستند بالكاميرا</p>
+            <p className="text-xs text-muted-foreground font-cairo">صور المستند بالكاميرا</p>
           </button>
         )}
 
@@ -123,7 +123,7 @@ const Scanner = () => {
         {loading && (
           <div className="rounded-2xl bg-card border border-border p-5 flex items-center gap-3">
             <Loader2 className="w-5 h-5 text-gold animate-spin shrink-0" />
-            <p className="text-sm font-cairo text-foreground" dir="rtl">{msg}</p>
+            <p className="text-sm font-cairo text-foreground">{msg}</p>
           </div>
         )}
 

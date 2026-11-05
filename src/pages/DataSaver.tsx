@@ -237,7 +237,7 @@ const DataSaver = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => navigate("/")} />
         <div>
-          <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">موفر البيانات</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">موفر البيانات</h1>
           <p className="text-[10px] text-muted-foreground">Image · Video · Audio Compression</p>
         </div>
       </header>
@@ -253,7 +253,7 @@ const DataSaver = () => {
                 <Upload className="w-6 h-6 text-gold" />
               </div>
               <p className="text-sm font-semibold text-foreground">Upload media</p>
-              <p className="text-xs text-muted-foreground font-cairo" dir="rtl">صورة · فيديو · صوت</p>
+              <p className="text-xs text-muted-foreground font-cairo">صورة · فيديو · صوت</p>
             </button>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="rounded-xl bg-card border border-border p-3 flex flex-col items-center gap-1">
@@ -315,12 +315,12 @@ const DataSaver = () => {
 
         {kind === "video" && !compressed && !loading && (
           <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
-            <p className="text-xs font-semibold font-cairo text-foreground" dir="rtl">اختار جودة الضغط</p>
+            <p className="text-xs font-semibold font-cairo text-foreground">اختار جودة الضغط</p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setVideoProfile("whatsapp")}
                 className={`rounded-xl border p-3 text-xs font-cairo transition ${videoProfile === "whatsapp" ? "border-gold bg-gold/10 text-foreground" : "border-border text-muted-foreground"}`}
-                dir="rtl"
+               
               >
                 <div className="font-bold">جودة الواتساب</div>
                 <div className="text-[10px] mt-0.5 opacity-80">ضغط عالي · 640p</div>
@@ -328,7 +328,7 @@ const DataSaver = () => {
               <button
                 onClick={() => setVideoProfile("balanced")}
                 className={`rounded-xl border p-3 text-xs font-cairo transition ${videoProfile === "balanced" ? "border-gold bg-gold/10 text-foreground" : "border-border text-muted-foreground"}`}
-                dir="rtl"
+               
               >
                 <div className="font-bold">جودة متوسطة</div>
                 <div className="text-[10px] mt-0.5 opacity-80">متوازنة · 960p</div>
@@ -337,7 +337,7 @@ const DataSaver = () => {
             <button
               onClick={startCompression}
               className="w-full rounded-full gradient-gold text-primary-foreground py-3 text-sm font-bold active:scale-95 transition-transform"
-              dir="rtl"
+             
             >
               ابدأ الضغط
             </button>
@@ -348,7 +348,7 @@ const DataSaver = () => {
           <button
             onClick={startCompression}
             className="w-full rounded-full gradient-gold text-primary-foreground py-3.5 text-sm font-bold active:scale-95 transition-transform"
-            dir="rtl"
+           
           >
             ضغط الصوت إلى 128kbps
           </button>
@@ -358,7 +358,7 @@ const DataSaver = () => {
           <div className="rounded-2xl bg-card border border-border p-5 space-y-3">
             <div className="flex items-center gap-3">
               <Loader2 className="w-5 h-5 text-gold animate-spin shrink-0" />
-              <p className="text-sm font-cairo text-foreground" dir="rtl">{msg}</p>
+              <p className="text-sm font-cairo text-foreground">{msg}</p>
             </div>
             {(kind === "video" || kind === "audio") && (
               <>
@@ -375,7 +375,7 @@ const DataSaver = () => {
               <div className="w-9 h-9 rounded-xl gradient-gold flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4 text-primary-foreground" />
               </div>
-              <p className="text-xs font-cairo text-foreground leading-relaxed" dir="rtl">
+              <p className="text-xs font-cairo text-foreground leading-relaxed">
                 الباقة غالية.. ضغطنا ليك الملف ده عشان يطير في الواتساب بلمحة بصر — وفّرت{" "}
                 <span className="font-bold text-nile">{savedPct}%</span> من حجمه.
               </p>
@@ -387,14 +387,14 @@ const DataSaver = () => {
                 className="rounded-2xl bg-[hsl(142_70%_45%)] text-white py-3.5 font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform shadow-md"
               >
                 <Share2 className="w-5 h-5" />
-                <span className="text-xs font-cairo" dir="rtl">مشاركة فورية للواتساب</span>
+                <span className="text-xs font-cairo">مشاركة فورية للواتساب</span>
               </button>
               <button
                 onClick={() => shareFile("facebook")}
                 className="rounded-2xl bg-[hsl(220_70%_50%)] text-white py-3.5 font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform shadow-md"
               >
                 <Facebook className="w-5 h-5" />
-                <span className="text-xs font-cairo" dir="rtl">نشر على فيسبوك</span>
+                <span className="text-xs font-cairo">نشر على فيسبوك</span>
               </button>
             </div>
 
@@ -411,7 +411,7 @@ const DataSaver = () => {
           <button
             onClick={reset}
             className="w-full rounded-full border border-border py-3 text-sm font-semibold text-foreground flex items-center justify-center gap-2"
-            dir="rtl"
+           
           >
             <Upload className="w-4 h-4" /> ملف جديد
           </button>

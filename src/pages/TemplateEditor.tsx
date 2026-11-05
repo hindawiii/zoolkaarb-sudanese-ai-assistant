@@ -717,7 +717,7 @@ const TemplateEditor = () => {
                 onChange={(e) => patch({ text: e.target.value })}
                 onFocus={() => setSelectedId(selected.id)}
                 rows={2}
-                dir="rtl"
+                dir="auto"
                 className="w-full rounded-2xl bg-background border border-border p-3 text-sm font-cairo text-foreground focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
                 placeholder="اكتب رسالتك..."
               />

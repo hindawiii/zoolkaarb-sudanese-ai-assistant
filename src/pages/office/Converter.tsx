@@ -83,7 +83,7 @@ const Converter = () => {
         <div className="flex items-center gap-3">
           <BackButton onClick={() => navigate("/office")} />
           <div>
-            <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">
+            <h1 className="text-base font-bold font-cairo text-foreground">
               محوّل PDF ↔ Word
             </h1>
             <p className="text-[10px] text-muted-foreground">Arabic-optimized</p>
@@ -135,7 +135,7 @@ const Converter = () => {
 
         <div className="rounded-2xl bg-card/40 border border-border/60 p-3 flex items-start gap-2">
           <FileType2 className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-          <p className="text-[11px] text-muted-foreground font-cairo leading-relaxed" dir="rtl">
+          <p className="text-[11px] text-muted-foreground font-cairo leading-relaxed">
             {isRtl
               ? "بنستخدم ذكاء الخال علشان النص العربي يطلع مظبوط، مش مقلوب."
               : "Powered by AI OCR — Arabic stays in correct order."}
@@ -166,7 +166,7 @@ const Converter = () => {
         </button>
 
         {credits === 0 && (
-          <p className="text-center text-xs font-cairo text-muted-foreground" dir="rtl">
+          <p className="text-center text-xs font-cairo text-muted-foreground">
             {isRtl ? "يا هندسة، الورق كتر؟ أحضر إعلان وسلك أمورك مع الخال!" : "Out of credits — watch an ad to continue."}
           </p>
         )}

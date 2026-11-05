@@ -100,7 +100,7 @@ const ZoolYafatish = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => (category ? setCategory(null) : navigate("/"))} />
         <div className="flex-1">
-          <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">الزول يفتش</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">الزول يفتش</h1>
           <p className="text-[10px] text-muted-foreground">Smart Directory</p>
         </div>
         <button
@@ -118,7 +118,7 @@ const ZoolYafatish = () => {
         <p className="text-xs text-foreground flex-1 truncate">
           {loc ? `${loc.lat.toFixed(3)}, ${loc.lon.toFixed(3)}` : "Detecting your location…"}
         </p>
-        {locError && <span className="text-[10px] text-muted-foreground font-cairo" dir="rtl">{locError}</span>}
+        {locError && <span className="text-[10px] text-muted-foreground font-cairo">{locError}</span>}
       </div>
 
       {/* Category grid */}
@@ -135,7 +135,7 @@ const ZoolYafatish = () => {
                   <c.icon className={`w-5 h-5 ${c.color}`} />
                 </div>
                 <p className="text-sm font-semibold text-foreground">{c.label}</p>
-                <p className="text-[11px] font-cairo text-earth-light mt-1" dir="rtl">{c.labelAr}</p>
+                <p className="text-[11px] font-cairo text-earth-light mt-1">{c.labelAr}</p>
               </button>
             ))}
           </div>
@@ -150,19 +150,19 @@ const ZoolYafatish = () => {
               {CATEGORIES.find((c) => c.id === category)?.label}
             </p>
             {usedFallback && (
-              <span className="text-[10px] text-earth-light font-cairo" dir="rtl">من قاعدة البيانات المحلية</span>
+              <span className="text-[10px] text-earth-light font-cairo">من قاعدة البيانات المحلية</span>
             )}
           </div>
 
           {placesLoading && (
             <div className="rounded-2xl bg-card border border-border p-5 flex items-center gap-3">
               <Loader2 className="w-5 h-5 text-gold animate-spin shrink-0" />
-              <p className="text-sm font-cairo text-foreground" dir="rtl">{msg}</p>
+              <p className="text-sm font-cairo text-foreground">{msg}</p>
             </div>
           )}
 
           {!placesLoading && enriched.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-8 font-cairo" dir="rtl">
+            <p className="text-sm text-muted-foreground text-center py-8 font-cairo">
               ما لقينا حاجة قريبة منك يا غالي.
             </p>
           )}
@@ -175,7 +175,7 @@ const ZoolYafatish = () => {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
-                      <p className="text-[11px] font-cairo text-earth-light mt-0.5 truncate" dir="rtl">{p.nameAr}</p>
+                      <p className="text-[11px] font-cairo text-earth-light mt-0.5 truncate">{p.nameAr}</p>
                       <div className="flex items-center gap-2 mt-2 text-[11px] text-muted-foreground">
                         <MapPin className="w-3 h-3" />
                         <span>{p.distanceKm.toFixed(1)} km</span>

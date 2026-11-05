@@ -60,7 +60,7 @@ const ToPdf = () => {
         <div className="flex items-center gap-3">
           <BackButton onClick={() => navigate("/office")} />
           <div>
-            <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">
+            <h1 className="text-base font-bold font-cairo text-foreground">
               صور / نص → PDF
             </h1>
             <p className="text-[10px] text-muted-foreground">Image / Text → PDF</p>
@@ -173,7 +173,7 @@ const ToPdf = () => {
         </button>
 
         {credits === 0 && (
-          <p className="mt-3 text-center text-xs font-cairo text-muted-foreground" dir="rtl">
+          <p className="mt-3 text-center text-xs font-cairo text-muted-foreground">
             {isRtl ? "يا هندسة، الورق كتر؟ أحضر إعلان وسلك أمورك مع الخال!" : "Out of credits — watch an ad to continue."}
           </p>
         )}
