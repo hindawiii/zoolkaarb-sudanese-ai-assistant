@@ -10,7 +10,7 @@ export default class AppErrorBoundary extends Component<{ children: ReactNode },
   }
   render() {
     if (!this.state.failed) return this.props.children;
-    return <main dir="rtl" className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center gap-5 px-6 text-center font-cairo">
+    return <main className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center gap-5 px-6 text-center font-cairo">
       <AlertTriangle className="h-10 w-10 text-gold" />
       <h1 className="text-xl font-bold">حصل خلل بسيط في رسمة</h1>
       <p className="text-sm text-muted-foreground">جرّب مرة تانية؛ بياناتك المحفوظة لم تُحذف.</p>

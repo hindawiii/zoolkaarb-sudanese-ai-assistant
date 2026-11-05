@@ -44,7 +44,7 @@ const Office = () => {
           <BackButton
             onClick={() => navigate("/")} />
           <div>
-            <h1 className="text-base font-bold font-cairo text-foreground" dir="rtl">
+            <h1 className="text-base font-bold font-cairo text-foreground">
               المكتب الرقمي
             </h1>
             <p className="text-[10px] text-muted-foreground">Rasma Digital Office</p>
@@ -64,10 +64,10 @@ const Office = () => {
           <p className="text-xs font-semibold opacity-90 font-cairo">
             {isRtl ? "مكتب الخال" : "Al-Khal Office"}
           </p>
-          <h2 className="text-xl font-bold font-cairo mt-1 leading-snug" dir="rtl">
+          <h2 className="text-xl font-bold font-cairo mt-1 leading-snug">
             {isRtl ? "ورقك بين إيديك في ثواني" : "Your docs, ready in seconds"}
           </h2>
-          <p className="text-xs opacity-90 mt-2 font-cairo" dir="rtl">
+          <p className="text-xs opacity-90 mt-2 font-cairo">
             {isRtl
               ? "سكنر، تحويل صور لـ PDF، و PDF ↔ Word بدعم العربي"
               : "Scanner, image→PDF, and Arabic PDF↔Word"}
@@ -85,7 +85,7 @@ const Office = () => {
                 <t.icon className="w-5 h-5 text-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold font-cairo text-foreground" dir="rtl">
+                <p className="text-sm font-bold font-cairo text-foreground">
                   {isRtl ? t.titleAr : t.titleEn}
                 </p>
                 <p className="text-[11px] text-muted-foreground mt-0.5 font-cairo">{t.desc}</p>

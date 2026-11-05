@@ -235,7 +235,7 @@ const VoiceChanger = () => {
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background max-w-md mx-auto pb-28 font-cairo">
+    <div className="min-h-screen bg-background max-w-md mx-auto pb-28 font-cairo">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-card/70 backdrop-blur-2xl border-b border-gold/20 px-5 py-4 flex items-center gap-3">
         <BackButton onClick={() => navigate("/")} />

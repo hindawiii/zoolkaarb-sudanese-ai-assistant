@@ -100,7 +100,7 @@ const Settings = () => {
             <Globe className="w-4 h-4 text-muted-foreground" />
             <div className="flex-1">
               <p className="text-sm text-foreground">{t("settings.language", language)}</p>
-              <p className="text-[10px] font-cairo text-earth-light" dir="rtl">اللغة</p>
+              <p className="text-[10px] font-cairo text-earth-light">اللغة</p>
             </div>
             <div className="flex rounded-full bg-muted p-0.5">
               {(["ar", "en"] as const).map((l) => (
@@ -121,7 +121,7 @@ const Settings = () => {
             <Moon className="w-4 h-4 text-muted-foreground" />
             <div className="flex-1">
               <p className="text-sm text-foreground">{t("settings.dark", language)}</p>
-              <p className="text-[10px] font-cairo text-earth-light" dir="rtl">الوضع الداكن</p>
+              <p className="text-[10px] font-cairo text-earth-light">الوضع الداكن</p>
             </div>
             <div className={`w-10 h-6 rounded-full transition-colors ${darkMode ? "bg-primary" : "bg-muted"} relative`}>
               <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-background shadow transition-transform ${darkMode ? "translate-x-[18px]" : "translate-x-0.5"}`} />
@@ -132,7 +132,7 @@ const Settings = () => {
             <Bell className="w-4 h-4 text-muted-foreground" />
             <div className="flex-1">
               <p className="text-sm text-foreground">{t("settings.notifications", language)}</p>
-              <p className="text-[10px] font-cairo text-earth-light" dir="rtl">الإشعارات</p>
+              <p className="text-[10px] font-cairo text-earth-light">الإشعارات</p>
             </div>
             <div className={`w-10 h-6 rounded-full transition-colors ${notifications ? "bg-primary" : "bg-muted"} relative`}>
               <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-background shadow transition-transform ${notifications ? "translate-x-[18px]" : "translate-x-0.5"}`} />
@@ -157,7 +157,7 @@ const Settings = () => {
               <item.icon className="w-4 h-4 text-muted-foreground" />
               <div className="flex-1">
                 <p className="text-sm text-foreground">{item.label}</p>
-                <p className="text-[10px] font-cairo text-earth-light" dir="rtl">{item.labelAr}</p>
+                <p className="text-[10px] font-cairo text-earth-light">{item.labelAr}</p>
               </div>
               <ChevronRight className={`w-4 h-4 text-muted-foreground ${language === "ar" ? "rotate-180" : ""}`} />
             </button>
@@ -171,7 +171,7 @@ const Settings = () => {
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center" onClick={() => setShowOverlay(null)}>
           <div className="bg-card border border-border rounded-2xl p-8 mx-6 text-center" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-bold font-cairo text-foreground">{showOverlay === "privacy" ? "الخصوصية" : "عن رسمة"}</h3>
-            <p className="text-sm text-muted-foreground mt-2 font-cairo" dir="rtl">{showOverlay === "privacy" ? "الملاحظات والتذكيرات محفوظة حالياً على جهازك. الصور والصوت والمستندات التي تختار معالجتها بالذكاء الاصطناعي تُرسل إلى خدمة المعالجة. مسح بيانات المتصفح يحذف البيانات المحلية. هذه خلاصة الاستخدام الحالي وليست بديلاً عن سياسة الخصوصية القانونية قبل النشر." : "رسمة يجمع أدوات الصور والملابس والأنمي والصوت والمكتب الرقمي، مع مساعدك الخال. مكافآت الإعلانات حالياً تجريبية وليست إعلانات مدفوعة."}</p>
+            <p className="text-sm text-muted-foreground mt-2 font-cairo">{showOverlay === "privacy" ? "الملاحظات والتذكيرات محفوظة حالياً على جهازك. الصور والصوت والمستندات التي تختار معالجتها بالذكاء الاصطناعي تُرسل إلى خدمة المعالجة. مسح بيانات المتصفح يحذف البيانات المحلية. هذه خلاصة الاستخدام الحالي وليست بديلاً عن سياسة الخصوصية القانونية قبل النشر." : "رسمة يجمع أدوات الصور والملابس والأنمي والصوت والمكتب الرقمي، مع مساعدك الخال. مكافآت الإعلانات حالياً تجريبية وليست إعلانات مدفوعة."}</p>
             <button onClick={() => setShowOverlay(null)} className="mt-5 px-6 py-2.5 rounded-full gradient-gold text-primary-foreground text-sm font-semibold active:scale-95 transition-transform">
               Got it!
             </button>

@@ -197,7 +197,6 @@ const ZoolShare = () => {
   return (
     <div
       className="min-h-screen bg-background text-foreground max-w-md mx-auto pb-10 font-cairo relative"
-      dir="rtl"
     >
       {/* Header */}
       <header className="relative flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-2xl sticky top-0 z-20">

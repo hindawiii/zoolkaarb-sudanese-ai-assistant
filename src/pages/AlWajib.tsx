@@ -117,7 +117,7 @@ const AlWajib = () => {
                   <t.icon className={`w-4 h-4 ${t.iconColor}`} />
                 </div>
                 <div>
-                  <p className="text-xs font-bold font-cairo text-foreground" dir="rtl">{t.titleAr}</p>
+                  <p className="text-xs font-bold font-cairo text-foreground">{t.titleAr}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <Flame className="w-3 h-3 text-gold" />
                     <span className="text-[9px] text-muted-foreground font-cairo">رائج</span>
@@ -151,7 +151,7 @@ const AlWajib = () => {
                 <t.icon className={`w-5 h-5 ${t.iconColor}`} />
               </div>
               <div>
-                <p className="text-sm font-bold font-cairo text-foreground" dir="rtl">{t.titleAr}</p>
+                <p className="text-sm font-bold font-cairo text-foreground">{t.titleAr}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{t.title}</p>
               </div>
               {t.isPremium && (
@@ -180,7 +180,7 @@ const AlWajib = () => {
               <Crown className="w-6 h-6 text-primary-foreground" />
             </div>
             <h3 className="text-lg font-bold font-cairo text-foreground">قالب احترافي</h3>
-            <p className="text-sm text-muted-foreground mt-2 font-cairo" dir="rtl">
+            <p className="text-sm text-muted-foreground mt-2 font-cairo">
               هذا القالب احترافي.. شاهد إعلان لدعم التطبيق وفتح "{adTemplate.titleAr}" للتعديل.
             </p>
             <div className="flex gap-2 mt-5">
