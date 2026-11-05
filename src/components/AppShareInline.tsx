@@ -60,28 +60,22 @@ const AppShareInline = () => {
       </Button>
       <div id={panelId} className="share-expansion" data-open={open} aria-hidden={!open}>
         <div className="overflow-hidden">
-          <div className="grid grid-cols-4 gap-1 py-3">
+          <div className="flex items-start gap-1 py-3 overflow-x-auto snap-x">
             {channels.map((channel) => (
-              <Button key={channel.name} asChild variant="ghost" className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg">
+              <Button key={channel.name} asChild variant="ghost" className="h-auto min-w-0 flex-1 basis-0 flex-col gap-1.5 px-0.5 py-1 rounded-lg whitespace-normal text-center leading-tight text-[clamp(9px,2.6vw,11px)] snap-start">
                 <a href={channel.href} tabIndex={open ? 0 : -1} target="_blank" rel="noopener noreferrer" aria-label={`${isAr ? "المشاركة عبر" : "Share via"} ${channel.name}`}>
                   <span className={`share-channel ${channel.className}`}><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-5 w-5"><path d={channel.path} /></svg></span>
-                  {channel.name}
+                  <span className="w-full truncate">{channel.name}</span>
                 </a>
               </Button>
             ))}
-            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={shareInstagram} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "المشاركة عبر Instagram" : "Share via Instagram"}>
+            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={shareInstagram} className="h-auto min-w-0 flex-1 basis-0 flex-col gap-1.5 px-0.5 py-1 rounded-lg whitespace-normal text-center leading-tight text-[clamp(9px,2.6vw,11px)]" aria-label={isAr ? "المشاركة عبر Instagram" : "Share via Instagram"}>
               <span className="share-channel share-instagram"><Instagram className="h-5 w-5" /></span>
-              Instagram
+              <span className="w-full truncate">Instagram</span>
             </Button>
-            {canNativeShare && (
-              <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={shareNative} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "المشاركة عبر تطبيقات أخرى" : "Share via other apps"}>
-                <span className="share-channel bg-muted text-foreground"><MoreHorizontal /></span>
-                {isAr ? "تطبيقات أخرى" : "More apps"}
-              </Button>
-            )}
-            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={() => { setNotice(""); void copyLink(); }} className="h-auto flex-col gap-2 px-1 py-1 text-[10px] rounded-lg" aria-label={isAr ? "نسخ رابط التطبيق" : "Copy app link"}>
-              <span className="share-channel bg-muted text-foreground">{copied ? <Check /> : <Copy />}</span>
-              {copied ? (isAr ? "تم النسخ" : "Copied") : (isAr ? "نسخ الرابط" : "Copy link")}
+            <Button variant="ghost" tabIndex={open ? 0 : -1} onClick={() => { setNotice(""); if (canNativeShare) void shareNative(); else void copyLink(); }} className="h-auto min-w-0 flex-1 basis-0 flex-col gap-1.5 px-0.5 py-1 rounded-lg whitespace-normal text-center leading-tight text-[clamp(9px,2.6vw,11px)]" aria-label={canNativeShare ? (isAr ? "المشاركة عبر تطبيقات أخرى أو نسخ الرابط" : "Share via other apps or copy link") : (isAr ? "نسخ رابط التطبيق" : "Copy app link")}>
+              <span className="share-channel bg-muted text-foreground">{copied ? <Check /> : canNativeShare ? <MoreHorizontal /> : <Copy />}</span>
+              <span className="w-full truncate">{copied ? (isAr ? "تم النسخ" : "Copied") : canNativeShare ? (isAr ? "المزيد" : "More") : (isAr ? "نسخ" : "Copy")}</span>
             </Button>
           </div>
           <p role="status" className="text-center text-xs text-muted-foreground">{notice || (copyError ? (isAr ? "تعذر النسخ؛ اختر إحدى وسائل المشاركة." : "Copy unavailable; choose a sharing channel.") : copied ? (isAr ? "تم نسخ رابط التطبيق" : "App link copied") : "")}</p>
