@@ -170,7 +170,7 @@ const Settings = () => {
             <h3 className="text-lg font-bold font-cairo text-foreground">{showOverlay === "privacy" ? (isAr ? "الخصوصية" : "Privacy") : (isAr ? "عن رسمة" : "About Rasma")}</h3>
             <p className="text-sm text-muted-foreground mt-2 font-cairo">{showOverlay === "privacy" ? (isAr ? "الملاحظات والتذكيرات محفوظة حالياً على جهازك. الصور والصوت والمستندات التي تختار معالجتها بالذكاء الاصطناعي تُرسل إلى خدمة المعالجة. مسح بيانات المتصفح يحذف البيانات المحلية. هذه خلاصة الاستخدام الحالي وليست بديلاً عن سياسة الخصوصية القانونية قبل النشر." : "Notes and reminders are stored on your device. Photos, audio and documents you choose to process with AI are sent to the processing service. Clearing browser data deletes local data. This is a summary of current use, not a legal privacy policy.") : (isAr ? "رسمة يجمع أدوات الصور والملابس والأنمي والصوت والمكتب الرقمي، مع مساعدك الخال. مكافآت الإعلانات حالياً تجريبية وليست إعلانات مدفوعة." : "Rasma brings together photo, outfit, anime, audio and digital office tools with your assistant Al-Khal. Ad rewards are currently a trial, not paid ads.")}</p>
             <button onClick={() => setShowOverlay(null)} className="mt-5 px-6 py-2.5 rounded-full gradient-gold text-primary-foreground text-sm font-semibold active:scale-95 transition-transform">
-              Got it!
+              {isAr ? "تمام" : "Got it!"}
             </button>
           </div>
         </div>
