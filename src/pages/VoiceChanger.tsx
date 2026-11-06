@@ -16,6 +16,8 @@ import {
   type VoiceParams,
 } from "@/lib/voiceFormant";
 
+const L = () => document.documentElement.lang !== "en";
+
 const TOOL_ID = "voice-changer";
 
 type VoiceId = "kandaka" | "zol" | "walid" | "habboba";
@@ -31,10 +33,10 @@ interface VoicePreset {
 }
 
 const PRESETS: VoicePreset[] = [
-  { id: "kandaka", name: "الكنداكة",   emoji: "👩", desc: "أنثوية دافئة",      pitch: 5,  reverb: 0.25, formant: 1.06 },
-  { id: "zol",     name: "الزول",      emoji: "🧑", desc: "ذكورية طبيعية",     pitch: 0,  reverb: 0.15, formant: 1.0 },
-  { id: "walid",   name: "الوالد",     emoji: "👨", desc: "عميقة هادئة",       pitch: -3, reverb: 0.2,  formant: 0.95 },
-  { id: "habboba", name: "الحبوبة",    emoji: "👵", desc: "حنونة قريبة",        pitch: -1, reverb: 0.35, formant: 0.97 },
+  { id: "kandaka", name: "الكنداكة",   emoji: "👩", desc: (L() ? "أنثوية دافئة" : "Warm feminine"),      pitch: 5,  reverb: 0.25, formant: 1.06 },
+  { id: "zol",     name: "الزول",      emoji: "🧑", desc: (L() ? "ذكورية طبيعية" : "Natural masculine"),     pitch: 0,  reverb: 0.15, formant: 1.0 },
+  { id: "walid",   name: "الوالد",     emoji: "👨", desc: (L() ? "عميقة هادئة" : "Deep and calm"),       pitch: -3, reverb: 0.2,  formant: 0.95 },
+  { id: "habboba", name: "الحبوبة",    emoji: "👵", desc: (L() ? "حنونة قريبة" : "Warm and caring"),        pitch: -1, reverb: 0.35, formant: 0.97 },
 ];
 
 const PROGRESS_MSG = "الخال بظبط في النبرة.. ثواني وبكون عندك صوت احترافي";
@@ -141,9 +143,9 @@ const VoiceChanger = () => {
         try {
           const buf = await decodeBlobToBuffer(blob);
           setOriginalBuffer(buf);
-          toast.success("تم الحفظ.. اختار شخصية!");
+          toast.success((L() ? "تم الحفظ.. اختار شخصية!" : "Saved — pick a voice!"));
         } catch {
-          toast.error("ما قدرنا نقرأ التسجيل");
+          toast.error((L() ? "ما قدرنا نقرأ التسجيل" : "Couldn't read the recording"));
         }
       };
 
@@ -164,7 +166,7 @@ const VoiceChanger = () => {
       if (previewUrl) { URL.revokeObjectURL(previewUrl); setPreviewUrl(null); }
     } catch (e) {
       console.error(e);
-      toast.error("ما قدرنا نفتح المايك");
+      toast.error((L() ? "ما قدرنا نفتح المايك" : "Couldn't open the microphone"));
     }
   };
 
@@ -179,7 +181,7 @@ const VoiceChanger = () => {
   };
 
   const convert = async () => {
-    if (!originalBuffer) return toast.error("سجل صوتك الأول");
+    if (!originalBuffer) return toast.error((L() ? "سجل صوتك الأول" : "Record your voice first"));
     if (credits <= 0) { setAdOpen(true); return; }
     const preset = PRESETS.find((p) => p.id === selected);
     if (!preset) return;
@@ -199,7 +201,7 @@ const VoiceChanger = () => {
 
     } catch (e) {
       console.error(e);
-      toast.error("في خلل، جرب تاني");
+      toast.error((L() ? "في خلل، جرب تاني" : "Something went wrong, try again"));
     } finally {
       setIsProcessing(false);
       setProgress(0);
@@ -209,14 +211,14 @@ const VoiceChanger = () => {
   const togglePlay = () => {
     const el = audioElRef.current;
     if (!el || !previewUrl) return;
-    if (el.paused) { el.play().then(() => setIsPlaying(true)).catch(() => toast.error("تعذر تشغيل المعاينة")); }
+    if (el.paused) { el.play().then(() => setIsPlaying(true)).catch(() => toast.error((L() ? "تعذر تشغيل المعاينة" : "Couldn't play the preview"))); }
     else { el.pause(); setIsPlaying(false); }
   };
 
   const shareToWhatsApp = async () => {
     if (!previewBlob) return;
     const file = new File([previewBlob], `zoolkaarb-${selected}.wav`, { type: "audio/wav" });
-    const text = "صوت احترافي من رسمة 🎤";
+    const text = (L() ? "صوت احترافي من رسمة 🎤" : "A pro voice from Rasma 🎤");
     try {
       const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean };
       if (nav.canShare && nav.canShare({ files: [file] })) {
@@ -229,7 +231,7 @@ const VoiceChanger = () => {
     a.download = file.name;
     a.click();
     setTimeout(() => window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank"), 500);
-    toast("نزّلنا ليك الملف.. ارفقه في الواتساب");
+    toast((L() ? "نزّلنا ليك الملف.. ارفقه في الواتساب" : "Downloaded — attach it in WhatsApp"));
   };
 
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
@@ -240,20 +242,20 @@ const VoiceChanger = () => {
       <header className="sticky top-0 z-10 bg-card/70 backdrop-blur-2xl border-b border-gold/20 px-5 py-4 flex items-center gap-3">
         <BackButton onClick={() => navigate("/")} />
         <div className="flex-1 text-start">
-          <h1 className="text-base font-bold text-foreground">غيّر صوتك — استوديو</h1>
-          <p className="text-[11px] text-muted-foreground">حفظ النبرة الطبيعية بدون تشويه</p>
+          <h1 className="text-base font-bold text-foreground">{L() ? "غيّر صوتك — استوديو" : "Voice Changer — Studio"}</h1>
+          <p className="text-[11px] text-muted-foreground">{L() ? "حفظ النبرة الطبيعية بدون تشويه" : "Keeps your natural tone, no distortion"}</p>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-gold/15 border border-gold/40">
           <Coins className="w-3.5 h-3.5 text-gold" />
-          <span className="text-[11px] font-bold text-gold">{credits} متبقية</span>
+          <span className="text-[11px] font-bold text-gold">{credits} {L() ? "متبقية" : "left"}</span>
         </div>
       </header>
 
       <main className="px-4 pt-4 space-y-5">
         <section aria-labelledby="voices-title">
           <div className="flex items-center justify-between mb-3">
-            <h2 id="voices-title" className="text-sm font-bold text-foreground">مكتبة الأصوات</h2>
-            <span className="text-xs text-muted-foreground">٤ شخصيات</span>
+            <h2 id="voices-title" className="text-sm font-bold text-foreground">{L() ? "مكتبة الأصوات" : "Voice library"}</h2>
+            <span className="text-xs text-muted-foreground">{L() ? "٤ شخصيات" : "4 voices"}</span>
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             {PRESETS.map((preset) => (
@@ -272,36 +274,36 @@ const VoiceChanger = () => {
 
         <section aria-labelledby="recording-title" className="border-y border-border py-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 id="recording-title" className="text-sm font-bold">التسجيل</h2>
-            <span role="status" className="text-xs text-muted-foreground">{isRecording ? "جارٍ التسجيل" : originalBuffer ? "تسجيلك جاهز" : "جاهز للتسجيل"}</span>
+            <h2 id="recording-title" className="text-sm font-bold">{L() ? "التسجيل" : "Recording"}</h2>
+            <span role="status" className="text-xs text-muted-foreground">{isRecording ? "جارٍ التسجيل" : originalBuffer ? "تسجيلك جاهز" : (L() ? "جاهز للتسجيل" : "Ready to record")}</span>
           </div>
           <div className="h-[72px] bg-muted/40 rounded-lg overflow-hidden">
-            {isRecording ? <canvas ref={canvasRef} width={400} height={72} className="w-full h-full" aria-label="موجة الميكروفون المباشرة" role="img" /> : <RecordedWaveform buffer={originalBuffer} />}
+            {isRecording ? <canvas ref={canvasRef} width={400} height={72} className="w-full h-full" aria-label=(L() ? "موجة الميكروفون المباشرة" : "Live microphone waveform") role="img" /> : <RecordedWaveform buffer={originalBuffer} />}
           </div>
           <div className="flex items-center justify-between mt-3">
             <span className="text-sm font-mono tabular-nums" dir="ltr">{fmt(elapsed)}</span>
             <Button onClick={isRecording ? stopRecording : startRecording} disabled={isProcessing}
               className={`h-12 rounded-full px-5 gap-2 ${isRecording ? "bg-destructive text-destructive-foreground" : "gradient-gold text-primary-foreground"}`}
-              aria-label={isRecording ? "إيقاف التسجيل" : "تسجيل"}>
-              {isRecording ? <Square /> : <Mic />}{isRecording ? "إيقاف التسجيل" : originalBuffer ? "تسجيل جديد" : "تسجيل صوتي"}
+              aria-label={isRecording ? "إيقاف التسجيل" : (L() ? "تسجيل" : "Record")}>
+              {isRecording ? <Square /> : <Mic />}{isRecording ? "إيقاف التسجيل" : originalBuffer ? "تسجيل جديد" : (L() ? "تسجيل صوتي" : "Record voice")}
             </Button>
           </div>
         </section>
 
         <section aria-labelledby="settings-title" className="space-y-4">
-          <h2 id="settings-title" className="text-sm font-bold">ضبط النبرة</h2>
+          <h2 id="settings-title" className="text-sm font-bold">{L() ? "ضبط النبرة" : "Tone settings"}</h2>
           <div>
-            <div className="flex justify-between mb-2 text-xs"><span>حدّة النبرة</span><span className="text-primary font-mono" dir="ltr">{pitch > 0 ? `+${pitch}` : pitch} st</span></div>
-            <Slider aria-label="حدّة النبرة" value={[pitch]} onValueChange={(v) => setPitch(v[0])} min={-12} max={12} step={1} disabled={isProcessing} />
+            <div className="flex justify-between mb-2 text-xs"><span>{L() ? "حدّة النبرة" : "Pitch"}</span><span className="text-primary font-mono" dir="ltr">{pitch > 0 ? `+${pitch}` : pitch} st</span></div>
+            <Slider aria-label=(L() ? "حدّة النبرة" : "Pitch") value={[pitch]} onValueChange={(v) => setPitch(v[0])} min={-12} max={12} step={1} disabled={isProcessing} />
           </div>
           <div>
-            <div className="flex justify-between mb-2 text-xs"><span>صدى الاستوديو</span><span className="text-primary font-mono">{Math.round(reverb * 100)}%</span></div>
-            <Slider aria-label="صدى الاستوديو" value={[reverb]} onValueChange={(v) => setReverb(v[0])} min={0} max={1} step={0.05} disabled={isProcessing} />
+            <div className="flex justify-between mb-2 text-xs"><span>{L() ? "صدى الاستوديو" : "Studio reverb"}</span><span className="text-primary font-mono">{Math.round(reverb * 100)}%</span></div>
+            <Slider aria-label=(L() ? "صدى الاستوديو" : "Studio reverb") value={[reverb]} onValueChange={(v) => setReverb(v[0])} min={0} max={1} step={0.05} disabled={isProcessing} />
           </div>
           <Button onClick={convert} disabled={!originalBuffer || isProcessing || isRecording}
             className="w-full h-12 rounded-lg gradient-gold text-primary-foreground font-bold">
             {isProcessing ? <Loader2 className="animate-spin" /> : <Wand2 />}
-            {credits > 0 ? "حوّل الصوت" : "مكافأة تجريبية لاستكمال التحويل"}
+            {credits > 0 ? "حوّل الصوت" : (L() ? "مكافأة تجريبية لاستكمال التحويل" : "Trial reward to finish converting")}
           </Button>
         </section>
 
@@ -309,17 +311,17 @@ const VoiceChanger = () => {
           <section className="border-t border-border pt-4 space-y-3" aria-labelledby="preview-title">
             <audio ref={audioElRef} src={previewUrl} onEnded={() => setIsPlaying(false)} onPause={() => setIsPlaying(false)} onPlay={() => setIsPlaying(true)} />
             <div className="flex items-center gap-3">
-              <Button onClick={togglePlay} variant="secondary" size="icon" className="rounded-full h-12 w-12" aria-label={isPlaying ? "إيقاف المعاينة" : "تشغيل المعاينة"}>
+              <Button onClick={togglePlay} variant="secondary" size="icon" className="rounded-full h-12 w-12" aria-label={isPlaying ? "إيقاف المعاينة" : (L() ? "تشغيل المعاينة" : "Play preview")}>
                 {isPlaying ? <Pause /> : <Play />}
               </Button>
-              <div className="flex-1"><h2 id="preview-title" className="text-sm font-bold">معاينة التسجيل المحوّل</h2><p className="text-xs text-muted-foreground">{previewName}</p></div>
-              <Button variant="outline" size="icon" onClick={shareToWhatsApp} disabled={!previewBlob} aria-label="مشاركة التسجيل" title="مشاركة التسجيل"><Share2 /></Button>
+              <div className="flex-1"><h2 id="preview-title" className="text-sm font-bold">{L() ? "معاينة التسجيل المحوّل" : "Converted recording preview"}</h2><p className="text-xs text-muted-foreground">{previewName}</p></div>
+              <Button variant="outline" size="icon" onClick={shareToWhatsApp} disabled={!previewBlob} aria-label=(L() ? "مشاركة التسجيل" : "Share recording") title=(L() ? "مشاركة التسجيل" : "Share recording")><Share2 /></Button>
             </div>
           </section>
         )}
       </main>
 
-      <StudioProgress open={isProcessing} progress={progress} isRtl message={PROGRESS_MSG} />
+      <StudioProgress open={isProcessing} progress={progress} isRtl={L()} message={L() ? PROGRESS_MSG : "Tuning your voice… a pro sound in seconds"} />
       <ZoolAdModal open={adOpen} toolId={TOOL_ID} isRtl onClose={() => setAdOpen(false)} />
     </div>
   );
