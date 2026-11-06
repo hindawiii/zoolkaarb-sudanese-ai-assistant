@@ -21,6 +21,8 @@ import { useP2PShare } from "@/hooks/useP2PShare";
 import QRCode from "qrcode";
 import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
 
+const L = () => document.documentElement.lang !== "en";
+
 type Role = "sender" | "receiver" | null;
 type Mode = "code" | "qr" | null; // sender: generate code | scan qr ; receiver: enter code | show qr
 
@@ -29,7 +31,7 @@ const QR_PREFIX = "zoolshare:";
 const resolveQrColor = (token: string) => {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
-  if (!context) throw new Error("تعذر تجهيز الباركود");
+  if (!context) throw new Error((L() ? "تعذر تجهيز الباركود" : "Could not prepare the QR code"));
   const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
   context.fillStyle = `hsl(${value})`;
   return context.fillStyle;
@@ -56,7 +58,7 @@ const ZoolShare = () => {
     try {
       await p2p.startHost();
     } catch (e) {
-      toast({ title: "ما زبط", description: (e as Error).message });
+      toast({ title: (L() ? "ما زبط" : "Didn't work"), description: (e as Error).message });
     }
   };
 
@@ -76,7 +78,7 @@ const ZoolShare = () => {
       });
       setQrDataUrl(url);
     } catch (e) {
-      toast({ title: "ما زبط", description: (e as Error).message });
+      toast({ title: (L() ? "ما زبط" : "Didn't work"), description: (e as Error).message });
     }
   };
 
@@ -88,13 +90,13 @@ const ZoolShare = () => {
 
   const submitJoinCode = async () => {
     if (joinCode.length !== 6) {
-      toast({ title: "كود ناقص", description: "أدخل 6 أرقام" });
+      toast({ title: (L() ? "كود ناقص" : "Incomplete code"), description: (L() ? "أدخل 6 أرقام" : "Enter 6 digits") });
       return;
     }
     try {
       await p2p.startJoin(joinCode);
     } catch (e) {
-      toast({ title: "ما زبط", description: (e as Error).message });
+      toast({ title: (L() ? "ما زبط" : "Didn't work"), description: (e as Error).message });
     }
   };
 
@@ -122,14 +124,14 @@ const ZoolShare = () => {
                 stopped = true;
                 controls.stop();
                 p2p.startJoin(code).catch((e) =>
-                  toast({ title: "ما زبط", description: (e as Error).message }),
+                  toast({ title: (L() ? "ما زبط" : "Didn't work"), description: (e as Error).message }),
                 );
               }
             },
           );
           scannerRef.current = controls;
         } catch (e) {
-          toast({ title: "الكاميرا ما اشتغلت", description: (e as Error).message });
+          toast({ title: (L() ? "الكاميرا ما اشتغلت" : "Camera didn't start"), description: (e as Error).message });
         }
       })();
       return () => {
@@ -167,7 +169,7 @@ const ZoolShare = () => {
     if (!p2p.code) return;
     await navigator.clipboard.writeText(p2p.code);
     setCopied(true);
-    toast({ title: "اتنسخ!", description: p2p.code });
+    toast({ title: (L() ? "اتنسخ!" : "Copied!"), description: p2p.code });
     setTimeout(() => setCopied(false), 1500);
   };
 
@@ -203,8 +205,8 @@ const ZoolShare = () => {
         <BackButton
           onClick={() => (role ? resetAll() : navigate("/"))} />
         <div className="flex-1">
-          <h1 className="text-base font-bold text-foreground">رسمة شير</h1>
-          <p className="text-[10px] text-muted-foreground">Local P2P · بدون رصيد</p>
+          <h1 className="text-base font-bold text-foreground">{L() ? "رسمة شير" : "Rasma Share"}</h1>
+          <p className="text-[10px] text-muted-foreground">{L() ? "Local P2P · بدون رصيد" : "Local P2P · No credits"}</p>
         </div>
         <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10 border border-border">
           <Wifi className="w-3 h-3 text-primary" />
@@ -217,7 +219,7 @@ const ZoolShare = () => {
         <div className="relative px-5 mt-3">
           <div className="rounded-lg border border-border bg-card/80 backdrop-blur-xl p-3">
             <p className="text-[11px] text-primary mb-2 font-bold">
-              الخال شغال.. بربط في الأجهزة
+              {L() ? "الخال شغال.. بربط في الأجهزة" : "Connecting the devices…"}
             </p>
             <div className="h-1.5 rounded-full bg-muted overflow-hidden">
               <div
@@ -235,8 +237,8 @@ const ZoolShare = () => {
       {!role && (
         <div className="relative px-5 mt-6 space-y-4">
           <div className="text-center mb-2">
-            <p className="text-xs text-muted-foreground">اختر دورك</p>
-            <h2 className="text-xl font-bold text-foreground mt-1">مرسل ولا مستلم؟</h2>
+            <p className="text-xs text-muted-foreground">{L() ? "اختر دورك" : "Choose your role"}</p>
+            <h2 className="text-xl font-bold text-foreground mt-1">{L() ? "مرسل ولا مستلم؟" : "Sender or receiver?"}</h2>
           </div>
 
           <Button variant="ghost"
@@ -247,8 +249,8 @@ const ZoolShare = () => {
               <Send className="w-7 h-7 text-primary-foreground" />
             </div>
             <div className="text-right flex-1">
-              <p className="text-base font-bold text-foreground">مرسل</p>
-              <p className="text-[11px] text-muted-foreground">عندك ملف وعايز تبعتو</p>
+              <p className="text-base font-bold text-foreground">{L() ? "مرسل" : "Sender"}</p>
+              <p className="text-[11px] text-muted-foreground">{L() ? "عندك ملف وعايز تبعتو" : "You have a file to send"}</p>
             </div>
           </Button>
 
@@ -260,13 +262,13 @@ const ZoolShare = () => {
               <Inbox className="w-7 h-7 text-primary" />
             </div>
             <div className="text-right flex-1">
-              <p className="text-base font-bold text-foreground">مستلم</p>
-              <p className="text-[11px] text-muted-foreground">عايز تستقبل ملف من زول</p>
+              <p className="text-base font-bold text-foreground">{L() ? "مستلم" : "Receiver"}</p>
+              <p className="text-[11px] text-muted-foreground">{L() ? "عايز تستقبل ملف من زول" : "You want to receive a file"}</p>
             </div>
           </Button>
 
           <p className="text-[10px] text-muted-foreground text-center pt-3">
-            الملف بيتنقل مباشرة بين الأجهزة عبر WebRTC. على نفس الواي فاي = سرعة فائقة بدون إنترنت.
+            {L() ? "الملف بيتنقل مباشرة بين الأجهزة عبر WebRTC. على نفس الواي فاي = سرعة فائقة بدون إنترنت." : "Files move directly between devices via WebRTC. Same Wi‑Fi = super fast, no internet needed."}
           </p>
         </div>
       )}
@@ -274,10 +276,10 @@ const ZoolShare = () => {
       {/* === SENDER: choose mode === */}
       {role === "sender" && !mode && (
         <ModeChoices
-          title="كيف تربط؟"
+          title={(L() ? "كيف تربط؟" : "How to connect?")}
           options={[
-            { id: "code", icon: <KeyRound className="w-6 h-6" />, label: "إنشاء كود", sub: "ولّد 6 أرقام للمستلم" },
-            { id: "qr", icon: <ScanLine className="w-6 h-6" />, label: "مسح الباركود", sub: "افتح الكاميرا واسحب باركود المستلم" },
+            { id: "code", icon: <KeyRound className="w-6 h-6" />, label: (L() ? "إنشاء كود" : "Create code"), sub: (L() ? "ولّد 6 أرقام للمستلم" : "Generate 6 digits for the receiver") },
+            { id: "qr", icon: <ScanLine className="w-6 h-6" />, label: (L() ? "مسح الباركود" : "Scan QR"), sub: (L() ? "افتح الكاميرا واسحب باركود المستلم" : "Open the camera and scan the receiver's QR") },
           ]}
           onPick={(id) => {
             if (id === "code") handleSenderGenerateCode();
@@ -290,10 +292,10 @@ const ZoolShare = () => {
       {/* === RECEIVER: choose mode === */}
       {role === "receiver" && !mode && (
         <ModeChoices
-          title="كيف تستقبل؟"
+          title={(L() ? "كيف تستقبل؟" : "How to receive?")}
           options={[
-            { id: "code", icon: <Hash className="w-6 h-6" />, label: "إدخال كود", sub: "اكتب الكود من المرسل" },
-            { id: "qr", icon: <QrCode className="w-6 h-6" />, label: "عرض الباركود", sub: "ورّي المرسل الباركود ليمسحو" },
+            { id: "code", icon: <Hash className="w-6 h-6" />, label: (L() ? "إدخال كود" : "Enter code"), sub: (L() ? "اكتب الكود من المرسل" : "Type the sender's code") },
+            { id: "qr", icon: <QrCode className="w-6 h-6" />, label: (L() ? "عرض الباركود" : "Show QR"), sub: (L() ? "ورّي المرسل الباركود ليمسحو" : "Show your QR to the sender") },
           ]}
           onPick={(id) => {
             if (id === "code") handleReceiverEnterCode();
@@ -307,7 +309,7 @@ const ZoolShare = () => {
       {role === "sender" && mode === "code" && (
         <div className="relative px-5 mt-5 space-y-4">
           <GlassCard>
-            <p className="text-[11px] text-muted-foreground text-center">شارك الكود ده مع المستلم</p>
+            <p className="text-[11px] text-muted-foreground text-center">{L() ? "شارك الكود ده مع المستلم" : "Share this code with the receiver"}</p>
             <div className="mt-3 flex items-center justify-center gap-2">
               <p
                 className="text-3xl font-bold tracking-normal font-mono text-primary"
@@ -318,7 +320,7 @@ const ZoolShare = () => {
               {p2p.code && (
                 <Button variant="ghost"
                   onClick={copyCode}
-                  aria-label="نسخ الكود"
+                  aria-label={(L() ? "نسخ الكود" : "Copy code")}
                   className="h-auto whitespace-normal p-2 rounded-xl bg-muted border border-border hover:bg-muted"
                 >
                   {copied ? <Check className="h-auto whitespace-normal w-4 h-4 text-primary" /> : <Copy className="w-4 h-4 text-primary" />}
@@ -334,8 +336,8 @@ const ZoolShare = () => {
               className="h-auto whitespace-normal w-full rounded-lg border-2 border-dashed border-primary/30 bg-card/60 backdrop-blur-xl p-8 flex flex-col items-center gap-2 active:scale-[0.98] transition-transform"
             >
               <Upload className="w-7 h-7 text-primary" />
-              <p className="text-sm font-bold text-foreground">اختار الملف</p>
-              <p className="text-[11px] text-muted-foreground">يبدأ الإرسال تلقائياً لما يتصل المستلم</p>
+              <p className="text-sm font-bold text-foreground">{L() ? "اختار الملف" : "Choose a file"}</p>
+              <p className="text-[11px] text-muted-foreground">{L() ? "يبدأ الإرسال تلقائياً لما يتصل المستلم" : "Sending starts once the receiver connects"}</p>
             </Button>
           ) : (
             <FilePreview file={pendingFile} progress={p2p.progress} status={p2p.status} />
@@ -349,7 +351,7 @@ const ZoolShare = () => {
       {role === "sender" && mode === "qr" && (
         <div className="relative px-5 mt-5 space-y-4">
           <GlassCard>
-            <p className="text-[11px] text-muted-foreground text-center mb-3">صوّب على باركود المستلم</p>
+            <p className="text-[11px] text-muted-foreground text-center mb-3">{L() ? "صوّب على باركود المستلم" : "Point at the receiver's QR"}</p>
             <div className="relative rounded-lg overflow-hidden bg-muted aspect-square border border-primary/30">
               <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
               {/* viewfinder */}
@@ -364,7 +366,7 @@ const ZoolShare = () => {
               className="h-auto whitespace-normal w-full rounded-lg border-2 border-dashed border-primary/30 bg-card/60 backdrop-blur-xl p-6 flex flex-col items-center gap-2 active:scale-[0.98] transition-transform"
             >
               <Upload className="w-7 h-7 text-primary" />
-              <p className="text-sm font-bold text-foreground">اختار الملف للإرسال</p>
+              <p className="text-sm font-bold text-foreground">{L() ? "اختار الملف للإرسال" : "Choose a file to send"}</p>
             </Button>
           )}
           {pendingFile && <FilePreview file={pendingFile} progress={p2p.progress} status={p2p.status} />}
@@ -378,13 +380,13 @@ const ZoolShare = () => {
         <div className="relative px-5 mt-5 space-y-4">
           {p2p.status === "idle" && (
             <GlassCard>
-              <p className="text-sm font-bold text-foreground text-center">أدخل الكود من المرسل</p>
+              <p className="text-sm font-bold text-foreground text-center">{L() ? "أدخل الكود من المرسل" : "Enter the sender's code"}</p>
               <input
                 inputMode="numeric"
                 maxLength={6}
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                aria-label="كود الاتصال"
+                aria-label={(L() ? "كود الاتصال" : "Connection code")}
                 className="mt-4 w-full text-center text-3xl font-mono tracking-normal py-3 rounded-xl bg-card/80 border border-primary/30 text-primary focus:outline-none focus:border-ring"
                 placeholder="------"
                 dir="ltr"
@@ -394,7 +396,7 @@ const ZoolShare = () => {
                 onClick={submitJoinCode}
                 className="h-auto whitespace-normal mt-4 w-full rounded-full py-3 gradient-gold font-bold text-primary-foreground active:scale-95 transition-transform"
               >
-                اتصل
+                {L() ? "اتصل" : "Connect"}
               </Button>
             </GlassCard>
           )}
@@ -408,15 +410,15 @@ const ZoolShare = () => {
       {role === "receiver" && mode === "qr" && (
         <div className="h-auto whitespace-normal relative px-5 mt-5 space-y-4">
           <GlassCard>
-            <p className="text-[11px] text-muted-foreground text-center">ورّي المرسل الباركود ده</p>
+            <p className="text-[11px] text-muted-foreground text-center">{L() ? "ورّي المرسل الباركود ده" : "Show this QR to the sender"}</p>
             <div className="mt-3 mx-auto w-full max-w-64 aspect-square rounded-lg qr-surface flex items-center justify-center overflow-hidden">
               {qrDataUrl ? (
                 <img src={qrDataUrl} alt="QR" className="w-full h-full" />
               ) : (
-                <div className="text-xs">جارٍ التوليد...</div>
+                <div className="text-xs">{L() ? "جارٍ التوليد..." : "Generating..."}</div>
               )}
             </div>
-            <p className="mt-3 text-center text-xs text-muted-foreground">أو الكود يدوياً</p>
+            <p className="mt-3 text-center text-xs text-muted-foreground">{L() ? "أو الكود يدوياً" : "Or the code manually"}</p>
             <p className="text-center text-2xl font-mono tracking-normal mt-1 text-primary">
               {p2p.code || "------"}
             </p>
@@ -424,7 +426,7 @@ const ZoolShare = () => {
           </GlassCard>
 
           {p2p.status === "connected" && !pendingFile && (
-            <p className="text-center text-xs text-primary">في انتظار الملف من المرسل...</p>
+            <p className="text-center text-xs text-primary">{L() ? "في انتظار الملف من المرسل..." : "Waiting for the sender's file..."}</p>
           )}
           {(p2p.incoming || p2p.status === "transferring" || p2p.status === "done") && (
             <ReceiverPanel p2p={p2p} onDownload={downloadReceived} onPickFile={() => fileRef.current?.click()} pendingFile={pendingFile} />
@@ -473,20 +475,20 @@ const ModeChoices = ({
         </div>
       </Button>
     ))}
-    <Button variant="ghost" onClick={onBack} className="h-auto whitespace-normal w-full text-xs text-muted-foreground py-2">رجوع</Button>
+    <Button variant="ghost" onClick={onBack} className="h-auto whitespace-normal w-full text-xs text-muted-foreground py-2">{L() ? "رجوع" : "Back"}</Button>
   </div>
 );
 
 const StatusPill = ({ status, role }: { status: string; role: "sender" | "receiver" }) => {
   const map: Record<string, string> = {
-    idle: "جاهز",
-    waiting: "في انتظار الطرف الآخر...",
-    connecting: "جاري الربط...",
-    connected: role === "sender" ? "متصل ✓ ابعت الملف" : "متصل ✓ في انتظار الملف",
-    transferring: "جاري النقل...",
-    done: "خلصنا ✓",
-    error: "خطأ",
-    fallback: "تعذر الربط المباشر",
+    idle: (L() ? "جاهز" : "Ready"),
+    waiting: (L() ? "في انتظار الطرف الآخر..." : "Waiting for the other device..."),
+    connecting: (L() ? "جاري الربط..." : "Connecting..."),
+    connected: role === "sender" ? "متصل ✓ ابعت الملف" : (L() ? "متصل ✓ في انتظار الملف" : "Connected ✓ waiting for file"),
+    transferring: (L() ? "جاري النقل..." : "Transferring..."),
+    done: (L() ? "خلصنا ✓" : "Done ✓"),
+    error: (L() ? "خطأ" : "Error"),
+    fallback: (L() ? "تعذر الربط المباشر" : "Direct connection failed"),
   };
   const ok = status === "connected" || status === "transferring" || status === "done";
   return (
@@ -532,19 +534,19 @@ const ReceiverPanel = ({
         </div>
       </>
     ) : (
-      <p className="text-sm text-muted-foreground text-center">{p2p.status === "connected" ? "متصل — في انتظار الملف" : "..."}</p>
+      <p className="text-sm text-muted-foreground text-center">{p2p.status === "connected" ? (L() ? "متصل — في انتظار الملف" : "Connected — waiting for file") : "..."}</p>
     )}
     {p2p.status === "done" && p2p.receivedUrl && (
       <Button variant="ghost"
         onClick={onDownload}
         className="h-auto whitespace-normal mt-4 w-full rounded-full py-3 gradient-gold font-bold text-primary-foreground flex items-center justify-center gap-2 active:scale-95"
       >
-        <Download className="h-auto whitespace-normal w-4 h-4" /> حفظ الملف
+        <Download className="h-auto whitespace-normal w-4 h-4" /> {L() ? "حفظ الملف" : "Save file"}
       </Button>
     )}
     {p2p.status === "connected" && !pendingFile && (
       <Button variant="ghost" onClick={onPickFile} className="h-auto whitespace-normal mt-3 w-full text-[11px] text-muted-foreground py-2 underline">
-        تبعت ملف عكسي؟
+        {L() ? "تبعت ملف عكسي؟" : "Send a file back?"}
       </Button>
     )}
   </GlassCard>
@@ -555,7 +557,7 @@ const ResetButton = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     className="h-auto whitespace-normal w-full rounded-full border border-border bg-card/60 py-3 text-sm font-bold text-primary flex items-center justify-center gap-2 active:scale-95"
   >
-    <RefreshCw className="h-auto whitespace-normal w-4 h-4" /> إعادة
+    <RefreshCw className="h-auto whitespace-normal w-4 h-4" /> {L() ? "إعادة" : "Restart"}
   </Button>
 );
 

@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import { useUser } from "@/store/userStore";
 import { Heart, Star, Sun, Moon, MessageCircle, Sparkles, Play, Crown, Lock, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
@@ -30,15 +31,16 @@ const templates: Template[] = [
   { id: "birthday", title: "Birthday Cards", titleAr: "بطاقات أعياد ميلاد", category: "cards", icon: Heart, gradient: "from-earth/40 via-sand to-gold/30", iconColor: "text-earth-light", isPremium: false },
 ];
 
-const CATEGORIES: { id: Category; label: string }[] = [
-  { id: "all", label: "الكل" },
-  { id: "friday", label: "جمعة مباركة" },
-  { id: "morning", label: "صباحيات" },
-  { id: "greetings", label: "تهاني" },
-  { id: "cards", label: "بطاقات" },
+const CATEGORIES: { id: Category; label: string; labelEn: string }[] = [
+  { id: "all", label: "الكل", labelEn: "All" },
+  { id: "friday", label: "جمعة مباركة", labelEn: "Friday" },
+  { id: "morning", label: "صباحيات", labelEn: "Mornings" },
+  { id: "greetings", label: "تهاني", labelEn: "Greetings" },
+  { id: "cards", label: "بطاقات", labelEn: "Cards" },
 ];
 
 const AlWajib = () => {
+  const isAr = useUser().language === "ar";
   const navigate = useNavigate();
   const [adTemplate, setAdTemplate] = useState<Template | null>(null);
   const [activeCat, setActiveCat] = useState<Category>("all");
@@ -69,8 +71,8 @@ const AlWajib = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-20">
         <BackButton onClick={() => navigate("/")} />
         <div className="flex-1 text-start">
-          <h1 className="text-base font-bold font-cairo text-foreground">مصمم الحالات</h1>
-          <p className="text-[10px] text-muted-foreground font-cairo">قوالب احترافية وتهاني</p>
+          <h1 className="text-base font-bold font-cairo text-foreground">{isAr ? "مصمم الحالات" : "Status Maker"}</h1>
+          <p className="text-[10px] text-muted-foreground font-cairo">{isAr ? "قوالب احترافية وتهاني" : "Pro templates & greetings"}</p>
         </div>
       </header>
 
@@ -89,7 +91,7 @@ const AlWajib = () => {
                     : "bg-card border border-border text-foreground hover:bg-muted"
                 }`}
               >
-                {c.label}
+                {isAr ? c.label : c.labelEn}
               </button>
             );
           })}
@@ -103,8 +105,8 @@ const AlWajib = () => {
             <div className="w-7 h-7 rounded-lg gradient-gold flex items-center justify-center">
               <Flame className="w-4 h-4 text-primary-foreground" />
             </div>
-            <h2 className="text-sm font-bold font-cairo text-foreground">ترشيحات الخال</h2>
-            <span className="text-[10px] text-muted-foreground font-cairo">الأكثر استخداماً</span>
+            <h2 className="text-sm font-bold font-cairo text-foreground">{isAr ? "ترشيحات الخال" : "Al-Khal's picks"}</h2>
+            <span className="text-[10px] text-muted-foreground font-cairo">{isAr ? "الأكثر استخداماً" : "Most used"}</span>
           </div>
           <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-5 px-5 pb-1">
             {trending.map((t) => (
@@ -117,10 +119,10 @@ const AlWajib = () => {
                   <t.icon className={`w-4 h-4 ${t.iconColor}`} />
                 </div>
                 <div>
-                  <p className="text-xs font-bold font-cairo text-foreground">{t.titleAr}</p>
+                  <p className="text-xs font-bold font-cairo text-foreground">{isAr ? t.titleAr : t.title}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <Flame className="w-3 h-3 text-gold" />
-                    <span className="text-[9px] text-muted-foreground font-cairo">رائج</span>
+                    <span className="text-[9px] text-muted-foreground font-cairo">{isAr ? "رائج" : "Trending"}</span>
                   </div>
                 </div>
               </button>
@@ -132,7 +134,7 @@ const AlWajib = () => {
       {/* Templates grid */}
       <div className="px-5 mt-5">
         <h2 className="text-sm font-bold font-cairo text-foreground mb-3 text-start">
-          {activeCat === "all" ? "كل القوالب" : CATEGORIES.find((c) => c.id === activeCat)?.label}
+          {activeCat === "all" ? (isAr ? "كل القوالب" : "All templates") : CATEGORIES.find((c) => c.id === activeCat)?.[isAr ? "label" : "labelEn"]}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {filtered.map((t) => (
@@ -151,14 +153,14 @@ const AlWajib = () => {
                 <t.icon className={`w-5 h-5 ${t.iconColor}`} />
               </div>
               <div>
-                <p className="text-sm font-bold font-cairo text-foreground">{t.titleAr}</p>
+                <p className="text-sm font-bold font-cairo text-foreground">{isAr ? t.titleAr : t.title}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{t.title}</p>
               </div>
               {t.isPremium && (
                 <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px] flex items-end justify-center pb-3 pointer-events-none">
                   <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-card/90 border border-border">
                     <Lock className="w-3 h-3 text-gold" />
-                    <span className="text-[10px] font-cairo font-semibold text-foreground">شاهد إعلان</span>
+                    <span className="text-[10px] font-cairo font-semibold text-foreground">{isAr ? "شاهد إعلان" : "Watch ad"}</span>
                   </div>
                 </div>
               )}
@@ -179,23 +181,23 @@ const AlWajib = () => {
             <div className="w-14 h-14 rounded-2xl gradient-gold mx-auto flex items-center justify-center mb-4">
               <Crown className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h3 className="text-lg font-bold font-cairo text-foreground">قالب احترافي</h3>
+            <h3 className="text-lg font-bold font-cairo text-foreground">{isAr ? "قالب احترافي" : "Pro template"}</h3>
             <p className="text-sm text-muted-foreground mt-2 font-cairo">
-              هذا القالب احترافي.. شاهد إعلان لدعم التطبيق وفتح "{adTemplate.titleAr}" للتعديل.
+              {isAr ? <>هذا القالب احترافي.. شاهد إعلان لدعم التطبيق وفتح "{adTemplate.titleAr}" للتعديل.</> : <>This is a pro template. Watch an ad to support the app and unlock "{adTemplate.title}".</>}
             </p>
             <div className="flex gap-2 mt-5">
               <button
                 onClick={() => setAdTemplate(null)}
                 className="flex-1 px-4 py-2.5 rounded-full border border-border text-sm font-semibold font-cairo active:scale-95 transition-transform"
               >
-                لاحقاً
+                {isAr ? "لاحقاً" : "Later"}
               </button>
               <button
                 onClick={watchAd}
                 className="flex-1 px-4 py-2.5 rounded-full gradient-gold text-primary-foreground text-sm font-semibold font-cairo active:scale-95 transition-transform flex items-center justify-center gap-1.5"
               >
                 <Play className="w-3.5 h-3.5" />
-                شاهد الآن
+                {isAr ? "شاهد الآن" : "Watch now"}
               </button>
             </div>
           </div>

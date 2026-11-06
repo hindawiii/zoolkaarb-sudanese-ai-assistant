@@ -14,6 +14,7 @@ const CATEGORIES: { id: Category; label: string; labelAr: string; icon: typeof P
 ];
 
 const ZoolYafatish = () => {
+  const isAr = useUser().language === "ar";
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const initial = (params.get("category") as Category) || null;
@@ -46,7 +47,7 @@ const ZoolYafatish = () => {
         setLocLoading(false);
       },
       () => {
-        setLocError("ما قدرنا نجيب موقعك. خلينا نستخدم الخرطوم.");
+        setLocError((isAr ? "ما قدرنا نجيب موقعك. خلينا نستخدم الخرطوم." : "Could not get your location. Using Khartoum."));
         const fallback = { lat: 15.5007, lon: 32.5599 };
         setLoc(fallback);
         setLastLocation({ ...fallback, city: "Khartoum" });
@@ -100,7 +101,7 @@ const ZoolYafatish = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => (category ? setCategory(null) : navigate("/"))} />
         <div className="flex-1">
-          <h1 className="text-base font-bold font-cairo text-foreground">الزول يفتش</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">{isAr ? "الزول يفتش" : "Nearby Places"}</h1>
           <p className="text-[10px] text-muted-foreground">Smart Directory</p>
         </div>
         <button
@@ -134,8 +135,8 @@ const ZoolYafatish = () => {
                 <div className={`w-11 h-11 rounded-xl ${c.bg} flex items-center justify-center mb-3`}>
                   <c.icon className={`w-5 h-5 ${c.color}`} />
                 </div>
-                <p className="text-sm font-semibold text-foreground">{c.label}</p>
-                <p className="text-[11px] font-cairo text-earth-light mt-1">{c.labelAr}</p>
+                <p className="text-sm font-semibold text-foreground">{isAr ? c.labelAr : c.label}</p>
+                
               </button>
             ))}
           </div>
@@ -147,10 +148,10 @@ const ZoolYafatish = () => {
         <div className="px-5 mt-5 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-foreground">
-              {CATEGORIES.find((c) => c.id === category)?.label}
+              {CATEGORIES.find((c) => c.id === category)?.[isAr ? "labelAr" : "label"]}
             </p>
             {usedFallback && (
-              <span className="text-[10px] text-earth-light font-cairo">من قاعدة البيانات المحلية</span>
+              <span className="text-[10px] text-earth-light font-cairo">{isAr ? "من قاعدة البيانات المحلية" : "From the local database"}</span>
             )}
           </div>
 
@@ -163,7 +164,7 @@ const ZoolYafatish = () => {
 
           {!placesLoading && enriched.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-8 font-cairo">
-              ما لقينا حاجة قريبة منك يا غالي.
+              {isAr ? "ما لقينا حاجة قريبة منك يا غالي." : "No nearby places found."}
             </p>
           )}
 
@@ -174,8 +175,8 @@ const ZoolYafatish = () => {
                 <div key={p.id} className="rounded-2xl bg-card border border-border p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
-                      <p className="text-[11px] font-cairo text-earth-light mt-0.5 truncate">{p.nameAr}</p>
+                      <p className="text-sm font-semibold text-foreground truncate">{isAr ? p.nameAr : p.name}</p>
+                      
                       <div className="flex items-center gap-2 mt-2 text-[11px] text-muted-foreground">
                         <MapPin className="w-3 h-3" />
                         <span>{p.distanceKm.toFixed(1)} km</span>

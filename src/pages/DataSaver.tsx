@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import { useUser } from "@/store/userStore";
 import { Upload, Download, Loader2, Share2, Facebook, Sparkles, Image as ImageIcon, Video, Music } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
@@ -29,6 +30,7 @@ const detectKind = (f: File): MediaKind | null => {
 };
 
 const DataSaver = () => {
+  const isAr = useUser().language === "ar";
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [original, setOriginal] = useState<File | null>(null);
@@ -53,10 +55,10 @@ const DataSaver = () => {
     const f = e.target.files?.[0];
     e.target.value = "";
     if (!f || loading) return;
-    if (f.size > 100 * 1024 * 1024) { toast({ title: "الحد الأقصى 100 ميجابايت", variant: "destructive" }); return; }
+    if (f.size > 100 * 1024 * 1024) { toast({ title: (isAr ? "الحد الأقصى 100 ميجابايت" : "Maximum size is 100 MB"), variant: "destructive" }); return; }
     const k = detectKind(f);
     if (!k) {
-      toast({ title: "صيغة غير مدعومة", description: "ارفع صورة، فيديو أو صوت", variant: "destructive" });
+      toast({ title: (isAr ? "صيغة غير مدعومة" : "Unsupported format"), description: (isAr ? "ارفع صورة، فيديو أو صوت" : "Upload an image, video, or audio file"), variant: "destructive" });
       return;
     }
     setOriginal(f);
@@ -84,7 +86,7 @@ const DataSaver = () => {
       setCompressedUrl(URL.createObjectURL(file));
     } catch (err) {
       toast({
-        title: "حصل خطأ",
+        title: (isAr ? "حصل خطأ" : "Something went wrong"),
         description: err instanceof Error ? err.message : "Compression failed",
         variant: "destructive",
       });
@@ -97,7 +99,7 @@ const DataSaver = () => {
     if (!original || loading) return;
     setLoading(true);
     setProgress(0);
-    setMsg("الخال شغال بضغط في الفيديو.. ثواني وبجهز ليك 🎬");
+    setMsg((isAr ? "الخال شغال بضغط في الفيديو.. ثواني وبجهز ليك 🎬" : "Compressing your video… just a moment 🎬"));
     try {
       await runMediaJob(async () => {
       const ff = await getFFmpeg((ratio) => setProgress(Math.max(0, Math.min(1, ratio))));
@@ -126,7 +128,7 @@ const DataSaver = () => {
       });
     } catch (err) {
       toast({
-        title: "ما قدرنا نضغط الفيديو",
+        title: (isAr ? "ما قدرنا نضغط الفيديو" : "Could not compress the video"),
         description: err instanceof Error ? err.message : "Video compression failed",
         variant: "destructive",
       });
@@ -139,7 +141,7 @@ const DataSaver = () => {
     if (!original || loading) return;
     setLoading(true);
     setProgress(0);
-    setMsg("الخال بضغط الصوت.. لحظات 🎵");
+    setMsg((isAr ? "الخال بضغط الصوت.. لحظات 🎵" : "Compressing your audio… 🎵"));
     try {
       await runMediaJob(async () => {
       const ff = await getFFmpeg((ratio) => setProgress(Math.max(0, Math.min(1, ratio))));
@@ -163,7 +165,7 @@ const DataSaver = () => {
       });
     } catch (err) {
       toast({
-        title: "ما قدرنا نضغط الصوت",
+        title: (isAr ? "ما قدرنا نضغط الصوت" : "Could not compress the audio"),
         description: err instanceof Error ? err.message : "Audio compression failed",
         variant: "destructive",
       });
@@ -211,7 +213,7 @@ const DataSaver = () => {
       );
     }
     toast({
-      title: "حمّل الملف الأول",
+      title: (isAr ? "حمّل الملف الأول" : "Download the file first"),
       description: "متصفحك ما بيدعم مشاركة الملف مباشرة — نزّله وارفعه في التطبيق.",
     });
   };
@@ -237,7 +239,7 @@ const DataSaver = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => navigate("/")} />
         <div>
-          <h1 className="text-base font-bold font-cairo text-foreground">موفر البيانات</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">{isAr ? "موفر البيانات" : "Data Saver"}</h1>
           <p className="text-[10px] text-muted-foreground">Image · Video · Audio Compression</p>
         </div>
       </header>
@@ -253,7 +255,7 @@ const DataSaver = () => {
                 <Upload className="w-6 h-6 text-gold" />
               </div>
               <p className="text-sm font-semibold text-foreground">Upload media</p>
-              <p className="text-xs text-muted-foreground font-cairo">صورة · فيديو · صوت</p>
+              <p className="text-xs text-muted-foreground font-cairo">{isAr ? "صورة · فيديو · صوت" : "Image · Video · Audio"}</p>
             </button>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="rounded-xl bg-card border border-border p-3 flex flex-col items-center gap-1">
@@ -315,23 +317,23 @@ const DataSaver = () => {
 
         {kind === "video" && !compressed && !loading && (
           <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
-            <p className="text-xs font-semibold font-cairo text-foreground">اختار جودة الضغط</p>
+            <p className="text-xs font-semibold font-cairo text-foreground">{isAr ? "اختار جودة الضغط" : "Choose compression quality"}</p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setVideoProfile("whatsapp")}
                 className={`rounded-xl border p-3 text-xs font-cairo transition ${videoProfile === "whatsapp" ? "border-gold bg-gold/10 text-foreground" : "border-border text-muted-foreground"}`}
                
               >
-                <div className="font-bold">جودة الواتساب</div>
-                <div className="text-[10px] mt-0.5 opacity-80">ضغط عالي · 640p</div>
+                <div className="font-bold">{isAr ? "جودة الواتساب" : "WhatsApp quality"}</div>
+                <div className="text-[10px] mt-0.5 opacity-80">{isAr ? "ضغط عالي · 640p" : "High compression · 640p"}</div>
               </button>
               <button
                 onClick={() => setVideoProfile("balanced")}
                 className={`rounded-xl border p-3 text-xs font-cairo transition ${videoProfile === "balanced" ? "border-gold bg-gold/10 text-foreground" : "border-border text-muted-foreground"}`}
                
               >
-                <div className="font-bold">جودة متوسطة</div>
-                <div className="text-[10px] mt-0.5 opacity-80">متوازنة · 960p</div>
+                <div className="font-bold">{isAr ? "جودة متوسطة" : "Medium quality"}</div>
+                <div className="text-[10px] mt-0.5 opacity-80">{isAr ? "متوازنة · 960p" : "Balanced · 960p"}</div>
               </button>
             </div>
             <button
@@ -339,7 +341,7 @@ const DataSaver = () => {
               className="w-full rounded-full gradient-gold text-primary-foreground py-3 text-sm font-bold active:scale-95 transition-transform"
              
             >
-              ابدأ الضغط
+              {isAr ? "ابدأ الضغط" : "Start compression"}
             </button>
           </div>
         )}
@@ -350,7 +352,7 @@ const DataSaver = () => {
             className="w-full rounded-full gradient-gold text-primary-foreground py-3.5 text-sm font-bold active:scale-95 transition-transform"
            
           >
-            ضغط الصوت إلى 128kbps
+            {isAr ? "ضغط الصوت إلى 128kbps" : "Compress audio to 128 kbps"}
           </button>
         )}
 
@@ -387,14 +389,14 @@ const DataSaver = () => {
                 className="rounded-2xl bg-[hsl(142_70%_45%)] text-white py-3.5 font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform shadow-md"
               >
                 <Share2 className="w-5 h-5" />
-                <span className="text-xs font-cairo">مشاركة فورية للواتساب</span>
+                <span className="text-xs font-cairo">{isAr ? "مشاركة فورية للواتساب" : "Share to WhatsApp"}</span>
               </button>
               <button
                 onClick={() => shareFile("facebook")}
                 className="rounded-2xl bg-[hsl(220_70%_50%)] text-white py-3.5 font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform shadow-md"
               >
                 <Facebook className="w-5 h-5" />
-                <span className="text-xs font-cairo">نشر على فيسبوك</span>
+                <span className="text-xs font-cairo">{isAr ? "نشر على فيسبوك" : "Share to Facebook"}</span>
               </button>
             </div>
 
@@ -402,7 +404,7 @@ const DataSaver = () => {
               onClick={download}
               className="w-full rounded-full border border-gold/40 bg-card py-3 text-sm font-semibold text-foreground flex items-center justify-center gap-2 active:scale-95 transition-transform"
             >
-              <Download className="w-4 h-4 text-gold" /> تحميل الملف المضغوط
+              <Download className="w-4 h-4 text-gold" /> {isAr ? "تحميل الملف المضغوط" : "Download compressed file"}
             </button>
           </>
         )}
