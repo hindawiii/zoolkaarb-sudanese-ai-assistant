@@ -534,7 +534,7 @@ const ReceiverPanel = ({
         </div>
       </>
     ) : (
-      <p className="text-sm text-muted-foreground text-center">{p2p.status === "connected" ? "متصل — في انتظار الملف" : "..."}</p>
+      <p className="text-sm text-muted-foreground text-center">{p2p.status === "connected" ? (L() ? "متصل — في انتظار الملف" : "Connected — waiting for file") : "..."}</p>
     )}
     {p2p.status === "done" && p2p.receivedUrl && (
       <Button variant="ghost"
