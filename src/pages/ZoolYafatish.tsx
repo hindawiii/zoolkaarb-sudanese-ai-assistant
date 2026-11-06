@@ -135,8 +135,8 @@ const ZoolYafatish = () => {
                 <div className={`w-11 h-11 rounded-xl ${c.bg} flex items-center justify-center mb-3`}>
                   <c.icon className={`w-5 h-5 ${c.color}`} />
                 </div>
-                <p className="text-sm font-semibold text-foreground">{c.label}</p>
-                <p className="text-[11px] font-cairo text-earth-light mt-1">{c.labelAr}</p>
+                <p className="text-sm font-semibold text-foreground">{isAr ? c.labelAr : c.label}</p>
+                
               </button>
             ))}
           </div>
@@ -148,7 +148,7 @@ const ZoolYafatish = () => {
         <div className="px-5 mt-5 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-foreground">
-              {CATEGORIES.find((c) => c.id === category)?.label}
+              {CATEGORIES.find((c) => c.id === category)?.[isAr ? "labelAr" : "label"]}
             </p>
             {usedFallback && (
               <span className="text-[10px] text-earth-light font-cairo">{isAr ? "من قاعدة البيانات المحلية" : "From the local database"}</span>
@@ -175,8 +175,8 @@ const ZoolYafatish = () => {
                 <div key={p.id} className="rounded-2xl bg-card border border-border p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
-                      <p className="text-[11px] font-cairo text-earth-light mt-0.5 truncate">{p.nameAr}</p>
+                      <p className="text-sm font-semibold text-foreground truncate">{isAr ? p.nameAr : p.name}</p>
+                      
                       <div className="flex items-center gap-2 mt-2 text-[11px] text-muted-foreground">
                         <MapPin className="w-3 h-3" />
                         <span>{p.distanceKm.toFixed(1)} km</span>

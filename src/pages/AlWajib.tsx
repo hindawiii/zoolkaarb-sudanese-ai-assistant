@@ -31,12 +31,12 @@ const templates: Template[] = [
   { id: "birthday", title: "Birthday Cards", titleAr: "بطاقات أعياد ميلاد", category: "cards", icon: Heart, gradient: "from-earth/40 via-sand to-gold/30", iconColor: "text-earth-light", isPremium: false },
 ];
 
-const CATEGORIES: { id: Category; label: string }[] = [
-  { id: "all", label: "الكل" },
-  { id: "friday", label: "جمعة مباركة" },
-  { id: "morning", label: "صباحيات" },
-  { id: "greetings", label: "تهاني" },
-  { id: "cards", label: "بطاقات" },
+const CATEGORIES: { id: Category; label: string; labelEn: string }[] = [
+  { id: "all", label: "الكل", labelEn: "All" },
+  { id: "friday", label: "جمعة مباركة", labelEn: "Friday" },
+  { id: "morning", label: "صباحيات", labelEn: "Mornings" },
+  { id: "greetings", label: "تهاني", labelEn: "Greetings" },
+  { id: "cards", label: "بطاقات", labelEn: "Cards" },
 ];
 
 const AlWajib = () => {
@@ -91,7 +91,7 @@ const AlWajib = () => {
                     : "bg-card border border-border text-foreground hover:bg-muted"
                 }`}
               >
-                {c.label}
+                {isAr ? c.label : c.labelEn}
               </button>
             );
           })}
@@ -119,7 +119,7 @@ const AlWajib = () => {
                   <t.icon className={`w-4 h-4 ${t.iconColor}`} />
                 </div>
                 <div>
-                  <p className="text-xs font-bold font-cairo text-foreground">{t.titleAr}</p>
+                  <p className="text-xs font-bold font-cairo text-foreground">{isAr ? t.titleAr : t.title}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <Flame className="w-3 h-3 text-gold" />
                     <span className="text-[9px] text-muted-foreground font-cairo">رائج</span>
@@ -134,7 +134,7 @@ const AlWajib = () => {
       {/* Templates grid */}
       <div className="px-5 mt-5">
         <h2 className="text-sm font-bold font-cairo text-foreground mb-3 text-start">
-          {activeCat === "all" ? "كل القوالب" : CATEGORIES.find((c) => c.id === activeCat)?.label}
+          {activeCat === "all" ? (isAr ? "كل القوالب" : "All templates") : CATEGORIES.find((c) => c.id === activeCat)?.[isAr ? "label" : "labelEn"]}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {filtered.map((t) => (
@@ -153,7 +153,7 @@ const AlWajib = () => {
                 <t.icon className={`w-5 h-5 ${t.iconColor}`} />
               </div>
               <div>
-                <p className="text-sm font-bold font-cairo text-foreground">{t.titleAr}</p>
+                <p className="text-sm font-bold font-cairo text-foreground">{isAr ? t.titleAr : t.title}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{t.title}</p>
               </div>
               {t.isPremium && (
