@@ -278,7 +278,7 @@ const VoiceChanger = () => {
             <span role="status" className="text-xs text-muted-foreground">{isRecording ? "جارٍ التسجيل" : originalBuffer ? "تسجيلك جاهز" : (L() ? "جاهز للتسجيل" : "Ready to record")}</span>
           </div>
           <div className="h-[72px] bg-muted/40 rounded-lg overflow-hidden">
-            {isRecording ? <canvas ref={canvasRef} width={400} height={72} className="w-full h-full" aria-label=(L() ? "موجة الميكروفون المباشرة" : "Live microphone waveform") role="img" /> : <RecordedWaveform buffer={originalBuffer} />}
+            {isRecording ? <canvas ref={canvasRef} width={400} height={72} className="w-full h-full" aria-label={(L() ? "موجة الميكروفون المباشرة" : "Live microphone waveform")} role="img" /> : <RecordedWaveform buffer={originalBuffer} />}
           </div>
           <div className="flex items-center justify-between mt-3">
             <span className="text-sm font-mono tabular-nums" dir="ltr">{fmt(elapsed)}</span>
@@ -294,11 +294,11 @@ const VoiceChanger = () => {
           <h2 id="settings-title" className="text-sm font-bold">{L() ? "ضبط النبرة" : "Tone settings"}</h2>
           <div>
             <div className="flex justify-between mb-2 text-xs"><span>{L() ? "حدّة النبرة" : "Pitch"}</span><span className="text-primary font-mono" dir="ltr">{pitch > 0 ? `+${pitch}` : pitch} st</span></div>
-            <Slider aria-label=(L() ? "حدّة النبرة" : "Pitch") value={[pitch]} onValueChange={(v) => setPitch(v[0])} min={-12} max={12} step={1} disabled={isProcessing} />
+            <Slider aria-label={(L() ? "حدّة النبرة" : "Pitch")} value={[pitch]} onValueChange={(v) => setPitch(v[0])} min={-12} max={12} step={1} disabled={isProcessing} />
           </div>
           <div>
             <div className="flex justify-between mb-2 text-xs"><span>{L() ? "صدى الاستوديو" : "Studio reverb"}</span><span className="text-primary font-mono">{Math.round(reverb * 100)}%</span></div>
-            <Slider aria-label=(L() ? "صدى الاستوديو" : "Studio reverb") value={[reverb]} onValueChange={(v) => setReverb(v[0])} min={0} max={1} step={0.05} disabled={isProcessing} />
+            <Slider aria-label={(L() ? "صدى الاستوديو" : "Studio reverb")} value={[reverb]} onValueChange={(v) => setReverb(v[0])} min={0} max={1} step={0.05} disabled={isProcessing} />
           </div>
           <Button onClick={convert} disabled={!originalBuffer || isProcessing || isRecording}
             className="w-full h-12 rounded-lg gradient-gold text-primary-foreground font-bold">
@@ -315,7 +315,7 @@ const VoiceChanger = () => {
                 {isPlaying ? <Pause /> : <Play />}
               </Button>
               <div className="flex-1"><h2 id="preview-title" className="text-sm font-bold">{L() ? "معاينة التسجيل المحوّل" : "Converted recording preview"}</h2><p className="text-xs text-muted-foreground">{previewName}</p></div>
-              <Button variant="outline" size="icon" onClick={shareToWhatsApp} disabled={!previewBlob} aria-label=(L() ? "مشاركة التسجيل" : "Share recording") title=(L() ? "مشاركة التسجيل" : "Share recording")><Share2 /></Button>
+              <Button variant="outline" size="icon" onClick={shareToWhatsApp} disabled={!previewBlob} aria-label={(L() ? "مشاركة التسجيل" : "Share recording")} title={(L() ? "مشاركة التسجيل" : "Share recording")}><Share2 /></Button>
             </div>
           </section>
         )}

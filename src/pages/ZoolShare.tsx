@@ -276,7 +276,7 @@ const ZoolShare = () => {
       {/* === SENDER: choose mode === */}
       {role === "sender" && !mode && (
         <ModeChoices
-          title=(L() ? "كيف تربط؟" : "How to connect?")
+          title={(L() ? "كيف تربط؟" : "How to connect?")}
           options={[
             { id: "code", icon: <KeyRound className="w-6 h-6" />, label: (L() ? "إنشاء كود" : "Create code"), sub: (L() ? "ولّد 6 أرقام للمستلم" : "Generate 6 digits for the receiver") },
             { id: "qr", icon: <ScanLine className="w-6 h-6" />, label: (L() ? "مسح الباركود" : "Scan QR"), sub: (L() ? "افتح الكاميرا واسحب باركود المستلم" : "Open the camera and scan the receiver's QR") },
@@ -292,7 +292,7 @@ const ZoolShare = () => {
       {/* === RECEIVER: choose mode === */}
       {role === "receiver" && !mode && (
         <ModeChoices
-          title=(L() ? "كيف تستقبل؟" : "How to receive?")
+          title={(L() ? "كيف تستقبل؟" : "How to receive?")}
           options={[
             { id: "code", icon: <Hash className="w-6 h-6" />, label: (L() ? "إدخال كود" : "Enter code"), sub: (L() ? "اكتب الكود من المرسل" : "Type the sender's code") },
             { id: "qr", icon: <QrCode className="w-6 h-6" />, label: (L() ? "عرض الباركود" : "Show QR"), sub: (L() ? "ورّي المرسل الباركود ليمسحو" : "Show your QR to the sender") },
@@ -320,7 +320,7 @@ const ZoolShare = () => {
               {p2p.code && (
                 <Button variant="ghost"
                   onClick={copyCode}
-                  aria-label=(L() ? "نسخ الكود" : "Copy code")
+                  aria-label={(L() ? "نسخ الكود" : "Copy code")}
                   className="h-auto whitespace-normal p-2 rounded-xl bg-muted border border-border hover:bg-muted"
                 >
                   {copied ? <Check className="h-auto whitespace-normal w-4 h-4 text-primary" /> : <Copy className="w-4 h-4 text-primary" />}
@@ -386,7 +386,7 @@ const ZoolShare = () => {
                 maxLength={6}
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                aria-label=(L() ? "كود الاتصال" : "Connection code")
+                aria-label={(L() ? "كود الاتصال" : "Connection code")}
                 className="mt-4 w-full text-center text-3xl font-mono tracking-normal py-3 rounded-xl bg-card/80 border border-primary/30 text-primary focus:outline-none focus:border-ring"
                 placeholder="------"
                 dir="ltr"
