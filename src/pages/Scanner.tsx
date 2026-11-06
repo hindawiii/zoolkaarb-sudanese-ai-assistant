@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import { useUser } from "@/store/userStore";
 import { Camera, Download, Loader2, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
@@ -34,6 +35,7 @@ const applyFilter = (img: HTMLImageElement, filter: Filter): string => {
 };
 
 const Scanner = () => {
+  const isAr = useUser().language === "ar";
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const [rawUrl, setRawUrl] = useState<string | null>(null);
@@ -85,7 +87,7 @@ const Scanner = () => {
       const h = img.height * ratio;
       pdf.addImage(processedUrl, "JPEG", (pageW - w) / 2, (pageH - h) / 2, w, h);
       pdf.save(`scan-${Date.now()}.pdf`);
-      toast({ title: "تمام!", description: "PDF saved" });
+      toast({ title: (isAr ? "تمام!" : "Done!"), description: "PDF saved" });
     };
     img.src = processedUrl;
   };
@@ -95,7 +97,7 @@ const Scanner = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => navigate("/office")} />
         <div>
-          <h1 className="text-base font-bold font-cairo text-foreground">ماسح المستندات</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">{isAr ? "ماسح المستندات" : "Document Scanner"}</h1>
           <p className="text-[10px] text-muted-foreground">Document Scanner</p>
         </div>
       </header>
@@ -110,7 +112,7 @@ const Scanner = () => {
               <Camera className="w-6 h-6 text-nile" />
             </div>
             <p className="text-sm font-semibold text-foreground">Capture a document</p>
-            <p className="text-xs text-muted-foreground font-cairo">صور المستند بالكاميرا</p>
+            <p className="text-xs text-muted-foreground font-cairo">{isAr ? "صور المستند بالكاميرا" : "Take a photo of your document"}</p>
           </button>
         )}
 

@@ -1,7 +1,9 @@
 import { useLocation } from "react-router-dom";
+import { useUser } from "@/store/userStore";
 import { useEffect } from "react";
 
 const NotFound = () => {
+  const isAr = useUser().language === "ar";
   const location = useLocation();
 
   useEffect(() => {

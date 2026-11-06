@@ -14,6 +14,7 @@ const CATEGORIES: { id: Category; label: string; labelAr: string; icon: typeof P
 ];
 
 const ZoolYafatish = () => {
+  const isAr = useUser().language === "ar";
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const initial = (params.get("category") as Category) || null;
@@ -46,7 +47,7 @@ const ZoolYafatish = () => {
         setLocLoading(false);
       },
       () => {
-        setLocError("ما قدرنا نجيب موقعك. خلينا نستخدم الخرطوم.");
+        setLocError((isAr ? "ما قدرنا نجيب موقعك. خلينا نستخدم الخرطوم." : "Could not get your location. Using Khartoum."));
         const fallback = { lat: 15.5007, lon: 32.5599 };
         setLoc(fallback);
         setLastLocation({ ...fallback, city: "Khartoum" });
@@ -100,7 +101,7 @@ const ZoolYafatish = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => (category ? setCategory(null) : navigate("/"))} />
         <div className="flex-1">
-          <h1 className="text-base font-bold font-cairo text-foreground">الزول يفتش</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">{isAr ? "الزول يفتش" : "Nearby Places"}</h1>
           <p className="text-[10px] text-muted-foreground">Smart Directory</p>
         </div>
         <button
@@ -150,7 +151,7 @@ const ZoolYafatish = () => {
               {CATEGORIES.find((c) => c.id === category)?.label}
             </p>
             {usedFallback && (
-              <span className="text-[10px] text-earth-light font-cairo">من قاعدة البيانات المحلية</span>
+              <span className="text-[10px] text-earth-light font-cairo">{isAr ? "من قاعدة البيانات المحلية" : "From the local database"}</span>
             )}
           </div>
 
@@ -163,7 +164,7 @@ const ZoolYafatish = () => {
 
           {!placesLoading && enriched.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-8 font-cairo">
-              ما لقينا حاجة قريبة منك يا غالي.
+              {isAr ? "ما لقينا حاجة قريبة منك يا غالي." : "No nearby places found."}
             </p>
           )}
 

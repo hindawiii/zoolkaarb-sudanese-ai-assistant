@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import { useUser } from "@/store/userStore";
 import { Heart, Star, Sun, Moon, MessageCircle, Sparkles, Play, Crown, Lock, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
@@ -39,6 +40,7 @@ const CATEGORIES: { id: Category; label: string }[] = [
 ];
 
 const AlWajib = () => {
+  const isAr = useUser().language === "ar";
   const navigate = useNavigate();
   const [adTemplate, setAdTemplate] = useState<Template | null>(null);
   const [activeCat, setActiveCat] = useState<Category>("all");
