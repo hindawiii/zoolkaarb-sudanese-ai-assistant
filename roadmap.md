@@ -1,5 +1,18 @@
 # Approved release development
 
+## Image studio upgrade — approved, delivered phase by phase
+
+- [ ] Phase 1: permanently remove Face Swap from discovery, tool registry, quotas, metadata and server operations; deploy and verify rejection of legacy requests
+- [ ] Phase 2: diagnose repeated generation failures, optimize image inputs and preserve safe gateway error handling; verify existing model availability before any authorized upgrade
+- [ ] Phase 3: replace opaque watermark with constrained bilingual Rasma signature and safe corner placement
+- [ ] Phase 4: guided edit choices, English prompt compiler and localized pre-generation summary; improve identity, multi-image composition and outfit reference fidelity
+- [ ] Phase 5: Smart Blender preview, with app credits consumed only on acceptance; distinguish app credits from paid AI generation costs
+- [ ] Phase 6: Studio inspiration, Share connection radar, Data Saver measured savings and chat suggestions above composer
+- [ ] Phase 7: complete Voice Changer / Fake Call bilingual content and alignment
+- [ ] Phase 8: verify current Cloud availability, then account and sync readiness; keep real ads and temporary rate limiting deferred
+
+Older Cloud blockers below are historical and need fresh verification before Cloud work.
+
 - [x] Phase 1: unified 21 page/step back controls; browser verified right arrows in Arabic, left arrows in English, original destinations and live language switching; two direction tests passed
 - [x] Phase 2: Rasma Share now follows light/dark tokens; browser verified role/mode selection, code input, reset and back. Transfer between devices remains unverified; transport logic unchanged.
 - [x] Phase 3: reorganized Audio Studio and Voice Changer; presets/settings visible before recording; browser verified real MediaRecorder input → decoded buffer → playable WAV, accurate preview name and layouts at 320/390/686px; credit regression tests passed

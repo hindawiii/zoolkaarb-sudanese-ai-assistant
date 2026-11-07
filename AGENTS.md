@@ -2,6 +2,7 @@
 
 - Load feature pages lazily behind a route error boundary to isolate failures and reduce initial downloads.
 - Preserve dedicated anime and outfitter routes as the authoritative implementations; generic studio handles only generic tools.
+- Validate photo-edit operations against its server-side allowlist before processing images or calling AI, so removed tools cannot be invoked through legacy clients.
 - Move account-owned data and credits to Cloud with RLS once the paused backend is restored; current local storage remains a legacy cache, not abuse protection.
 - Real ads and rate limiting are deferred; never describe mock rewards as revenue or abuse protection.
 - Load FFmpeg only for local media jobs, explicitly bundle its module worker with a matching ESM core, serialize its shared filesystem operations, and host oversized WASM through project assets.

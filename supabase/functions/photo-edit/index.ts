@@ -1,5 +1,6 @@
 import { corsHeaders, gatewayError, readBody } from "../_shared/request.ts";
 import { z } from "npm:zod@3.25.76";
+import { isPhotoEditAction } from "./actions.ts";
 
 const PROMPTS: Record<string, string> = {
   "remove-bg":
@@ -24,8 +25,6 @@ const PROMPTS: Record<string, string> = {
     "Replace the clothing of the person in this photo with traditional Sudanese attire (jalabiya/thobe with imma turban for men, vibrant toub for women). Match lighting, shadows, and skin tone. Keep face and pose identical.",
   "clothes-casual":
     "Replace the clothing of the person in this photo with stylish modern casual streetwear. Match lighting, shadows, and skin tone. Keep face, hair, and pose identical.",
-  "face-swap":
-    "Take the face from the SECOND image and seamlessly blend it onto the person in the FIRST image. Match skin tone, lighting direction, shadows, and color grading perfectly. Preserve the body, pose, and background of the first image. Photorealistic result.",
   "smart-blender":
     "Merge the provided images into a single cohesive composition. Apply AI color harmonization to unify lighting, shadows, and color grading across all elements so they look like one natural photo.",
 };
@@ -390,6 +389,12 @@ Deno.serve(async (req) => {
 
   try {
     const { imageBase64, images, action, anime, outfitter, sceneSwap } = await readBody(req, z.object({ imageBase64: z.string().max(12000000).optional(), images: z.array(z.string().min(1).max(12000000)).max(4).optional(), action: z.string().min(1).max(100), anime: z.record(z.union([z.string().max(5000), z.boolean()])).optional(), outfitter: z.record(z.union([z.string().max(100), z.boolean()])).optional(), sceneSwap: z.object({ targetHint: z.string().max(1000).optional(), characterName: z.string().max(200).optional() }).optional() }));
+    if (!isPhotoEditAction(action)) {
+      return new Response(JSON.stringify({ error: "عملية غير مدعومة / Unsupported action" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const imageList: string[] = Array.isArray(images) && images.length > 0
       ? images
       : imageBase64
