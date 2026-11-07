@@ -10,6 +10,7 @@ import { consumeUse, getRemaining, grantAdReward, type StudioToolId } from "@/li
 import { addZoolWatermark } from "@/lib/watermark";
 import RewardedAdModal from "@/components/studio/RewardedAdModal";
 import QuotaBadge from "@/components/studio/QuotaBadge";
+import { Button } from "@/components/ui/button";
 
 const fileToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -47,19 +48,16 @@ const StudioToolPage = () => {
       <div className="min-h-screen bg-background flex items-center justify-center" dir={isRtl ? "rtl" : "ltr"}>
         <div className="text-center">
           <p className="font-cairo text-foreground">{isRtl ? "أداة غير موجودة" : "Tool not found"}</p>
-          <button onClick={() => navigate("/studio")} className="mt-3 px-4 py-2 rounded-xl gradient-gold text-primary-foreground font-cairo">
+          <Button onClick={() => navigate("/studio")} className="mt-3 px-4 py-2 rounded-xl gradient-gold text-primary-foreground font-cairo">
             {isRtl ? "رجوع للاستوديو" : "Back to Studio"}
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
-  const requiredCount = tool.mode === "single-edit" ? 1 : tool.mode === "multi-edit" ? 2 : 2;
-  const maxImages = tool.mode === "multi-edit" ? 4 : tool.mode === "single-edit" ? 1 : 2;
-  const slotLabels = tool.mode === "dual-edit"
-    ? isRtl ? ["1. صورة الجسم/الخلفية", "2. صورة الوجه"] : ["1. Body / scene", "2. Face source"]
-    : [];
+  const requiredCount = tool.mode === "single-edit" ? 1 : 2;
+  const maxImages = tool.mode === "multi-edit" ? 4 : 1;
 
   const handlePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -212,11 +210,6 @@ const StudioToolPage = () => {
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
-                    {slotLabels[i] && (
-                      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                        <p className="text-[10px] text-white font-cairo font-bold">{slotLabels[i]}</p>
-                      </div>
-                    )}
                   </div>
                 ) : (
                   <button
@@ -225,7 +218,7 @@ const StudioToolPage = () => {
                   >
                     <Plus className="w-6 h-6 text-muted-foreground" />
                     <p className="text-[10.5px] text-muted-foreground font-cairo text-center px-2">
-                      {slotLabels[i] || (isRtl ? "ارفع صورة" : "Upload")}
+                      {isRtl ? "ارفع صورة" : "Upload"}
                     </p>
                   </button>
                 )}

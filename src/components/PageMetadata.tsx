@@ -5,7 +5,7 @@ const TITLES: Record<string, string> = {
   "/": "رسمة — استوديو الذكاء الاصطناعي",
   "/chat": "الخال", "/studio": "استوديو رسمة", "/studio/quick": "الأدوات السريعة",
   "/studio/anime-hero": "بطل الأنمي", "/studio/clothes-changer": "غيّر ملابسك",
-  "/studio/face-swap": "تبديل الوجوه", "/studio/smart-blender": "الدمج الذكي",
+  "/studio/smart-blender": "الدمج الذكي",
   "/settings": "الإعدادات", "/al-wajib": "مصمم الحالات", "/data-saver": "موفّر البيانات",
   "/zool-share": "رسمة شير", "/scanner": "ماسح المستندات", "/yafatish": "دليل الأماكن",
   "/voice-changer": "غيّر صوتك", "/audio-studio": "الصوت والميديا",

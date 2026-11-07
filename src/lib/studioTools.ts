@@ -1,7 +1,7 @@
-import { Eraser, Wand2, Sparkles, Palette, Crop, Users, Shirt, Drama, Layers, type LucideIcon } from "lucide-react";
+import { Eraser, Wand2, Sparkles, Palette, Crop, Shirt, Drama, Layers, type LucideIcon } from "lucide-react";
 import type { StudioToolId } from "@/lib/studioQuota";
 
-export type ToolMode = "single-edit" | "dual-edit" | "multi-edit";
+export type ToolMode = "single-edit" | "multi-edit";
 
 export interface StudioTool {
   id: StudioToolId | "quick-edit";
@@ -23,21 +23,6 @@ export interface StudioTool {
 }
 
 export const STUDIO_TOOLS: StudioTool[] = [
-  {
-    id: "face-swap",
-    slug: "face-swap",
-    icon: Users,
-    labelAr: "تبديل الوجوه",
-    labelEn: "Face Swap",
-    taglineAr: "ركّب وجهك على أي صورة",
-    taglineEn: "Swap faces with anyone",
-    workingMessageAr: "الخال شغال في المعمل.. بجهز ليك الفزعة",
-    workingMessageEn: "Al-Khal is working his magic...",
-    mode: "dual-edit",
-    action: "face-swap",
-    accent: "earth",
-    metered: true,
-  },
   {
     id: "clothes-changer",
     slug: "clothes-changer",

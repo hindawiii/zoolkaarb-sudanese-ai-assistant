@@ -43,7 +43,7 @@ const ServiceGrid = () => {
               {isRtl ? "ستوديو رسمة" : "Rasma Studio"}
             </h3>
             <p className="text-[12px] text-muted-foreground font-cairo mt-1 truncate">
-              {isRtl ? "أنمي · أزياء تراثية · تبديل وجوه · دمج ذكي" : "Anime · Heritage outfits · Face swap · Blend"}
+              {isRtl ? "أنمي · أزياء تراثية · دمج ذكي" : "Anime · Heritage outfits · Blend"}
             </p>
           </div>
           <span className="w-11 h-11 shrink-0 rounded-2xl gradient-gold depth-icon flex items-center justify-center">

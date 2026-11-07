@@ -47,7 +47,7 @@ const Studio = () => {
               {isRtl ? "✦ معمل الخال للذكاء الاصطناعي" : "✦ Al-Khal's AI Lab"}
             </p>
             <h2 className="mt-1 text-xl font-extrabold text-primary-foreground font-cairo leading-tight">
-              {isRtl ? "ستة أدوات سحرية" : "Six magical tools"}
+              {isRtl ? "أدوات رسمة الإبداعية" : "Rasma Creative Tools"}
             </h2>
             <p className="mt-1.5 text-xs text-primary-foreground/80 font-cairo">
               {isRtl

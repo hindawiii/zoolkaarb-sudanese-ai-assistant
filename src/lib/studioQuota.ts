@@ -14,7 +14,6 @@ export const FREE_LIMIT = FREE_TRIAL;
 export const AD_REWARD = DEFAULT_REWARD;
 
 export type StudioToolId =
-  | "face-swap"
   | "clothes-changer"
   | "anime-hero"
   | "smart-blender";
