@@ -60,7 +60,7 @@ const Settings = () => {
       <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
         <BackButton onClick={() => navigate("/")} />
         <div>
-          <h1 className="text-base font-bold font-cairo text-foreground">{t("settings.title", "ar")}</h1>
+          <h1 className="text-base font-bold font-cairo text-foreground">{t("settings.title", language)}</h1>
           <p className="text-[10px] text-muted-foreground">{t("settings.title", "en")}</p>
         </div>
       </header>
