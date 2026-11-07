@@ -2,7 +2,7 @@
 
 ## Image studio upgrade — approved, delivered phase by phase
 
-- [ ] Phase 1: permanently remove Face Swap from discovery, tool registry, quotas, metadata and server operations; deploy and verify rejection of legacy requests
+- [x] Phase 1: permanently removed Face Swap from discovery, tool registry, quota types, metadata and server operations; live legacy request returns 400, browser route unavailable, other tools reachable, six regression tests passed
 - [ ] Phase 2: diagnose repeated generation failures, optimize image inputs and preserve safe gateway error handling; verify existing model availability before any authorized upgrade
 - [ ] Phase 3: replace opaque watermark with constrained bilingual Rasma signature and safe corner placement
 - [ ] Phase 4: guided edit choices, English prompt compiler and localized pre-generation summary; improve identity, multi-image composition and outfit reference fidelity
