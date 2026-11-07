@@ -275,7 +275,7 @@ const VoiceChanger = () => {
         <section aria-labelledby="recording-title" className="border-y border-border py-4">
           <div className="flex items-center justify-between mb-3">
             <h2 id="recording-title" className="text-sm font-bold">{L() ? "التسجيل" : "Recording"}</h2>
-            <span role="status" className="text-xs text-muted-foreground">{isRecording ? "جارٍ التسجيل" : originalBuffer ? "تسجيلك جاهز" : (L() ? "جاهز للتسجيل" : "Ready to record")}</span>
+            <span role="status" className="text-xs text-muted-foreground">{isRecording ? (L() ? "جارٍ التسجيل" : "Recording…") : originalBuffer ? (L() ? "تسجيلك جاهز" : "Your recording is ready") : (L() ? "جاهز للتسجيل" : "Ready to record")}</span>
           </div>
           <div className="h-[72px] bg-muted/40 rounded-lg overflow-hidden">
             {isRecording ? <canvas ref={canvasRef} width={400} height={72} className="w-full h-full" aria-label={(L() ? "موجة الميكروفون المباشرة" : "Live microphone waveform")} role="img" /> : <RecordedWaveform buffer={originalBuffer} />}
@@ -284,8 +284,8 @@ const VoiceChanger = () => {
             <span className="text-sm font-mono tabular-nums" dir="ltr">{fmt(elapsed)}</span>
             <Button onClick={isRecording ? stopRecording : startRecording} disabled={isProcessing}
               className={`h-12 rounded-full px-5 gap-2 ${isRecording ? "bg-destructive text-destructive-foreground" : "gradient-gold text-primary-foreground"}`}
-              aria-label={isRecording ? "إيقاف التسجيل" : (L() ? "تسجيل" : "Record")}>
-              {isRecording ? <Square /> : <Mic />}{isRecording ? "إيقاف التسجيل" : originalBuffer ? "تسجيل جديد" : (L() ? "تسجيل صوتي" : "Record voice")}
+              aria-label={isRecording ? (L() ? "إيقاف التسجيل" : "Stop recording") : (L() ? "تسجيل" : "Record")}>
+              {isRecording ? <Square /> : <Mic />}{isRecording ? (L() ? "إيقاف التسجيل" : "Stop recording") : originalBuffer ? (L() ? "تسجيل جديد" : "New recording") : (L() ? "تسجيل صوتي" : "Record voice")}
             </Button>
           </div>
         </section>
@@ -311,7 +311,7 @@ const VoiceChanger = () => {
           <section className="border-t border-border pt-4 space-y-3" aria-labelledby="preview-title">
             <audio ref={audioElRef} src={previewUrl} onEnded={() => setIsPlaying(false)} onPause={() => setIsPlaying(false)} onPlay={() => setIsPlaying(true)} />
             <div className="flex items-center gap-3">
-              <Button onClick={togglePlay} variant="secondary" size="icon" className="rounded-full h-12 w-12" aria-label={isPlaying ? "إيقاف المعاينة" : (L() ? "تشغيل المعاينة" : "Play preview")}>
+              <Button onClick={togglePlay} variant="secondary" size="icon" className="rounded-full h-12 w-12" aria-label={isPlaying ? (L() ? "إيقاف المعاينة" : "Pause preview") : (L() ? "تشغيل المعاينة" : "Play preview")}>
                 {isPlaying ? <Pause /> : <Play />}
               </Button>
               <div className="flex-1"><h2 id="preview-title" className="text-sm font-bold">{L() ? "معاينة التسجيل المحوّل" : "Converted recording preview"}</h2><p className="text-xs text-muted-foreground">{previewName}</p></div>
