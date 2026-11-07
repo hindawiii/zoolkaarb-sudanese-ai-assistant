@@ -303,7 +303,7 @@ const VoiceChanger = () => {
           <Button onClick={convert} disabled={!originalBuffer || isProcessing || isRecording}
             className="w-full h-12 rounded-lg gradient-gold text-primary-foreground font-bold">
             {isProcessing ? <Loader2 className="animate-spin" /> : <Wand2 />}
-            {credits > 0 ? "حوّل الصوت" : (L() ? "مكافأة تجريبية لاستكمال التحويل" : "Trial reward to finish converting")}
+            {credits > 0 ? (L() ? "حوّل الصوت" : "Convert voice") : (L() ? "مكافأة تجريبية لاستكمال التحويل" : "Trial reward to finish converting")}
           </Button>
         </section>
 
